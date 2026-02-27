@@ -25,7 +25,7 @@ The system is built with a focus on **Resilience**, **Scalability**, and **Intel
 
 ### 1\. Ingestion Layer (NestJS & RabbitMQ)
 
--   Handles massive bursts of traffic (e.g., during DDoS attacks).
+-   Handles massive bursts of traffic (e.g. during DDoS attacks).
 
 -   Uses **RabbitMQ** as a message broker to decouple log ingestion from processing, ensuring zero data loss.
 
@@ -72,7 +72,7 @@ The system is built with a focus on **Resilience**, **Scalability**, and **Intel
 
 -   Docker (for RabbitMQ & Databases)
 
--   API Keys for your LLM provider (e.g., OpenAI)
+-   API Keys for your LLM provider (e.g. OpenAI)
 
 ### Installation
 
@@ -81,8 +81,8 @@ The system is built with a focus on **Resilience**, **Scalability**, and **Intel
     Bash
 
     ```
-    git clone https://github.com/your-username/Sentinel-Supreme.git
-    cd Sentinel-Supreme
+    git clone https://github.com/your-username/sentinel-supreme.git
+    cd sentinel-supreme
 
     ```
 
@@ -118,4 +118,4 @@ Sentinel-Supreme is designed with **RBAC** at its core, ensuring that sensitive 
 
 * * * * *
 
-**Developed with ❤️ by [Your Name]**
+**Developed with ❤️ by sukenik**
