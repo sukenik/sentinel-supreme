@@ -1,3 +1,5 @@
+<img width="1408" height="768" alt="sentinel-supreme-architecture" src="https://github.com/user-attachments/assets/5950fac0-bb39-46b8-bc7e-4db8cca9d02c" />
+
 🛡️ Sentinel-Supreme: Autonomous Security Operations Center (ASOC)
 ==================================================================
 
