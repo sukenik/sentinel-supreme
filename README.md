@@ -118,6 +118,29 @@ The system is built with a focus on **Resilience**, **Scalability**, and **Intel
 
 Sentinel-Supreme is designed with **RBAC** at its core, ensuring that sensitive security logs are only accessible to authorized personnel. All AI-driven decisions are logged for auditing purposes.
 
+## 🗺️ Project Roadmap & Progress
+
+I'm building **Sentinel-Supreme** in structured phases. You can track my progress below:
+
+### 🏗️ Phase 1: The Distributed Foundation (In Progress)
+- [ ] Monorepo Setup (Nx, NestJS, React)
+- [ ] Dockerized Infrastructure (Postgres, Mongo, RabbitMQ)
+- [ ] Implement RabbitMQ Producer/Consumer Flow
+- [ ] Data Persistence Layer (Prisma & Mongoose)
+- [ ] Real-time Dashboard (WebSockets)
+
+### 🧠 Phase 2: AI & Analysis Layer
+- [ ] Integration with LangChain & OpenAI
+- [ ] Vector Database setup for Similarity Search
+- [ ] Autonomous Investigation Agent logic
+- [ ] Risk Scoring Engine
+
+### 🔐 Phase 3: Enterprise Features & Scaling
+- [ ] Role-Based Access Control (RBAC)
+- [ ] Rate Limiting & DDoS Protection
+- [ ] Caching with Redis
+- [ ] Full DevOps Pipeline (CI/CD)
+
 * * * * *
 
 **Developed with ❤️ by sukenik**
