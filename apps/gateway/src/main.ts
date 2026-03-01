@@ -23,5 +23,3 @@ async function bootstrap() {
 }
 
 bootstrap()
-
-const a
