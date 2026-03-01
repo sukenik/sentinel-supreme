@@ -1,0 +1,77 @@
+services:
+    postgres:
+        image: postgres:16-alpine
+        container_name: sentinel-postgres
+        restart: unless-stopped
+        ports:
+            - '5432:5432'
+        environment:
+            POSTGRES_USER: sentinel
+            POSTGRES_PASSWORD: sentinel_secret
+            POSTGRES_DB: sentinel_db
+        volumes:
+            - postgres_data:/var/lib/postgresql/data
+        healthcheck:
+            test: ['CMD-SHELL', 'pg_isready -U sentinel -d sentinel_db']
+            interval: 10s
+            timeout: 5s
+            retries: 5
+            start_period: 30s
+        networks:
+            - sentinel-network
+
+    mongodb:
+        image: mongo:7
+        container_name: sentinel-mongodb
+        restart: unless-stopped
+        ports:
+            - '27017:27017'
+        environment:
+            MONGO_INITDB_ROOT_USERNAME: sentinel
+            MONGO_INITDB_ROOT_PASSWORD: sentinel_secret
+            MONGO_INITDB_DATABASE: sentinel_logs
+        volumes:
+            - mongodb_data:/data/db
+        healthcheck:
+            test: ['CMD', 'mongosh', '--eval', "db.adminCommand('ping')"]
+            interval: 10s
+            timeout: 5s
+            retries: 5
+            start_period: 30s
+        networks:
+            - sentinel-network
+
+    rabbitmq:
+        image: rabbitmq:3.13-management-alpine
+        container_name: sentinel-rabbitmq
+        restart: unless-stopped
+        ports:
+            - '5672:5672'
+            - '15672:15672'
+        environment:
+            RABBITMQ_DEFAULT_USER: sentinel
+            RABBITMQ_DEFAULT_PASS: sentinel_secret
+            RABBITMQ_DEFAULT_VHOST: sentinel_vhost
+        volumes:
+            - rabbitmq_data:/var/lib/rabbitmq
+        healthcheck:
+            test: ['CMD', 'rabbitmq-diagnostics', '-q', 'ping']
+            interval: 10s
+            timeout: 5s
+            retries: 5
+            start_period: 30s
+        networks:
+            - sentinel-network
+
+volumes:
+    postgres_data:
+        driver: local
+    mongodb_data:
+        driver: local
+    rabbitmq_data:
+        driver: local
+
+networks:
+    sentinel-network:
+        driver: bridge
+        name: sentinel-network
