@@ -6,8 +6,8 @@ module.exports = {
 		path: join(__dirname, 'dist'),
 		clean: true,
 		...(process.env.NODE_ENV !== 'production' && {
-			devtoolModuleFilenameTemplate: '[absolute-resource-path]',
-		}),
+			devtoolModuleFilenameTemplate: '[absolute-resource-path]'
+		})
 	},
 	plugins: [
 		new NxAppWebpackPlugin({
@@ -19,7 +19,7 @@ module.exports = {
 			optimization: false,
 			outputHashing: 'none',
 			generatePackageJson: false,
-			sourceMap: true,
-		}),
-	],
+			sourceMap: true
+		})
+	]
 }
