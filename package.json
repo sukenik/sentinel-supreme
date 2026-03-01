@@ -20,8 +20,8 @@
 		"prepare": "husky"
 	},
 	"lint-staged": {
-		"apps/**/*.{ts,tsx,js,jsx}": [
-			"nx affected:lint --uncommitted --fix",
+		"*.{ts,tsx,js,jsx}": [
+			"lint --uncommitted --fix",
 			"prettier --write"
 		],
 		"*.{json,md,css,html,yaml,yml}": [
