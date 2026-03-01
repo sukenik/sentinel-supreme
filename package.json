@@ -4,6 +4,7 @@
 	"license": "MIT",
 	"private": true,
 	"scripts": {
+		"start": "nx run-many --target=serve --all --parallel",
 		"start:gateway": "nx serve gateway",
 		"start:dashboard": "nx serve dashboard",
 		"build:gateway": "nx build gateway",
@@ -19,8 +20,8 @@
 		"prepare": "husky"
 	},
 	"lint-staged": {
-		"*.{ts,tsx,js,jsx}": [
-			"eslint --fix",
+		"apps/**/*.{ts,tsx,js,jsx}": [
+			"nx affected:lint --uncommitted --fix",
 			"prettier --write"
 		],
 		"*.{json,md,css,html,yaml,yml}": [
