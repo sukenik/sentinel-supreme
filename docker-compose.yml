@@ -6,9 +6,9 @@ services:
         ports:
             - '5432:5432'
         environment:
-            POSTGRES_USER: sentinel
-            POSTGRES_PASSWORD: sentinel_secret
-            POSTGRES_DB: sentinel_db
+            POSTGRES_USER: ${POSTGRES_USER}
+            POSTGRES_PASSWORD: ${DB_PASSWORD}
+            POSTGRES_DB: ${POSTGRES_DB}
         volumes:
             - postgres_data:/var/lib/postgresql/data
         healthcheck:
@@ -27,9 +27,9 @@ services:
         ports:
             - '27017:27017'
         environment:
-            MONGO_INITDB_ROOT_USERNAME: sentinel
-            MONGO_INITDB_ROOT_PASSWORD: sentinel_secret
-            MONGO_INITDB_DATABASE: sentinel_logs
+            MONGO_INITDB_ROOT_USERNAME: ${MONGO_USER}
+            MONGO_INITDB_ROOT_PASSWORD: ${MONGO_PASSWORD}
+            MONGO_INITDB_DATABASE: ${MONGO_DB}
         volumes:
             - mongodb_data:/data/db
         healthcheck:
@@ -49,9 +49,9 @@ services:
             - '5672:5672'
             - '15672:15672'
         environment:
-            RABBITMQ_DEFAULT_USER: sentinel
-            RABBITMQ_DEFAULT_PASS: sentinel_secret
-            RABBITMQ_DEFAULT_VHOST: sentinel_vhost
+            RABBITMQ_DEFAULT_USER: ${RABBITMQ_USER}
+            RABBITMQ_DEFAULT_PASS: ${RABBITMQ_PASSWORD}
+            RABBITMQ_DEFAULT_VHOST: ${RABBITMQ_VHOST}
         volumes:
             - rabbitmq_data:/var/lib/rabbitmq
         healthcheck:
