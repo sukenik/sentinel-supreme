@@ -24,4 +24,4 @@ async function bootstrap() {
 
 bootstrap()
 
-let a
+const a
