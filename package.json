@@ -21,7 +21,7 @@
 	},
 	"lint-staged": {
 		"*.{ts,tsx,js,jsx}": [
-			"nx affected:lint --uncommitted --fix",
+			"lint --uncommitted --fix",
 			"prettier --write"
 		],
 		"*.{json,md,css,html,yaml,yml}": [
