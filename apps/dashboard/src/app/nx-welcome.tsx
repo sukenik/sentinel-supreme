@@ -424,7 +424,7 @@ export function NxWelcome({ title }: { title: string }) {
         gap: 4rem;
       }
     }
-          `,
+          `
 				}}
 			/>
 			<div className="wrapper">

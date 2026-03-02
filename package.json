@@ -7,8 +7,10 @@
 		"start": "nx run-many --target=serve --all --parallel",
 		"start:gateway": "nx serve gateway",
 		"start:dashboard": "nx serve dashboard",
+		"start:log-processor": "nx serve log-processor",
 		"build:gateway": "nx build gateway",
 		"build:dashboard": "nx build dashboard",
+		"build:log-processor": "nx build log-processor",
 		"lint": "nx run-many --target=lint --all",
 		"lint:fix": "nx run-many --target=lint --all --fix",
 		"format": "nx format:write",
@@ -21,11 +23,11 @@
 	},
 	"lint-staged": {
 		"*.{ts,tsx,js,jsx}": [
-			"lint --uncommitted --fix",
-			"prettier --write"
+			"nx affected --target=lint --uncommitted --fix",
+			"nx format:write --uncommitted"
 		],
 		"*.{json,md,css,html,yaml,yml}": [
-			"prettier --write"
+			"nx format:write --uncommitted"
 		]
 	},
 	"workspaces": [

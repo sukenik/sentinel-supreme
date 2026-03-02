@@ -8,6 +8,9 @@
 		},
 		{
 			"path": "./apps/dashboard"
+		},
+		{
+			"path": "./apps/log-processor"
 		}
 	]
 }
