@@ -11,8 +11,8 @@ export default [
 			'**/dist',
 			'**/out-tsc',
 			'**/vite.config.*.timestamp*',
-			'**/vitest.config.*.timestamp*',
-		],
+			'**/vitest.config.*.timestamp*'
+		]
 	},
 	{
 		files: ['**/*.ts', '**/*.tsx', '**/*.js', '**/*.jsx'],
@@ -26,12 +26,12 @@ export default [
 					depConstraints: [
 						{
 							sourceTag: '*',
-							onlyDependOnLibsWithTags: ['*'],
-						},
-					],
-				},
-			],
-		},
+							onlyDependOnLibsWithTags: ['*']
+						}
+					]
+				}
+			]
+		}
 	},
 	{
 		files: [
@@ -42,14 +42,14 @@ export default [
 			'**/*.js',
 			'**/*.jsx',
 			'**/*.cjs',
-			'**/*.mjs',
+			'**/*.mjs'
 		],
 		plugins: {
-			prettier: prettierPlugin,
+			prettier: prettierPlugin
 		},
 		rules: {
-			'prettier/prettier': 'error',
-		},
+			'prettier/prettier': 'error'
+		}
 	},
-	prettierConfig,
+	prettierConfig
 ]
