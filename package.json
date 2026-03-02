@@ -23,11 +23,11 @@
 	},
 	"lint-staged": {
 		"*.{ts,tsx,js,jsx}": [
-			"lint --uncommitted --fix",
-			"prettier --write"
+			"nx affected --target=lint --uncommitted --fix",
+			"nx format:write --uncommitted"
 		],
 		"*.{json,md,css,html,yaml,yml}": [
-			"prettier --write"
+			"nx format:write --uncommitted"
 		]
 	},
 	"workspaces": [
