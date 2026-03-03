@@ -7,3 +7,7 @@ export const QUEUES = {
 export const LOG_PATTERNS = {
 	NEW_LOG: 'log_message'
 }
+
+export const ENV_VARS = {
+	RABBITMQ_URL: 'RABBITMQ_URL'
+}
