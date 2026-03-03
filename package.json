@@ -36,8 +36,13 @@
 	],
 	"dependencies": {
 		"@nestjs/common": "^11.0.0",
+		"@nestjs/config": "^4.0.3",
 		"@nestjs/core": "^11.0.0",
+		"@nestjs/microservices": "^11.1.14",
 		"@nestjs/platform-express": "^11.0.0",
+		"amqp-connection-manager": "^5.0.0",
+		"amqplib": "^0.10.9",
+		"joi": "^18.0.2",
 		"react": "^19.0.0",
 		"react-dom": "^19.0.0",
 		"reflect-metadata": "^0.1.13",

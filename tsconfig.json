@@ -11,6 +11,9 @@
 		},
 		{
 			"path": "./apps/log-processor"
+		},
+		{
+			"path": "./libs/shared"
 		}
 	]
 }

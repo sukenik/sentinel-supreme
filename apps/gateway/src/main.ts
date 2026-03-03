@@ -18,7 +18,7 @@ async function bootstrap() {
 
 	app.useGlobalInterceptors(new TransformInterceptor())
 	app.setGlobalPrefix(globalPrefix)
-	app.listen(port)
+	await app.listen(port)
 	Logger.log(`🚀 Gateway is running on: http://localhost:${port}/${globalPrefix}`)
 }
 
