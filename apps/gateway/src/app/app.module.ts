@@ -1,10 +1,9 @@
 import { Module } from '@nestjs/common'
-import { ConfigModule, ConfigService } from '@nestjs/config'
-import { ClientsModule, Transport } from '@nestjs/microservices'
-import { LOG_SERVICE, QUEUES } from '@sentinel-supreme/shared'
+import { ConfigModule } from '@nestjs/config'
 import Joi from 'joi'
 import { AppController } from './app.controller'
 import { AppService } from './app.service'
+import { LogsModule } from './logs/logs.module'
 
 @Module({
 	imports: [
@@ -15,22 +14,7 @@ import { AppService } from './app.service'
 				RABBITMQ_URL: Joi.string().required()
 			})
 		}),
-		ClientsModule.registerAsync([
-			{
-				name: LOG_SERVICE,
-				inject: [ConfigService],
-				useFactory: (configService: ConfigService) => ({
-					transport: Transport.RMQ,
-					options: {
-						urls: [configService.getOrThrow<string>('RABBITMQ_URL')],
-						queue: QUEUES.LOG_QUEUE,
-						queueOptions: {
-							durable: true
-						}
-					}
-				})
-			}
-		])
+		LogsModule
 	],
 	controllers: [AppController],
 	providers: [AppService]

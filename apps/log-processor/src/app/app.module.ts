@@ -1,8 +1,8 @@
 import { Module } from '@nestjs/common'
-import { AppController } from './app.controller'
-import { AppService } from './app.service'
 import { ConfigModule } from '@nestjs/config'
 import * as Joi from 'joi'
+import { AppController } from './app.controller'
+import { AppService } from './app.service'
 
 @Module({
 	imports: [
@@ -10,7 +10,7 @@ import * as Joi from 'joi'
 			isGlobal: true,
 			validationSchema: Joi.object({
 				RABBITMQ_URL: Joi.string().required(),
-				PORT: Joi.number().default(3000)
+				PORT: Joi.number().default(3001)
 			})
 		})
 	],

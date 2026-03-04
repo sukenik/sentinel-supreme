@@ -2,13 +2,13 @@ import { Logger } from '@nestjs/common'
 import { ConfigService } from '@nestjs/config'
 import { NestFactory } from '@nestjs/core'
 import { MicroserviceOptions, Transport } from '@nestjs/microservices'
-import { QUEUES } from '@sentinel-supreme/shared'
+import { ENV_VARS, QUEUES, DL_CONFIG } from '@sentinel-supreme/shared'
 import { AppModule } from './app/app.module'
 
 async function bootstrap() {
 	const appContext = await NestFactory.createApplicationContext(AppModule)
 	const configService = appContext.get(ConfigService)
-	const rmqUrl = configService.getOrThrow<string>('RABBITMQ_URL')
+	const rmqUrl = configService.getOrThrow<string>(ENV_VARS.RABBITMQ_URL)
 	const port = configService.get<number>('PORT')
 
 	const app = await NestFactory.createMicroservice<MicroserviceOptions>(AppModule, {
@@ -16,8 +16,13 @@ async function bootstrap() {
 		options: {
 			urls: [rmqUrl],
 			queue: QUEUES.LOG_QUEUE,
+			noAck: false,
 			queueOptions: {
-				durable: true
+				durable: true,
+				arguments: {
+					[DL_CONFIG.DLX_HEADER]: DL_CONFIG.DLX_EXCHANGE,
+					[DL_CONFIG.DL_ROUTING_KEY_HEADER]: DL_CONFIG.DL_ROUTING_KEY
+				}
 			}
 		}
 	})
