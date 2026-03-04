@@ -2,9 +2,8 @@ import { Logger } from '@nestjs/common'
 import { ConfigService } from '@nestjs/config'
 import { NestFactory } from '@nestjs/core'
 import { MicroserviceOptions, Transport } from '@nestjs/microservices'
-import { ENV_VARS, QUEUES } from '@sentinel-supreme/shared'
+import { ENV_VARS, QUEUES, DL_CONFIG } from '@sentinel-supreme/shared'
 import { AppModule } from './app/app.module'
-import { DL_ROUTING_KEY, DL_ROUTING_KEY_HEADER, DLX_EXCHANGE, DLX_HEADER } from './consts'
 
 async function bootstrap() {
 	const appContext = await NestFactory.createApplicationContext(AppModule)
@@ -21,8 +20,8 @@ async function bootstrap() {
 			queueOptions: {
 				durable: true,
 				arguments: {
-					[DLX_HEADER]: DLX_EXCHANGE,
-					[DL_ROUTING_KEY_HEADER]: DL_ROUTING_KEY
+					[DL_CONFIG.DLX_HEADER]: DL_CONFIG.DLX_EXCHANGE,
+					[DL_CONFIG.DL_ROUTING_KEY_HEADER]: DL_CONFIG.DL_ROUTING_KEY
 				}
 			}
 		}

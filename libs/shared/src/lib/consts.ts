@@ -11,3 +11,11 @@ export const LOG_PATTERNS = {
 export const ENV_VARS = {
 	RABBITMQ_URL: 'RABBITMQ_URL'
 }
+
+export const DL_CONFIG = {
+	DLX_HEADER: 'x-dead-letter-exchange',
+	DL_ROUTING_KEY_HEADER: 'x-dead-letter-routing-key',
+	DLX_EXCHANGE: 'log_dlx',
+	DLQ_NAME: 'log_queue_dead_letters',
+	DL_ROUTING_KEY: 'log_dead_letter_key'
+}
