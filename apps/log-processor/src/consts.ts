@@ -1,0 +1,5 @@
+export const DLX_HEADER = 'x-dead-letter-exchange'
+export const DL_ROUTING_KEY_HEADER = 'x-dead-letter-routing-key'
+export const DLX_EXCHANGE = 'log_dlx'
+export const DLQ_NAME = 'log_queue_dead_letters'
+export const DL_ROUTING_KEY = 'log_dead_letter_key'

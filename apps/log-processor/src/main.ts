@@ -4,6 +4,7 @@ import { NestFactory } from '@nestjs/core'
 import { MicroserviceOptions, Transport } from '@nestjs/microservices'
 import { ENV_VARS, QUEUES } from '@sentinel-supreme/shared'
 import { AppModule } from './app/app.module'
+import { DL_ROUTING_KEY, DL_ROUTING_KEY_HEADER, DLX_EXCHANGE, DLX_HEADER } from './consts'
 
 async function bootstrap() {
 	const appContext = await NestFactory.createApplicationContext(AppModule)
@@ -16,8 +17,13 @@ async function bootstrap() {
 		options: {
 			urls: [rmqUrl],
 			queue: QUEUES.LOG_QUEUE,
+			noAck: false,
 			queueOptions: {
-				durable: true
+				durable: true,
+				arguments: {
+					[DLX_HEADER]: DLX_EXCHANGE,
+					[DL_ROUTING_KEY_HEADER]: DL_ROUTING_KEY
+				}
 			}
 		}
 	})
