@@ -1,7 +1,6 @@
 import { Injectable, Logger, OnModuleInit } from '@nestjs/common'
 import { ConfigService } from '@nestjs/config'
-import { ENV_VARS } from '@sentinel-supreme/shared'
-import { validateRmqTopology } from '../../../../libs/shared/src/lib/rmq-setup'
+import { ENV_VARS, validateRmqTopology } from '@sentinel-supreme/shared'
 
 @Injectable()
 export class AppService implements OnModuleInit {

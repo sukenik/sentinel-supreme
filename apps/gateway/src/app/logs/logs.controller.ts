@@ -1,8 +1,7 @@
 import { Controller, Inject, Logger, OnModuleInit, Post } from '@nestjs/common'
 import { ConfigService } from '@nestjs/config'
 import { ClientProxy } from '@nestjs/microservices'
-import { ENV_VARS, LOG_PATTERNS, LOG_SERVICE } from '@sentinel-supreme/shared'
-import { validateRmqTopology } from '@sentinel-supreme/shared/lib/rmq-setup'
+import { ENV_VARS, LOG_PATTERNS, LOG_SERVICE, validateRmqTopology } from '@sentinel-supreme/shared'
 
 @Controller('logs')
 export class LogsController implements OnModuleInit {
