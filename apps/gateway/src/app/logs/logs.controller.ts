@@ -1,7 +1,13 @@
-import { Controller, Inject, Logger, OnModuleInit, Post } from '@nestjs/common'
+import { Body, Controller, Inject, Logger, OnModuleInit, Post } from '@nestjs/common'
 import { ConfigService } from '@nestjs/config'
 import { ClientProxy } from '@nestjs/microservices'
-import { ENV_VARS, LOG_PATTERNS, LOG_SERVICE, validateRmqTopology } from '@sentinel-supreme/shared'
+import {
+	ENV_VARS,
+	LOG_PATTERNS,
+	LOG_SERVICE,
+	validateRmqTopology,
+	CreateLogDto
+} from '@sentinel-supreme/shared'
 
 @Controller('logs')
 export class LogsController implements OnModuleInit {
@@ -25,17 +31,10 @@ export class LogsController implements OnModuleInit {
 	}
 
 	@Post()
-	async createLog() {
+	async createLog(@Body() logData: CreateLogDto) {
 		this.logger.log('Receiving new log event via HTTP')
 
-		for (let i = 0; i < 1000; i++) {
-			this.rmqClient.emit(LOG_PATTERNS.NEW_LOG, {
-				message: `Stress test log #${i}`,
-				level: 'info',
-				timestamp: new Date().toISOString()
-			})
-		}
-
-		return { message: 'Log accepted and queued for processing' }
+		this.rmqClient.emit(LOG_PATTERNS.NEW_LOG, logData)
+		return { message: 'Log accepted' }
 	}
 }
