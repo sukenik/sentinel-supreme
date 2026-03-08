@@ -29,6 +29,7 @@ import { EventsModule } from './events/events.module'
 				type: 'postgres',
 				url: `postgres://${config.get(ENV_VARS.POSTGRES_USER)}:${config.get(ENV_VARS.POSTGRES_PASSWORD)}@localhost:${config.get(ENV_VARS.POSTGRES_PORT)}/${config.get(ENV_VARS.POSTGRES_DB)}`,
 				autoLoadEntities: true,
+				// TODO: Change for prod!
 				synchronize: true
 			})
 		}),
