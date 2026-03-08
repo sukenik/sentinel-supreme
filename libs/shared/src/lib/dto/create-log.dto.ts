@@ -1,6 +1,6 @@
 import { IsString, IsNotEmpty, IsEnum, IsOptional, IsObject } from 'class-validator'
 
-export enum LogLevel {
+enum eLogLevel {
 	INFO = 'info',
 	WARN = 'warn',
 	ERROR = 'error',
@@ -12,8 +12,8 @@ export class CreateLogDto {
 	@IsNotEmpty()
 	message!: string
 
-	@IsEnum(LogLevel)
-	level!: LogLevel
+	@IsEnum(eLogLevel)
+	level!: eLogLevel
 
 	@IsString()
 	@IsNotEmpty()
