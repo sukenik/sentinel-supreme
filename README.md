@@ -120,8 +120,8 @@ I'm building **Sentinel-Supreme** in structured phases. You can track my progres
 
 - [x] Monorepo Setup (Nx, NestJS, React)
 - [x] Dockerized Infrastructure (Postgres, Mongo, RabbitMQ)
-- [ ] Implement RabbitMQ Producer/Consumer Flow
-- [ ] Data Persistence Layer (Prisma & Mongoose)
+- [x] Implement RabbitMQ Producer/Consumer Flow
+- [ ] Data Persistence Layer (TypeORM & Mongoose)
 - [ ] Real-time Dashboard (WebSockets)
 
 ### 🧠 Phase 2: AI & Analysis Layer
