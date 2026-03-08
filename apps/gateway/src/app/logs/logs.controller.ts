@@ -1,13 +1,17 @@
-import { Body, Controller, Inject, Logger, OnModuleInit, Post } from '@nestjs/common'
+import { Body, Controller, Inject, Logger, OnModuleInit, Post, UseGuards } from '@nestjs/common'
 import { ConfigService } from '@nestjs/config'
 import { ClientProxy } from '@nestjs/microservices'
 import {
+	CreateLogDto,
 	ENV_VARS,
+	eUserRole,
 	LOG_PATTERNS,
 	LOG_SERVICE,
-	validateRmqTopology,
-	CreateLogDto
+	validateRmqTopology
 } from '@sentinel-supreme/shared'
+import { Roles } from '../auth/decorators/roles.decorator'
+import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard'
+import { RolesGuard } from '../auth/guards/roles.guard'
 
 @Controller('logs')
 export class LogsController implements OnModuleInit {
@@ -31,6 +35,8 @@ export class LogsController implements OnModuleInit {
 	}
 
 	@Post()
+	@UseGuards(JwtAuthGuard, RolesGuard)
+	@Roles(eUserRole.USER, eUserRole.ADMIN)
 	async createLog(@Body() logData: CreateLogDto) {
 		this.logger.log('Receiving new log event via HTTP')
 

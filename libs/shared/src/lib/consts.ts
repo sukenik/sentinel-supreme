@@ -13,7 +13,9 @@ export const ENV_VARS = {
 	POSTGRES_USER: 'POSTGRES_USER',
 	POSTGRES_PASSWORD: 'POSTGRES_PASSWORD',
 	POSTGRES_DB: 'POSTGRES_DB',
-	POSTGRES_PORT: 'POSTGRES_PORT'
+	POSTGRES_PORT: 'POSTGRES_PORT',
+	JWT_SECRET: 'JWT_SECRET',
+	JWT_EXPIRATION_IN_SECONDS: 'JWT_EXPIRATION_IN_SECONDS'
 }
 
 export const DL_CONFIG = {
@@ -23,3 +25,5 @@ export const DL_CONFIG = {
 	DLQ_NAME: 'log_queue_dead_letters',
 	DL_ROUTING_KEY: 'log_dead_letter_key'
 }
+
+export const JWT_FALLBACK_SECRET = 'fallback_secret'

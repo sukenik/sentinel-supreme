@@ -5,9 +5,10 @@ import { ENV_VARS } from '@sentinel-supreme/shared'
 import Joi from 'joi'
 import { AppController } from './app.controller'
 import { AppService } from './app.service'
+import { AuthModule } from './auth/auth.module'
+import { EventsModule } from './events/events.module'
 import { LogsModule } from './logs/logs.module'
 import { UsersModule } from './users/users.module'
-import { EventsModule } from './events/events.module'
 
 @Module({
 	imports: [
@@ -19,7 +20,9 @@ import { EventsModule } from './events/events.module'
 				POSTGRES_USER: Joi.string().required(),
 				POSTGRES_PASSWORD: Joi.string().required(),
 				POSTGRES_DB: Joi.string().required(),
-				POSTGRES_PORT: Joi.number().required()
+				POSTGRES_PORT: Joi.number().required(),
+				JWT_SECRET: Joi.string().required(),
+				JWT_EXPIRATION_IN_SECONDS: Joi.number().required()
 			})
 		}),
 		TypeOrmModule.forRootAsync({
@@ -35,7 +38,8 @@ import { EventsModule } from './events/events.module'
 		}),
 		LogsModule,
 		UsersModule,
-		EventsModule
+		EventsModule,
+		AuthModule
 	],
 	controllers: [AppController],
 	providers: [AppService]
