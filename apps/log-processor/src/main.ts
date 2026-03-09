@@ -1,4 +1,4 @@
-import { Logger } from '@nestjs/common'
+import { Logger, ValidationPipe } from '@nestjs/common'
 import { ConfigService } from '@nestjs/config'
 import { NestFactory } from '@nestjs/core'
 import { MicroserviceOptions, Transport } from '@nestjs/microservices'
@@ -8,7 +8,6 @@ import { AppModule } from './app/app.module'
 async function bootstrap() {
 	const appContext = await NestFactory.createApplicationContext(AppModule)
 	const config = appContext.get(ConfigService)
-	const port = config.get<number>('PORT')
 
 	const { RMQ_USER, RMQ_PASSWORD, RMQ_PORT, RMQ_VHOST } = ENV_VARS
 
@@ -35,8 +34,10 @@ async function bootstrap() {
 		}
 	})
 
+	app.useGlobalPipes(new ValidationPipe({ whitelist: true, transform: true }))
+
 	await app.listen()
-	Logger.log(`🚀 Log Processor is running on: http://localhost:${port}`)
+	Logger.log('🚀 Log Processor is running')
 
 	await appContext.close()
 }

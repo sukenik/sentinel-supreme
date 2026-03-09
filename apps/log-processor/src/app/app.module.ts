@@ -12,7 +12,6 @@ import { LogsModule } from './logs/logs.module'
 		ConfigModule.forRoot({
 			isGlobal: true,
 			validationSchema: Joi.object({
-				PORT: Joi.number().default(3001),
 				MONGO_USER: Joi.string().required(),
 				MONGO_PASSWORD: Joi.string().required(),
 				MONGO_PORT: Joi.number().required(),
