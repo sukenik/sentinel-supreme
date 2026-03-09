@@ -16,7 +16,10 @@ import { UsersModule } from './users/users.module'
 			isGlobal: true,
 			validationSchema: Joi.object({
 				PORT: Joi.number().default(3000),
-				RABBITMQ_URL: Joi.string().required(),
+				RABBITMQ_USER: Joi.string().required(),
+				RABBITMQ_PASSWORD: Joi.string().required(),
+				RABBITMQ_PORT: Joi.number().required(),
+				RABBITMQ_VHOST: Joi.string().required(),
 				POSTGRES_USER: Joi.string().required(),
 				POSTGRES_PASSWORD: Joi.string().required(),
 				POSTGRES_DB: Joi.string().required(),

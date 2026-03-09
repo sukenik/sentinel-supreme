@@ -1,6 +1,6 @@
 import { IsString, IsNotEmpty, IsEnum, IsOptional, IsObject } from 'class-validator'
 
-enum eLogLevel {
+export enum eLogLevel {
 	INFO = 'info',
 	WARN = 'warn',
 	ERROR = 'error',
