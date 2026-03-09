@@ -16,14 +16,14 @@ import { UsersModule } from './users/users.module'
 			isGlobal: true,
 			validationSchema: Joi.object({
 				PORT: Joi.number().default(3000),
-				RABBITMQ_USER: Joi.string().required(),
-				RABBITMQ_PASSWORD: Joi.string().required(),
-				RABBITMQ_PORT: Joi.number().required(),
-				RABBITMQ_VHOST: Joi.string().required(),
-				POSTGRES_USER: Joi.string().required(),
-				POSTGRES_PASSWORD: Joi.string().required(),
-				POSTGRES_DB: Joi.string().required(),
-				POSTGRES_PORT: Joi.number().required(),
+				RMQ_USER: Joi.string().required(),
+				RMQ_PASSWORD: Joi.string().required(),
+				RMQ_PORT: Joi.number().required(),
+				RMQ_VHOST: Joi.string().required(),
+				PG_USER: Joi.string().required(),
+				PG_PASSWORD: Joi.string().required(),
+				PG_DB: Joi.string().required(),
+				PG_PORT: Joi.number().required(),
 				JWT_SECRET: Joi.string().required(),
 				JWT_EXPIRATION_IN_SECONDS: Joi.number().required()
 			})
@@ -33,7 +33,7 @@ import { UsersModule } from './users/users.module'
 			inject: [ConfigService],
 			useFactory: (config: ConfigService) => ({
 				type: 'postgres',
-				url: `postgres://${config.get(ENV_VARS.POSTGRES_USER)}:${config.get(ENV_VARS.POSTGRES_PASSWORD)}@localhost:${config.get(ENV_VARS.POSTGRES_PORT)}/${config.get(ENV_VARS.POSTGRES_DB)}`,
+				url: `postgres://${config.get(ENV_VARS.PG_USER)}:${config.get(ENV_VARS.PG_PASSWORD)}@localhost:${config.get(ENV_VARS.PG_PORT)}/${config.get(ENV_VARS.PG_DB)}`,
 				autoLoadEntities: true,
 				// TODO: Change for prod!
 				synchronize: true

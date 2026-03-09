@@ -14,7 +14,7 @@ import { LogsController } from './logs.controller'
 					transport: Transport.RMQ,
 					options: {
 						urls: [
-							`amqp://${config.getOrThrow<string>(ENV_VARS.RABBITMQ_USER)}:${config.getOrThrow<string>(ENV_VARS.RABBITMQ_PASSWORD)}@localhost:${config.getOrThrow<string>(ENV_VARS.RABBITMQ_PORT)}/${config.getOrThrow<string>(ENV_VARS.RABBITMQ_VHOST)}`
+							`amqp://${config.getOrThrow<string>(ENV_VARS.RMQ_USER)}:${config.getOrThrow<string>(ENV_VARS.RMQ_PASSWORD)}@localhost:${config.getOrThrow<string>(ENV_VARS.RMQ_PORT)}/${config.getOrThrow<string>(ENV_VARS.RMQ_VHOST)}`
 						],
 						queue: QUEUES.LOG_QUEUE,
 						queueOptions: {

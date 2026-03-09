@@ -10,12 +10,12 @@ async function bootstrap() {
 	const config = appContext.get(ConfigService)
 	const port = config.get<number>('PORT')
 
-	const { RABBITMQ_USER, RABBITMQ_PASSWORD, RABBITMQ_PORT, RABBITMQ_VHOST } = ENV_VARS
+	const { RMQ_USER, RMQ_PASSWORD, RMQ_PORT, RMQ_VHOST } = ENV_VARS
 
-	const rmqUser = config.getOrThrow<string>(RABBITMQ_USER)
-	const rmqPassword = config.getOrThrow<string>(RABBITMQ_PASSWORD)
-	const rmqPort = config.getOrThrow<string>(RABBITMQ_PORT)
-	const rmqVhost = config.getOrThrow<string>(RABBITMQ_VHOST)
+	const rmqUser = config.getOrThrow<string>(RMQ_USER)
+	const rmqPassword = config.getOrThrow<string>(RMQ_PASSWORD)
+	const rmqPort = config.getOrThrow<string>(RMQ_PORT)
+	const rmqVhost = config.getOrThrow<string>(RMQ_VHOST)
 
 	const rmqUrl = `amqp://${rmqUser}:${rmqPassword}@localhost:${rmqPort}/${rmqVhost}`
 
