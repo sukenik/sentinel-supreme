@@ -1,6 +1,6 @@
 import { CanActivate, ExecutionContext, Injectable } from '@nestjs/common'
 import { Reflector } from '@nestjs/core'
-import { eUserRole } from '@sentinel-supreme/shared'
+import { eUserRole, iRequestUser } from '@sentinel-supreme/shared'
 import { ROLES_KEY } from '../decorators/roles.decorator'
 
 @Injectable()
@@ -17,8 +17,8 @@ export class RolesGuard implements CanActivate {
 			return true
 		}
 
-		const { user } = context.switchToHttp().getRequest()
+		const { user } = context.switchToHttp().getRequest() as { user: iRequestUser }
 
-		return requiredRoles.some((role) => user?.role === role)
+		return requiredRoles.some((role) => user.role === role)
 	}
 }
