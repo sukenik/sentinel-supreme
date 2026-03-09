@@ -24,12 +24,12 @@ export class LogsController implements OnModuleInit {
 
 	async onModuleInit() {
 		try {
-			const { RABBITMQ_USER, RABBITMQ_PASSWORD, RABBITMQ_PORT, RABBITMQ_VHOST } = ENV_VARS
+			const { RMQ_USER, RMQ_PASSWORD, RMQ_PORT, RMQ_VHOST } = ENV_VARS
 
-			const rmqUser = this.config.getOrThrow<string>(RABBITMQ_USER)
-			const rmqPassword = this.config.getOrThrow<string>(RABBITMQ_PASSWORD)
-			const rmqPort = this.config.getOrThrow<string>(RABBITMQ_PORT)
-			const rmqVhost = this.config.getOrThrow<string>(RABBITMQ_VHOST)
+			const rmqUser = this.config.getOrThrow<string>(RMQ_USER)
+			const rmqPassword = this.config.getOrThrow<string>(RMQ_PASSWORD)
+			const rmqPort = this.config.getOrThrow<string>(RMQ_PORT)
+			const rmqVhost = this.config.getOrThrow<string>(RMQ_VHOST)
 
 			const rmqUrl = `amqp://${rmqUser}:${rmqPassword}@localhost:${rmqPort}/${rmqVhost}`
 

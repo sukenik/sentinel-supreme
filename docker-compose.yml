@@ -4,11 +4,11 @@ services:
         container_name: sentinel-postgres
         restart: unless-stopped
         ports:
-            - '${POSTGRES_PORT}:5432'
+            - '${PG_PORT}:5432'
         environment:
-            POSTGRES_USER: ${POSTGRES_USER}
-            POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
-            POSTGRES_DB: ${POSTGRES_DB}
+            POSTGRES_USER: ${PG_USER}
+            POSTGRES_PASSWORD: ${PG_PASSWORD}
+            POSTGRES_DB: ${PG_DB}
         volumes:
             - postgres_data:/var/lib/postgresql/data
         healthcheck:
@@ -46,12 +46,12 @@ services:
         container_name: sentinel-rabbitmq
         restart: unless-stopped
         ports:
-            - '5672:5672'
-            - '15672:15672'
+            - '${RMQ_PORT}:5672'
+            - '${RMQ_MANAGEMENT_PORT}:15672'
         environment:
-            RABBITMQ_DEFAULT_USER: ${RABBITMQ_USER}
-            RABBITMQ_DEFAULT_PASS: ${RABBITMQ_PASSWORD}
-            RABBITMQ_DEFAULT_VHOST: ${RABBITMQ_VHOST}
+            RABBITMQ_DEFAULT_USER: ${RMQ_USER}
+            RABBITMQ_DEFAULT_PASS: ${RMQ_PASSWORD}
+            RABBITMQ_DEFAULT_VHOST: ${RMQ_VHOST}
         volumes:
             - rabbitmq_data:/var/lib/rabbitmq
         healthcheck:
