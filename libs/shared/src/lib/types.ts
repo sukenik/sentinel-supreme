@@ -11,3 +11,9 @@ export interface iJwtPayload {
 	iat?: number
 	exp?: number
 }
+
+export interface iRequestUser {
+	userId: string
+	email: string
+	role: eUserRole
+}
