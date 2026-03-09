@@ -13,7 +13,9 @@ import { LogsController } from './logs.controller'
 				useFactory: (config: ConfigService) => ({
 					transport: Transport.RMQ,
 					options: {
-						urls: [config.getOrThrow<string>(ENV_VARS.RABBITMQ_URL)],
+						urls: [
+							`amqp://${config.getOrThrow<string>(ENV_VARS.RABBITMQ_USER)}:${config.getOrThrow<string>(ENV_VARS.RABBITMQ_PASSWORD)}@localhost:${config.getOrThrow<string>(ENV_VARS.RABBITMQ_PORT)}/${config.getOrThrow<string>(ENV_VARS.RABBITMQ_VHOST)}`
+						],
 						queue: QUEUES.LOG_QUEUE,
 						queueOptions: {
 							durable: true,
