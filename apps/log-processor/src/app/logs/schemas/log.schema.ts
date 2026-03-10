@@ -2,7 +2,7 @@ import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose'
 import { eLogLevel } from '@sentinel-supreme/shared'
 import { Document } from 'mongoose'
 
-@Schema({ timestamps: true })
+@Schema({ timestamps: { createdAt: false, updatedAt: true } })
 export class Log extends Document {
 	@Prop({
 		required: true,
@@ -22,7 +22,7 @@ export class Log extends Document {
 	@Prop({ required: true, index: true })
 	service!: string
 
-	@Prop({ default: Date.now })
+	@Prop({ required: true, index: true })
 	createdAt!: Date
 
 	@Prop({ type: Object })
