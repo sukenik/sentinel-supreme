@@ -1,15 +1,44 @@
-import { Injectable } from '@nestjs/common'
+import { Injectable, Logger, OnModuleDestroy } from '@nestjs/common'
 import { InjectModel } from '@nestjs/mongoose'
 import { CreateLogDto } from '@sentinel-supreme/shared'
 import { Model } from 'mongoose'
+import { Subject } from 'rxjs'
+import { bufferTime, filter } from 'rxjs/operators'
 import { Log } from './schemas/log.schema'
 
 @Injectable()
-export class LogsService {
-	constructor(@InjectModel(Log.name) private logModel: Model<Log>) {}
+export class LogsService implements OnModuleDestroy {
+	private readonly logger = new Logger(LogsService.name)
+	private readonly logBuffer$ = new Subject<CreateLogDto>()
 
-	async saveLog(data: CreateLogDto): Promise<Log> {
-		const newLog = new this.logModel(data)
-		return newLog.save()
+	constructor(@InjectModel(Log.name) private logModel: Model<Log>) {
+		this.initBuffer()
+	}
+
+	private initBuffer() {
+		this.logBuffer$
+			.pipe(
+				bufferTime(5000, undefined, 50),
+				filter((logs) => logs.length > 0)
+			)
+			.subscribe({
+				next: async (logs) => {
+					try {
+						await this.logModel.insertMany(logs)
+
+						this.logger.log(`✅ Bulk Insert: Saved ${logs.length} logs to MongoDB`)
+					} catch (error) {
+						this.logger.error('❌ Failed to bulk insert logs', error)
+					}
+				}
+			})
+	}
+
+	async saveLog(data: CreateLogDto): Promise<void> {
+		this.logBuffer$.next(data)
+	}
+
+	onModuleDestroy() {
+		this.logBuffer$.complete()
 	}
 }

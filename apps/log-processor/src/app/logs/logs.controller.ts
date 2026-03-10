@@ -23,8 +23,7 @@ export class LogsController {
 
 			channel.ack(originalMsg)
 		} catch (error) {
-			console.error('Processing failed, sending to DLX...')
-			console.error('Error:', error)
+			console.error('Processing failed, sending to DLX...', error)
 
 			channel.nack(originalMsg, false, false)
 		}
