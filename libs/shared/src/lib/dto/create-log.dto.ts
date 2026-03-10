@@ -1,4 +1,4 @@
-import { IsString, IsNotEmpty, IsEnum, IsOptional, IsObject } from 'class-validator'
+import { IsString, IsNotEmpty, IsEnum, IsOptional, IsObject, IsDateString } from 'class-validator'
 
 export enum eLogLevel {
 	INFO = 'info',
@@ -22,4 +22,8 @@ export class CreateLogDto {
 	@IsObject()
 	@IsOptional()
 	metadata?: Record<string, any>
+
+	@IsOptional()
+	@IsDateString()
+	createdAt?: string
 }

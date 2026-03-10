@@ -17,10 +17,6 @@ export class LogsController {
 
 			await this.logsService.saveLog(data)
 
-			if (data.message.includes('fail')) {
-				throw new Error('Simulated failure')
-			}
-
 			channel.ack(originalMsg)
 		} catch (error) {
 			console.error('Processing failed, sending to DLX...', error)

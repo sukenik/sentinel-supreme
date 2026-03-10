@@ -1,3 +1,5 @@
+import { CreateLogDto } from './dto/create-log.dto'
+
 export enum eUserRole {
 	USER = 'user',
 	ANALYST = 'analyst',
@@ -16,4 +18,8 @@ export interface iRequestUser {
 	userId: string
 	email: string
 	role: eUserRole
+}
+
+export interface iLog extends CreateLogDto {
+	fingerprint: string
 }

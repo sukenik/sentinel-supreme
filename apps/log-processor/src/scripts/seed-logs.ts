@@ -1,6 +1,7 @@
 import { NestFactory } from '@nestjs/core'
 import { getModelToken } from '@nestjs/mongoose'
 import { eLogLevel } from '@sentinel-supreme/shared'
+import * as crypto from 'crypto'
 import { Model } from 'mongoose'
 import { AppModule } from '../app/app.module'
 import { Log } from '../app/logs/schemas/log.schema'
@@ -16,13 +17,19 @@ async function runSeed() {
 	const logs = []
 
 	for (let i = 0; i < 100; i++) {
-		logs.push({
+		const data = {
 			level: levels[Math.floor(Math.random() * levels.length)],
 			message: `System message number ${i} - Auto generated seed`,
 			service: services[Math.floor(Math.random() * services.length)],
 			metadata: { env: 'development', batch: 'seed-v1' },
 			createdAt: new Date(Date.now() - Math.floor(Math.random() * 1000000000))
-		})
+		}
+
+		const timeBucket = Math.floor(data.createdAt.getTime() / 5000)
+		const str = `${data.service}-${data.level}-${data.message}-${JSON.stringify(data.metadata)}-${timeBucket}`
+		const fingerprint = crypto.createHash('md5').update(str).digest('hex')
+
+		logs.push({ ...data, fingerprint })
 	}
 
 	try {
