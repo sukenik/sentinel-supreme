@@ -27,8 +27,8 @@ export class LogsService implements OnModuleDestroy {
 						await this.logModel.insertMany(logs)
 
 						this.logger.log(`✅ Bulk Insert: Saved ${logs.length} logs to MongoDB`)
-					} catch (err) {
-						this.logger.error('❌ Failed to bulk insert logs', err)
+					} catch (error) {
+						this.logger.error('❌ Failed to bulk insert logs', error)
 					}
 				}
 			})
