@@ -1,11 +1,11 @@
 import { Injectable, Logger, OnModuleDestroy } from '@nestjs/common'
 import { InjectModel } from '@nestjs/mongoose'
-import { CreateLogDto } from '@sentinel-supreme/shared'
+import { CreateLogDto, iLog } from '@sentinel-supreme/shared'
 import * as crypto from 'crypto'
 import { Model } from 'mongoose'
 import { Subject } from 'rxjs'
 import { bufferTime, filter } from 'rxjs/operators'
-import { Log, iLog } from './schemas/log.schema'
+import { Log } from './schemas/log.schema'
 
 @Injectable()
 export class LogsService implements OnModuleDestroy {

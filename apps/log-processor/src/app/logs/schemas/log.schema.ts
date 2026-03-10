@@ -1,10 +1,6 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose'
+import { eLogLevel } from '@sentinel-supreme/shared'
 import { Document } from 'mongoose'
-import { CreateLogDto, eLogLevel } from '@sentinel-supreme/shared'
-
-export interface iLog extends CreateLogDto {
-	fingerprint: string
-}
 
 @Schema({ timestamps: true })
 export class Log extends Document {
