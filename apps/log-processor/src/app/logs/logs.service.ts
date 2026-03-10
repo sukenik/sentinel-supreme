@@ -41,7 +41,7 @@ export class LogsService implements OnModuleDestroy {
 			})
 	}
 
-	private createFingerprint(data: CreateLogDto): string {
+	private getFingerprint(data: CreateLogDto): string {
 		const logDate = data.createdAt ? new Date(data.createdAt) : new Date()
 		const timeBucket = Math.floor(logDate.getTime() / 5000)
 
@@ -51,7 +51,7 @@ export class LogsService implements OnModuleDestroy {
 	}
 
 	async saveLog(data: CreateLogDto): Promise<void> {
-		const fingerprint = this.createFingerprint(data)
+		const fingerprint = this.getFingerprint(data)
 
 		this.logBuffer$.next({ ...data, fingerprint })
 	}
