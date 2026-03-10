@@ -1,6 +1,10 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose'
 import { Document } from 'mongoose'
-import { eLogLevel } from '@sentinel-supreme/shared'
+import { CreateLogDto, eLogLevel } from '@sentinel-supreme/shared'
+
+export interface iLog extends CreateLogDto {
+	fingerprint: string
+}
 
 @Schema({ timestamps: true })
 export class Log extends Document {
@@ -13,11 +17,17 @@ export class Log extends Document {
 	})
 	level!: eLogLevel
 
+	@Prop({ required: true, unique: true })
+	fingerprint!: string
+
 	@Prop({ required: true })
 	message!: string
 
 	@Prop({ required: true, index: true })
 	service!: string
+
+	@Prop({ default: Date.now })
+	createdAt!: Date
 
 	@Prop({ type: Object })
 	metadata?: Record<string, any>

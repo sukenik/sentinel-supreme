@@ -47,7 +47,12 @@ export class LogsController implements OnModuleInit {
 	async createLog(@Body() logData: CreateLogDto) {
 		this.logger.log('Receiving new log event via HTTP')
 
-		this.rmqClient.emit(LOG_PATTERNS.NEW_LOG, logData)
+		const logWithTime = {
+			...logData,
+			createdAt: logData.createdAt || new Date().toISOString()
+		}
+
+		this.rmqClient.emit(LOG_PATTERNS.NEW_LOG, logWithTime)
 		return { message: 'Log accepted' }
 	}
 }
