@@ -1,0 +1,39 @@
+import { NestFactory } from '@nestjs/core'
+import { getModelToken } from '@nestjs/mongoose'
+import { eLogLevel } from '@sentinel-supreme/shared'
+import { Model } from 'mongoose'
+import { AppModule } from '../app/app.module'
+import { Log } from '../app/logs/schemas/log.schema'
+
+async function runSeed() {
+	console.log('🌱 Starting Seed process...')
+
+	const app = await NestFactory.createApplicationContext(AppModule)
+	const logModel = app.get<Model<Log>>(getModelToken(Log.name))
+
+	const services = ['gateway', 'auth-service', 'payment-service', 'inventory']
+	const levels = Object.values(eLogLevel)
+	const logs = []
+
+	for (let i = 0; i < 100; i++) {
+		logs.push({
+			level: levels[Math.floor(Math.random() * levels.length)],
+			message: `System message number ${i} - Auto generated seed`,
+			service: services[Math.floor(Math.random() * services.length)],
+			metadata: { env: 'development', batch: 'seed-v1' },
+			createdAt: new Date(Date.now() - Math.floor(Math.random() * 1000000000))
+		})
+	}
+
+	try {
+		await logModel.insertMany(logs)
+		console.log('✅ Successfully seeded 100 logs to MongoDB')
+	} catch (error) {
+		console.error('❌ Seed failed:', error)
+	} finally {
+		await app.close()
+		process.exit(0)
+	}
+}
+
+runSeed()

@@ -16,10 +16,10 @@ import { LogsModule } from './logs/logs.module'
 				MONGO_PASSWORD: Joi.string().required(),
 				MONGO_PORT: Joi.number().required(),
 				MONGO_DB: Joi.string().required(),
-				RABBITMQ_USER: Joi.string().required(),
-				RABBITMQ_PASSWORD: Joi.string().required(),
-				RABBITMQ_PORT: Joi.number().required(),
-				RABBITMQ_VHOST: Joi.string().required()
+				RMQ_USER: Joi.string().required(),
+				RMQ_PASSWORD: Joi.string().required(),
+				RMQ_PORT: Joi.number().required(),
+				RMQ_VHOST: Joi.string().required()
 			})
 		}),
 		MongooseModule.forRootAsync({

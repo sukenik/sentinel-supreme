@@ -19,7 +19,8 @@
 		"docker:up": "docker compose up -d",
 		"docker:down": "docker compose down",
 		"docker:logs": "docker compose logs -f",
-		"prepare": "husky"
+		"prepare": "husky",
+		"seed:logs": "ts-node -P apps/log-processor/tsconfig.app.json apps/log-processor/src/scripts/seed-logs.ts"
 	},
 	"lint-staged": {
 		"*.{ts,tsx,js,jsx}": [
