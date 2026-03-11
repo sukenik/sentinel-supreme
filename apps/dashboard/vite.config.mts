@@ -1,7 +1,5 @@
-/// <reference types='vitest' />
 import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
-
 export default defineConfig(() => ({
 	root: import.meta.dirname,
 	cacheDir: '../../node_modules/.vite/apps/dashboard',
@@ -19,19 +17,18 @@ export default defineConfig(() => ({
 	//  plugins: [],
 	// },
 	build: {
-		outDir: './dist',
 		emptyOutDir: true,
+		transformMixedEsModules: true,
+		outDir: './dist',
 		reportCompressedSize: true,
-		commonjsOptions: {
-			transformMixedEsModules: true
-		}
+		commonjsOptions: { transformMixedEsModules: true }
 	},
 	test: {
 		name: 'dashboard',
 		watch: false,
 		globals: true,
 		environment: 'jsdom',
-		include: ['{src,tests}/**/*.{test,spec}.{js,mjs,cjs,ts,mts,cts,jsx,tsx}'],
+		include: ['src/**/*.{test,spec}.{js,mjs,cjs,ts,mts,cts,jsx,tsx}'],
 		reporters: ['default'],
 		coverage: {
 			reportsDirectory: './test-output/vitest/coverage',
