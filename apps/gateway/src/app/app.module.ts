@@ -9,13 +9,14 @@ import { AuthModule } from './auth/auth.module'
 import { EventsModule } from './events/events.module'
 import { LogsModule } from './logs/logs.module'
 import { UsersModule } from './users/users.module'
+import { WebsocketModule } from './websocket/websocket.module'
 
 @Module({
 	imports: [
 		ConfigModule.forRoot({
 			isGlobal: true,
 			validationSchema: Joi.object({
-				PORT: Joi.number().default(3000),
+				GATEWAY_PORT: Joi.number().default(3000),
 				RMQ_USER: Joi.string().required(),
 				RMQ_PASSWORD: Joi.string().required(),
 				RMQ_PORT: Joi.number().required(),
@@ -42,7 +43,8 @@ import { UsersModule } from './users/users.module'
 		LogsModule,
 		UsersModule,
 		EventsModule,
-		AuthModule
+		AuthModule,
+		WebsocketModule
 	],
 	controllers: [AppController],
 	providers: [AppService]

@@ -1,6 +1,7 @@
-import { Injectable, Logger, OnModuleDestroy } from '@nestjs/common'
+import { Inject, Injectable, Logger, OnModuleDestroy } from '@nestjs/common'
+import { ClientProxy } from '@nestjs/microservices'
 import { InjectModel } from '@nestjs/mongoose'
-import { CreateLogDto, iLog } from '@sentinel-supreme/shared'
+import { CreateLogDto, GATEWAY_SERVICE, iLog, LOG_PATTERNS } from '@sentinel-supreme/shared'
 import * as crypto from 'crypto'
 import { Model } from 'mongoose'
 import { Subject } from 'rxjs'
@@ -12,7 +13,10 @@ export class LogsService implements OnModuleDestroy {
 	private readonly logger = new Logger(LogsService.name)
 	private readonly logBuffer$ = new Subject<iLog>()
 
-	constructor(@InjectModel(Log.name) private logModel: Model<Log>) {
+	constructor(
+		@InjectModel(Log.name) private logModel: Model<Log>,
+		@Inject(GATEWAY_SERVICE) private client: ClientProxy
+	) {
 		this.initBuffer()
 	}
 
@@ -26,6 +30,10 @@ export class LogsService implements OnModuleDestroy {
 				next: async (logs) => {
 					try {
 						await this.logModel.insertMany(logs, { ordered: false })
+
+						logs.forEach((log) => {
+							this.client.emit(LOG_PATTERNS.BROADCAST_TO_UI, log)
+						})
 
 						this.logger.log(`✅ Bulk Insert: Saved ${logs.length} logs to MongoDB`)
 					} catch (error) {

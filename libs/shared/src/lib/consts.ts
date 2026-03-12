@@ -1,11 +1,14 @@
 export const LOG_SERVICE = 'LOG_SERVICE'
+export const GATEWAY_SERVICE = 'GATEWAY_SERVICE'
 
 export const QUEUES = {
-	LOG_QUEUE: 'log_queue'
+	LOG_QUEUE: 'log_queue',
+	UI_UPDATE_QUEUE: 'ui_updates_queue'
 }
 
 export const LOG_PATTERNS = {
-	NEW_LOG: 'log_message'
+	NEW_LOG: 'log_message',
+	BROADCAST_TO_UI: 'broadcast_to_ui'
 }
 
 export const ENV_VARS = {
@@ -22,7 +25,8 @@ export const ENV_VARS = {
 	RMQ_USER: 'RMQ_USER',
 	RMQ_PASSWORD: 'RMQ_PASSWORD',
 	RMQ_PORT: 'RMQ_PORT',
-	RMQ_VHOST: 'RMQ_VHOST'
+	RMQ_VHOST: 'RMQ_VHOST',
+	GATEWAY_PORT: 'GATEWAY_PORT'
 }
 
 export const DL_CONFIG = {
