@@ -1,10 +1,12 @@
-import { Controller } from '@nestjs/common'
+import { Controller, Logger } from '@nestjs/common'
 import { Ctx, MessagePattern, Payload, RmqContext } from '@nestjs/microservices'
 import { CreateLogDto, LOG_PATTERNS } from '@sentinel-supreme/shared'
 import { LogsService } from './logs.service'
 
 @Controller('logs')
 export class LogsController {
+	private readonly logger = new Logger(LogsController.name)
+
 	constructor(private readonly logsService: LogsService) {}
 
 	@MessagePattern(LOG_PATTERNS.NEW_LOG)
@@ -13,13 +15,11 @@ export class LogsController {
 		const originalMsg = context.getMessage()
 
 		try {
-			console.log('--- Processing Log and Saving to Mongo ---')
-
 			await this.logsService.saveLog(data)
 
 			channel.ack(originalMsg)
 		} catch (error) {
-			console.error('Processing failed, sending to DLX...', error)
+			this.logger.error('❌ Processing failed, sending to DLX...', error)
 
 			channel.nack(originalMsg, false, false)
 		}
