@@ -1,9 +1,8 @@
 import { Injectable, UnauthorizedException } from '@nestjs/common'
 import { JwtService } from '@nestjs/jwt'
+import { iJwtPayload } from '@sentinel-supreme/shared'
 import * as bcrypt from 'bcrypt'
 import { UsersService } from '../users/users.service'
-import { iJwtPayload } from '@sentinel-supreme/shared'
-import { iJwtPayload } from '@sentinel-supreme/shared/lib/types'
 
 @Injectable()
 export class AuthService {

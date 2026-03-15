@@ -1,6 +1,7 @@
 import { Controller, Logger } from '@nestjs/common'
 import { Ctx, MessagePattern, Payload, RmqContext } from '@nestjs/microservices'
-import { CreateLogDto, LOG_PATTERNS } from '@sentinel-supreme/shared'
+import { LOG_PATTERNS } from '@sentinel-supreme/shared'
+import { CreateLogDto } from '@sentinel-supreme/shared/server'
 import { LogsService } from './logs.service'
 
 @Controller('logs')

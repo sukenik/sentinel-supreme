@@ -1,6 +1,6 @@
 import { Controller, Post, Body } from '@nestjs/common'
 import { AuthService } from './auth.service'
-import { RegisterDto } from '@sentinel-supreme/shared'
+import { RegisterDto } from '@sentinel-supreme/shared/server'
 
 @Controller('auth')
 export class AuthController {

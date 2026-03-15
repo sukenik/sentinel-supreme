@@ -22,7 +22,7 @@
 		"baseUrl": ".",
 		"paths": {
 			"@sentinel-supreme/shared": ["libs/shared/src/index.ts"],
-			"@sentinel-supreme/shared/*": ["libs/shared/src/*"]
+			"@sentinel-supreme/shared/server/*": ["libs/shared/src/index-server.ts"]
 		}
 	}
 }

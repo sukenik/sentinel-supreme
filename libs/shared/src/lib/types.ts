@@ -1,9 +1,14 @@
-import { CreateLogDto } from './dto/create-log.dto'
-
 export enum eUserRole {
 	USER = 'user',
 	ANALYST = 'analyst',
 	ADMIN = 'admin'
+}
+
+export enum eLogLevel {
+	INFO = 'info',
+	WARN = 'warn',
+	ERROR = 'error',
+	DEBUG = 'debug'
 }
 
 export interface iJwtPayload {
@@ -20,6 +25,14 @@ export interface iRequestUser {
 	role: eUserRole
 }
 
-export interface iLog extends CreateLogDto {
+export interface iBaseLog {
+	service: string
+	level: eLogLevel
+	message: string
+	metadata?: Record<string, any>
+	createdAt?: Date | string
+}
+
+export interface iLog extends iBaseLog {
 	fingerprint: string
 }

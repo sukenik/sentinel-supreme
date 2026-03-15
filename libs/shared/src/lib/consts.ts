@@ -1,5 +1,12 @@
 export const LOG_SERVICE = 'LOG_SERVICE'
 export const GATEWAY_SERVICE = 'GATEWAY_SERVICE'
+export const GATEWAY_DASHBOARD_NAMESPACE = 'logs'
+export const JWT_FALLBACK_SECRET = 'fallback_secret'
+
+export const appConfig = {
+	DASHBOARD_URL: 'http://localhost:4200/',
+	GATEWAY_URL: 'http://localhost:3000/'
+}
 
 export const QUEUES = {
 	LOG_QUEUE: 'log_queue',
@@ -37,4 +44,6 @@ export const DL_CONFIG = {
 	DL_ROUTING_KEY: 'log_dead_letter_key'
 }
 
-export const JWT_FALLBACK_SECRET = 'fallback_secret'
+export const WS_EVENTS = {
+	LOG_RECEIVED: 'log_received'
+}

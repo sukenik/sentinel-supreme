@@ -1,13 +1,7 @@
-import { IsString, IsNotEmpty, IsEnum, IsOptional, IsObject, IsDateString } from 'class-validator'
+import { IsDateString, IsEnum, IsNotEmpty, IsObject, IsOptional, IsString } from 'class-validator'
+import { eLogLevel, iBaseLog } from '../types'
 
-export enum eLogLevel {
-	INFO = 'info',
-	WARN = 'warn',
-	ERROR = 'error',
-	DEBUG = 'debug'
-}
-
-export class CreateLogDto {
+export class CreateLogDto implements iBaseLog {
 	@IsString()
 	@IsNotEmpty()
 	message!: string
