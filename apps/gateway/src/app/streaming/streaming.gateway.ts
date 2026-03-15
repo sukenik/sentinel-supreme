@@ -5,18 +5,18 @@ import {
 	WebSocketGateway,
 	WebSocketServer
 } from '@nestjs/websockets'
-import { appConfig, GATEWAY_DASHBOARD_NAMESPACE, WS_EVENTS } from '@sentinel-supreme/shared'
+import { appConfig, GATEWAY_DASHBOARD_NAMESPACE, iLog, WS_EVENTS } from '@sentinel-supreme/shared'
 import { Server, Socket } from 'socket.io'
 
 @WebSocketGateway({
 	cors: { origin: appConfig.DASHBOARD_URL },
 	namespace: GATEWAY_DASHBOARD_NAMESPACE
 })
-export class LogsGateway implements OnGatewayConnection, OnGatewayDisconnect {
+export class DashboardStreamGateway implements OnGatewayConnection, OnGatewayDisconnect {
 	@WebSocketServer()
 	server!: Server
 
-	private readonly logger = new Logger(LogsGateway.name)
+	private readonly logger = new Logger(DashboardStreamGateway.name)
 
 	handleConnection(client: Socket) {
 		this.logger.log(`Client connected: ${client.id}`)
@@ -26,7 +26,7 @@ export class LogsGateway implements OnGatewayConnection, OnGatewayDisconnect {
 		this.logger.log(`Client disconnected: ${client.id}`)
 	}
 
-	sendToClients(log: any) {
+	sendToClients(log: iLog) {
 		this.server.emit(WS_EVENTS.LOG_RECEIVED, log)
 	}
 }

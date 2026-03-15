@@ -1,6 +1,6 @@
 export const LOG_SERVICE = 'LOG_SERVICE'
 export const GATEWAY_SERVICE = 'GATEWAY_SERVICE'
-export const GATEWAY_DASHBOARD_NAMESPACE = 'logs'
+export const GATEWAY_DASHBOARD_NAMESPACE = 'dashboard-stream'
 export const JWT_FALLBACK_SECRET = 'fallback_secret'
 
 export const appConfig = {
