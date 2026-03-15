@@ -1,9 +1,10 @@
 import { appConfig, GATEWAY_DASHBOARD_NAMESPACE, iLog, WS_EVENTS } from '@sentinel-supreme/shared'
 import { useEffect, useState } from 'react'
 import { io, Socket } from 'socket.io-client'
+import { useLogStore } from '../store/useLogStore'
 
 export const useLogsSocket = () => {
-	const [logs, setLogs] = useState<iLog[]>([])
+	const addLog = useLogStore((state) => state.addLog)
 	const [isConnected, setIsConnected] = useState(false)
 
 	const { GATEWAY_URL } = appConfig
@@ -13,26 +14,17 @@ export const useLogsSocket = () => {
 			transports: ['websocket']
 		})
 
-		socket.on('connect', () => {
-			setIsConnected(true)
-			console.log('Connected to Sentinel Socket')
-		})
+		socket.on('connect', () => setIsConnected(true))
+		socket.on('disconnect', () => setIsConnected(false))
 
 		socket.on(WS_EVENTS.LOG_RECEIVED, (newLog: iLog) => {
-			setLogs((prevLogs) => {
-				const updatedLogs = [newLog, ...prevLogs]
-				return updatedLogs.slice(0, 100)
-			})
-		})
-
-		socket.on('disconnect', () => {
-			setIsConnected(false)
+			addLog(newLog)
 		})
 
 		return () => {
 			socket.disconnect()
 		}
-	}, [])
+	}, [addLog])
 
-	return { logs, isConnected }
+	return { isConnected }
 }
