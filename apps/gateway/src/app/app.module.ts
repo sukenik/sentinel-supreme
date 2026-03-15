@@ -7,9 +7,9 @@ import { AppController } from './app.controller'
 import { AppService } from './app.service'
 import { AuthModule } from './auth/auth.module'
 import { EventsModule } from './events/events.module'
-import { LogsModule } from './logs/logs.module'
+import { IngestionModule } from './ingestion/ingestion.module'
+import { StreamingModule } from './streaming/streaming.module'
 import { UsersModule } from './users/users.module'
-import { WebsocketModule } from './websocket/websocket.module'
 
 @Module({
 	imports: [
@@ -40,11 +40,11 @@ import { WebsocketModule } from './websocket/websocket.module'
 				synchronize: true
 			})
 		}),
-		LogsModule,
+		IngestionModule,
 		UsersModule,
 		EventsModule,
 		AuthModule,
-		WebsocketModule
+		StreamingModule
 	],
 	controllers: [AppController],
 	providers: [AppService]

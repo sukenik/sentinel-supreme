@@ -8,8 +8,8 @@ import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard'
 import { RolesGuard } from '../auth/guards/roles.guard'
 
 @Controller('logs')
-export class LogsController implements OnModuleInit {
-	private readonly logger = new Logger(LogsController.name)
+export class IngestionController implements OnModuleInit {
+	private readonly logger = new Logger(IngestionController.name)
 
 	constructor(
 		@Inject(LOG_SERVICE) private readonly rmqClient: ClientProxy,

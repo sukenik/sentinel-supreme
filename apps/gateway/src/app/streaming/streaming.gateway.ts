@@ -12,11 +12,11 @@ import { Server, Socket } from 'socket.io'
 	cors: { origin: appConfig.DASHBOARD_URL },
 	namespace: GATEWAY_DASHBOARD_NAMESPACE
 })
-export class LogsGateway implements OnGatewayConnection, OnGatewayDisconnect {
+export class DashboardStreamGateway implements OnGatewayConnection, OnGatewayDisconnect {
 	@WebSocketServer()
 	server!: Server
 
-	private readonly logger = new Logger(LogsGateway.name)
+	private readonly logger = new Logger(DashboardStreamGateway.name)
 
 	handleConnection(client: Socket) {
 		this.logger.log(`Client connected: ${client.id}`)
