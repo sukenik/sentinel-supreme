@@ -58,3 +58,4 @@ vitest.config.*.timestamp*
 
 .claude
 GEMINI.md
+simulate-logs.ps1

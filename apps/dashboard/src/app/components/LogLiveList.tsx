@@ -1,9 +1,11 @@
-import { eLogLevel } from '@sentinel-supreme/shared'
 import React from 'react'
 import { useLogsSocket } from '../hooks/useLogsSocket'
+import { useLogStore } from '../store/useLogStore'
+import { getLevelColor } from '../utils'
 
 export const LogLiveList: React.FC = () => {
-	const { logs, isConnected } = useLogsSocket()
+	const logs = useLogStore((state) => state.logs)
+	const { isConnected } = useLogsSocket()
 
 	return (
 		<div className='p-6 bg-slate-900 min-h-screen text-blue-100'>
@@ -25,10 +27,10 @@ export const LogLiveList: React.FC = () => {
 				<table className='w-full text-left border-collapse'>
 					<thead>
 						<tr className='bg-blue-900/30 text-cyan-300 uppercase text-xs tracking-widest'>
-							<th className='p-4 border-b border-blue-800'>Time</th>
-							<th className='p-4 border-b border-blue-800'>Service</th>
-							<th className='p-4 border-b border-blue-800'>Level</th>
-							<th className='p-4 border-b border-blue-800'>Message</th>
+							<th className='p-4 border-b border-blue-800'>{'Time'}</th>
+							<th className='p-4 border-b border-blue-800'>{'Service'}</th>
+							<th className='p-4 border-b border-blue-800'>{'Level'}</th>
+							<th className='p-4 border-b border-blue-800'>{'Message'}</th>
 						</tr>
 					</thead>
 					<tbody className='divide-y divide-blue-900/50 font-mono text-sm'>
@@ -43,13 +45,7 @@ export const LogLiveList: React.FC = () => {
 								<td className='p-4 font-semibold text-blue-300'>{log.service}</td>
 								<td className='p-4'>
 									<span
-										className={`px-2 py-1 rounded text-xs font-bold ${
-											log.level === eLogLevel.ERROR
-												? 'bg-red-900/40 text-red-400'
-												: log.level === eLogLevel.WARN
-													? 'bg-yellow-900/40 text-yellow-400'
-													: 'bg-green-900/40 text-green-400'
-										}`}
+										className={`px-2 py-1 rounded text-xs font-bold ${getLevelColor(log.level)}`}
 									>
 										{log.level.toUpperCase()}
 									</span>
