@@ -1,5 +1,5 @@
 import { Body, Controller, Post } from '@nestjs/common'
-import { RegisterDto } from '@sentinel-supreme/shared'
+import { RegisterDto } from '@sentinel-supreme/shared/server'
 import { UsersService } from './users.service'
 
 @Controller('users')

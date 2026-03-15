@@ -1,14 +1,8 @@
 import { Body, Controller, Inject, Logger, OnModuleInit, Post, UseGuards } from '@nestjs/common'
 import { ConfigService } from '@nestjs/config'
 import { ClientProxy } from '@nestjs/microservices'
-import {
-	CreateLogDto,
-	ENV_VARS,
-	eUserRole,
-	LOG_PATTERNS,
-	LOG_SERVICE,
-	validateRmqTopology
-} from '@sentinel-supreme/shared'
+import { ENV_VARS, eUserRole, LOG_PATTERNS, LOG_SERVICE } from '@sentinel-supreme/shared'
+import { CreateLogDto, validateRmqTopology } from '@sentinel-supreme/shared/server'
 import { Roles } from '../auth/decorators/roles.decorator'
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard'
 import { RolesGuard } from '../auth/guards/roles.guard'
