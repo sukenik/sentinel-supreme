@@ -1,5 +1,7 @@
 import { Module } from '@nestjs/common'
 import { ConfigModule, ConfigService } from '@nestjs/config'
+import { APP_GUARD } from '@nestjs/core'
+import { ThrottlerGuard, ThrottlerModule } from '@nestjs/throttler'
 import { TypeOrmModule } from '@nestjs/typeorm'
 import { ENV_VARS } from '@sentinel-supreme/shared'
 import Joi from 'joi'
@@ -13,6 +15,18 @@ import { UsersModule } from './users/users.module'
 
 @Module({
 	imports: [
+		ThrottlerModule.forRoot([
+			{
+				name: 'short',
+				ttl: 1000,
+				limit: 10
+			},
+			{
+				name: 'long',
+				ttl: 60000,
+				limit: 100
+			}
+		]),
 		ConfigModule.forRoot({
 			isGlobal: true,
 			validationSchema: Joi.object({
@@ -47,6 +61,12 @@ import { UsersModule } from './users/users.module'
 		StreamingModule
 	],
 	controllers: [AppController],
-	providers: [AppService]
+	providers: [
+		{
+			provide: APP_GUARD,
+			useClass: ThrottlerGuard
+		},
+		AppService
+	]
 })
 export class AppModule {}
