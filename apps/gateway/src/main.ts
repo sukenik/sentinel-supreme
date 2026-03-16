@@ -25,7 +25,7 @@ async function bootstrap() {
 		transport: Transport.RMQ,
 		options: {
 			urls: [rmqUrl],
-			queue: QUEUES.UI_UPDATE_QUEUE,
+			queue: QUEUES.UI_UPDATES_QUEUE,
 			noAck: true,
 			queueOptions: {
 				durable: true

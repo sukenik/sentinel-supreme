@@ -10,7 +10,7 @@ export const appConfig = {
 
 export const QUEUES = {
 	LOG_QUEUE: 'log_queue',
-	UI_UPDATE_QUEUE: 'ui_updates_queue'
+	UI_UPDATES_QUEUE: 'ui_updates_queue'
 }
 
 export const LOG_PATTERNS = {

@@ -20,7 +20,7 @@ import { ConfigService } from '@nestjs/config'
 						urls: [
 							`amqp://${config.getOrThrow<string>(ENV_VARS.RMQ_USER)}:${config.getOrThrow<string>(ENV_VARS.RMQ_PASSWORD)}@localhost:${config.getOrThrow<string>(ENV_VARS.RMQ_PORT)}/${config.getOrThrow<string>(ENV_VARS.RMQ_VHOST)}`
 						],
-						queue: QUEUES.UI_UPDATE_QUEUE
+						queue: QUEUES.UI_UPDATES_QUEUE
 					}
 				})
 			}
