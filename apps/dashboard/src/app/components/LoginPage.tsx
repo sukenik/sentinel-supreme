@@ -1,6 +1,6 @@
 import { appConfig, iAuthResponse } from '@sentinel-supreme/shared'
 import axios from 'axios'
-import { FC, SyntheticEvent, useState } from 'react'
+import { ChangeEvent, FC, SyntheticEvent, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useAuthStore } from '../store/useAuthStore'
 
@@ -38,6 +38,14 @@ export const LoginPage: FC = () => {
 		}
 	}
 
+	const handleEmailChange = (e: ChangeEvent<HTMLInputElement>) => {
+		setEmail(e.target.value)
+	}
+
+	const handlePasswordChange = (e: ChangeEvent<HTMLInputElement>) => {
+		setPassword(e.target.value)
+	}
+
 	return (
 		<div className='min-h-screen bg-slate-950 flex items-center justify-center p-4'>
 			<div className='max-w-md w-full bg-slate-900 border border-slate-800 rounded-2xl p-8 shadow-2xl'>
@@ -66,7 +74,7 @@ export const LoginPage: FC = () => {
 							type='email'
 							required
 							value={email}
-							onChange={(e) => setEmail(e.target.value)}
+							onChange={handleEmailChange}
 							className='w-full bg-slate-800 border border-slate-700 rounded-lg px-4 py-3 text-white focus:outline-none focus:ring-2 focus:ring-cyan-500/50 transition-all'
 							placeholder='email'
 						/>
@@ -80,7 +88,7 @@ export const LoginPage: FC = () => {
 							type='password'
 							required
 							value={password}
-							onChange={(e) => setPassword(e.target.value)}
+							onChange={handlePasswordChange}
 							className='w-full bg-slate-800 border border-slate-700 rounded-lg px-4 py-3 text-white focus:outline-none focus:ring-2 focus:ring-cyan-500/50 transition-all'
 							placeholder='password'
 						/>
