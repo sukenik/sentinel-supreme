@@ -19,10 +19,23 @@ export interface iJwtPayload {
 	exp?: number
 }
 
+export interface iUser {
+	id: string
+	email: string
+	password?: string
+	role: eUserRole
+	createdAt: Date
+}
+
 export interface iRequestUser {
 	userId: string
 	email: string
 	role: eUserRole
+}
+
+export interface iAuthResponse {
+	access_token: string
+	user: iRequestUser
 }
 
 export interface iBaseLog {

@@ -26,7 +26,7 @@ import { LogsModule } from './logs/logs.module'
 			imports: [ConfigModule],
 			inject: [ConfigService],
 			useFactory: (config: ConfigService) => ({
-				uri: `mongodb://${config.get(ENV_VARS.MONGO_USER)}:${config.get(ENV_VARS.MONGO_PASSWORD)}@localhost:${config.get(ENV_VARS.MONGO_PORT)}/${config.get(ENV_VARS.MONGO_DB)}?authSource=admin`
+				uri: `mongodb://${config.getOrThrow(ENV_VARS.MONGO_USER)}:${config.getOrThrow(ENV_VARS.MONGO_PASSWORD)}@localhost:${config.getOrThrow(ENV_VARS.MONGO_PORT)}/${config.getOrThrow(ENV_VARS.MONGO_DB)}?authSource=admin`
 			})
 		}),
 		LogsModule

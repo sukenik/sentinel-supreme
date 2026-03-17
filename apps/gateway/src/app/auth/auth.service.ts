@@ -1,6 +1,6 @@
 import { Injectable, UnauthorizedException } from '@nestjs/common'
 import { JwtService } from '@nestjs/jwt'
-import { iJwtPayload } from '@sentinel-supreme/shared'
+import { iAuthResponse, iJwtPayload } from '@sentinel-supreme/shared'
 import * as bcrypt from 'bcrypt'
 import { UsersService } from '../users/users.service'
 
@@ -14,7 +14,7 @@ export class AuthService {
 	async login(email: string, pass: string) {
 		const user = await this.usersService.getByEmail(email)
 
-		if (!user || !(await bcrypt.compare(pass, user.password))) {
+		if (!user || !(await bcrypt.compare(pass, user.password!))) {
 			throw new UnauthorizedException('Invalid credentials')
 		}
 
@@ -25,7 +25,12 @@ export class AuthService {
 		} as iJwtPayload
 
 		return {
-			access_token: this.jwtService.sign(payload)
-		}
+			access_token: this.jwtService.sign(payload),
+			user: {
+				userId: user.id,
+				email: user.email,
+				role: user.role
+			}
+		} as iAuthResponse
 	}
 }

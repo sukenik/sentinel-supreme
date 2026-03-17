@@ -2,16 +2,22 @@ import { Logger, ValidationPipe } from '@nestjs/common'
 import { ConfigService } from '@nestjs/config'
 import { NestFactory } from '@nestjs/core'
 import { Transport } from '@nestjs/microservices'
-import { ENV_VARS, QUEUES } from '@sentinel-supreme/shared'
+import { appConfig, ENV_VARS, QUEUES } from '@sentinel-supreme/shared'
 import { AppModule } from './app/app.module'
 import { TransformInterceptor } from './app/interceptors/transform.interceptor'
 
 async function bootstrap() {
 	const app = await NestFactory.create(AppModule)
 
+	app.enableCors({
+		origin: appConfig.DASHBOARD_URL,
+		methods: 'GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS',
+		credentials: true
+	})
+
 	const config = app.get(ConfigService)
 
-	const port = config.get(ENV_VARS.GATEWAY_PORT)
+	const port = config.getOrThrow(ENV_VARS.GATEWAY_PORT)
 	const globalPrefix = 'api'
 
 	const rmqUser = config.getOrThrow<string>(ENV_VARS.RMQ_USER)
@@ -40,7 +46,6 @@ async function bootstrap() {
 	app.setGlobalPrefix(globalPrefix)
 
 	await app.startAllMicroservices()
-
 	await app.listen(port)
 	Logger.log(`🚀 Gateway is running on: http://localhost:${port}/${globalPrefix}`)
 }
