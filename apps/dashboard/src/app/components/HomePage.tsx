@@ -16,7 +16,7 @@ export const HomePage: FC = () => {
 					</div>
 				</div>
 				<nav className='flex-1 px-4 space-y-2'>
-					<div className='p-3 bg-slate-800 rounded-lg cursor-pointer'>Dashboard</div>
+					<div className='p-3 bg-slate-800 rounded-lg cursor-pointer'>{'Dashboard'}</div>
 					<div className='p-3 hover:bg-slate-800 rounded-lg cursor-pointer transition'>
 						{'Logs'}
 					</div>
@@ -30,7 +30,7 @@ export const HomePage: FC = () => {
 			</aside>
 			<main className='flex-1 flex flex-col overflow-hidden'>
 				<header className='h-16 bg-slate-900/50 backdrop-blur-md border-b border-slate-800 flex items-center justify-between px-8'>
-					<h1 className='text-lg font-medium'>Overview</h1>
+					<h1 className='text-lg font-medium'>{'Overview'}</h1>
 					<div className='flex items-center space-x-4'>
 						<div className='w-8 h-8 rounded-full bg-accent flex items-center justify-center text-slate-950 font-bold'>
 							{'D'}
