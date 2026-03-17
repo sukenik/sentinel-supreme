@@ -16,8 +16,8 @@ import { JwtStrategy } from './strategies/jwt.strategy'
 			imports: [ConfigModule],
 			inject: [ConfigService],
 			useFactory: (config: ConfigService) => ({
-				secret: config.get(ENV_VARS.JWT_SECRET) || JWT_FALLBACK_SECRET,
-				signOptions: { expiresIn: config.get(ENV_VARS.JWT_EXPIRATION_IN_SECONDS) }
+				secret: config.getOrThrow(ENV_VARS.JWT_SECRET) || JWT_FALLBACK_SECRET,
+				signOptions: { expiresIn: config.getOrThrow(ENV_VARS.JWT_EXPIRATION_IN_SECONDS) }
 			})
 		})
 	],

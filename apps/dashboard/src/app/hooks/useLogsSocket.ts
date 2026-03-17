@@ -2,6 +2,7 @@ import { appConfig, GATEWAY_DASHBOARD_NAMESPACE, iLog, WS_EVENTS } from '@sentin
 import { useEffect, useState } from 'react'
 import { io, Socket } from 'socket.io-client'
 import { useLogStore } from '../store/useLogStore'
+import { useAuthStore } from '../store/useAuthStore'
 
 export const useLogsSocket = () => {
 	const addLog = useLogStore((state) => state.addLog)
@@ -9,9 +10,14 @@ export const useLogsSocket = () => {
 
 	const { GATEWAY_URL } = appConfig
 
+	const token = useAuthStore((state) => state.access_token)
+
 	useEffect(() => {
+		if (!token) return
+
 		const socket: Socket = io(`${GATEWAY_URL}${GATEWAY_DASHBOARD_NAMESPACE}`, {
-			transports: ['websocket']
+			transports: ['websocket'],
+			auth: { token }
 		})
 
 		socket.on('connect', () => setIsConnected(true))
@@ -24,7 +30,7 @@ export const useLogsSocket = () => {
 		return () => {
 			socket.disconnect()
 		}
-	}, [addLog])
+	}, [addLog, token])
 
 	return { isConnected }
 }

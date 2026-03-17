@@ -4,7 +4,7 @@ export const GATEWAY_DASHBOARD_NAMESPACE = 'dashboard-stream'
 export const JWT_FALLBACK_SECRET = 'fallback_secret'
 
 export const appConfig = {
-	DASHBOARD_URL: 'http://localhost:4200/',
+	DASHBOARD_URL: 'http://localhost:4200',
 	GATEWAY_URL: 'http://localhost:3000/'
 }
 
@@ -33,7 +33,9 @@ export const ENV_VARS = {
 	RMQ_PASSWORD: 'RMQ_PASSWORD',
 	RMQ_PORT: 'RMQ_PORT',
 	RMQ_VHOST: 'RMQ_VHOST',
-	GATEWAY_PORT: 'GATEWAY_PORT'
+	GATEWAY_PORT: 'GATEWAY_PORT',
+	INITIAL_ADMIN_EMAIL: 'INITIAL_ADMIN_EMAIL',
+	INITIAL_ADMIN_PASSWORD: 'INITIAL_ADMIN_PASSWORD'
 }
 
 export const DL_CONFIG = {

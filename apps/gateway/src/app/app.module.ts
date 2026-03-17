@@ -40,7 +40,9 @@ import { UsersModule } from './users/users.module'
 				PG_DB: Joi.string().required(),
 				PG_PORT: Joi.number().required(),
 				JWT_SECRET: Joi.string().required(),
-				JWT_EXPIRATION_IN_SECONDS: Joi.number().required()
+				JWT_EXPIRATION_IN_SECONDS: Joi.number().required(),
+				INITIAL_ADMIN_EMAIL: Joi.string().required(),
+				INITIAL_ADMIN_PASSWORD: Joi.string().required()
 			})
 		}),
 		TypeOrmModule.forRootAsync({
@@ -48,7 +50,7 @@ import { UsersModule } from './users/users.module'
 			inject: [ConfigService],
 			useFactory: (config: ConfigService) => ({
 				type: 'postgres',
-				url: `postgres://${config.get(ENV_VARS.PG_USER)}:${config.get(ENV_VARS.PG_PASSWORD)}@localhost:${config.get(ENV_VARS.PG_PORT)}/${config.get(ENV_VARS.PG_DB)}`,
+				url: `postgres://${config.getOrThrow(ENV_VARS.PG_USER)}:${config.getOrThrow(ENV_VARS.PG_PASSWORD)}@localhost:${config.getOrThrow(ENV_VARS.PG_PORT)}/${config.getOrThrow(ENV_VARS.PG_DB)}`,
 				autoLoadEntities: true,
 				// TODO: Change for prod!
 				synchronize: true
