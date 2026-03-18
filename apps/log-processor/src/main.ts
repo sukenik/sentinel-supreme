@@ -9,14 +9,15 @@ async function bootstrap() {
 	const appContext = await NestFactory.createApplicationContext(AppModule)
 	const config = appContext.get(ConfigService)
 
-	const { RMQ_USER, RMQ_PASSWORD, RMQ_PORT, RMQ_VHOST } = ENV_VARS
+	const { RMQ_USER, RMQ_PASSWORD, RMQ_PORT, RMQ_VHOST, RMQ_HOST } = ENV_VARS
 
 	const rmqUser = config.getOrThrow<string>(RMQ_USER)
 	const rmqPassword = config.getOrThrow<string>(RMQ_PASSWORD)
 	const rmqPort = config.getOrThrow<string>(RMQ_PORT)
 	const rmqVhost = config.getOrThrow<string>(RMQ_VHOST)
+	const rmqHost = config.getOrThrow<string>(RMQ_HOST)
 
-	const rmqUrl = `amqp://${rmqUser}:${rmqPassword}@localhost:${rmqPort}/${rmqVhost}`
+	const rmqUrl = `amqp://${rmqUser}:${rmqPassword}@${rmqHost}:${rmqPort}/${rmqVhost}`
 
 	const app = await NestFactory.createMicroservice<MicroserviceOptions>(AppModule, {
 		transport: Transport.RMQ,
