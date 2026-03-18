@@ -18,7 +18,7 @@ import { ConfigService } from '@nestjs/config'
 					transport: Transport.RMQ,
 					options: {
 						urls: [
-							`amqp://${config.getOrThrow<string>(ENV_VARS.RMQ_USER)}:${config.getOrThrow<string>(ENV_VARS.RMQ_PASSWORD)}@localhost:${config.getOrThrow<string>(ENV_VARS.RMQ_PORT)}/${config.getOrThrow<string>(ENV_VARS.RMQ_VHOST)}`
+							`amqp://${config.getOrThrow(ENV_VARS.RMQ_USER)}:${config.getOrThrow(ENV_VARS.RMQ_PASSWORD)}@${config.getOrThrow(ENV_VARS.RMQ_HOST)}:${config.getOrThrow(ENV_VARS.RMQ_PORT)}/${config.getOrThrow(ENV_VARS.RMQ_VHOST)}`
 						],
 						queue: QUEUES.UI_UPDATES_QUEUE
 					}

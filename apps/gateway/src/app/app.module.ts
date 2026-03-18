@@ -10,6 +10,7 @@ import { AppService } from './app.service'
 import { AuthModule } from './auth/auth.module'
 import { EventsModule } from './events/events.module'
 import { IngestionModule } from './ingestion/ingestion.module'
+import { RedisModule } from './redis/redis.module'
 import { StreamingModule } from './streaming/streaming.module'
 import { UsersModule } from './users/users.module'
 
@@ -35,14 +36,18 @@ import { UsersModule } from './users/users.module'
 				RMQ_PASSWORD: Joi.string().required(),
 				RMQ_PORT: Joi.number().required(),
 				RMQ_VHOST: Joi.string().required(),
+				RMQ_HOST: Joi.string().required(),
 				PG_USER: Joi.string().required(),
 				PG_PASSWORD: Joi.string().required(),
 				PG_DB: Joi.string().required(),
 				PG_PORT: Joi.number().required(),
+				PG_HOST: Joi.string().required(),
 				JWT_SECRET: Joi.string().required(),
 				JWT_EXPIRATION_IN_SECONDS: Joi.number().required(),
 				INITIAL_ADMIN_EMAIL: Joi.string().required(),
-				INITIAL_ADMIN_PASSWORD: Joi.string().required()
+				INITIAL_ADMIN_PASSWORD: Joi.string().required(),
+				REDIS_HOST: Joi.string().required(),
+				REDIS_PORT: Joi.string().required()
 			})
 		}),
 		TypeOrmModule.forRootAsync({
@@ -50,7 +55,7 @@ import { UsersModule } from './users/users.module'
 			inject: [ConfigService],
 			useFactory: (config: ConfigService) => ({
 				type: 'postgres',
-				url: `postgres://${config.getOrThrow(ENV_VARS.PG_USER)}:${config.getOrThrow(ENV_VARS.PG_PASSWORD)}@localhost:${config.getOrThrow(ENV_VARS.PG_PORT)}/${config.getOrThrow(ENV_VARS.PG_DB)}`,
+				url: `postgres://${config.getOrThrow(ENV_VARS.PG_USER)}:${config.getOrThrow(ENV_VARS.PG_PASSWORD)}@${config.getOrThrow(ENV_VARS.PG_HOST)}:${config.getOrThrow(ENV_VARS.PG_PORT)}/${config.getOrThrow(ENV_VARS.PG_DB)}`,
 				autoLoadEntities: true,
 				// TODO: Change for prod!
 				synchronize: true
@@ -60,7 +65,8 @@ import { UsersModule } from './users/users.module'
 		UsersModule,
 		EventsModule,
 		AuthModule,
-		StreamingModule
+		StreamingModule,
+		RedisModule
 	],
 	controllers: [AppController],
 	providers: [

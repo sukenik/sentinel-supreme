@@ -9,8 +9,10 @@ import { TransformInterceptor } from './app/interceptors/transform.interceptor'
 async function bootstrap() {
 	const app = await NestFactory.create(AppModule)
 
+	const { DASHBOARD_URL, GATEWAY_URL } = appConfig
+
 	app.enableCors({
-		origin: appConfig.DASHBOARD_URL,
+		origin: DASHBOARD_URL,
 		methods: 'GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS',
 		credentials: true
 	})
@@ -24,8 +26,9 @@ async function bootstrap() {
 	const rmqPassword = config.getOrThrow<string>(ENV_VARS.RMQ_PASSWORD)
 	const rmqPort = config.getOrThrow<string>(ENV_VARS.RMQ_PORT)
 	const rmqVhost = config.getOrThrow<string>(ENV_VARS.RMQ_VHOST)
+	const rmqHost = config.getOrThrow<string>(ENV_VARS.RMQ_HOST)
 
-	const rmqUrl = `amqp://${rmqUser}:${rmqPassword}@localhost:${rmqPort}/${rmqVhost}`
+	const rmqUrl = `amqp://${rmqUser}:${rmqPassword}@${rmqHost}:${rmqPort}/${rmqVhost}`
 
 	app.connectMicroservice({
 		transport: Transport.RMQ,
@@ -47,7 +50,7 @@ async function bootstrap() {
 
 	await app.startAllMicroservices()
 	await app.listen(port)
-	Logger.log(`🚀 Gateway is running on: http://localhost:${port}/${globalPrefix}`)
+	Logger.log(`🚀 Gateway is running on: ${GATEWAY_URL}/${globalPrefix}`)
 }
 
 bootstrap()

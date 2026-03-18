@@ -11,6 +11,7 @@ import {
 	GATEWAY_DASHBOARD_NAMESPACE,
 	iJwtPayload,
 	iLog,
+	WS_ERRORS,
 	WS_EVENTS
 } from '@sentinel-supreme/shared'
 import { Server, Socket } from 'socket.io'
@@ -27,23 +28,28 @@ export class DashboardStreamGateway implements OnGatewayConnection, OnGatewayDis
 
 	constructor(private readonly jwtService: JwtService) {}
 
-	async handleConnection(client: Socket) {
-		try {
-			const token = client.handshake.auth?.token
+	afterInit(server: Server) {
+		server.use(async (socket, next) => {
+			try {
+				const token = socket.handshake.auth?.token
 
-			if (!token) {
-				throw new Error('No token provided')
+				if (!token) {
+					return next(new Error(WS_ERRORS.NO_TOKEN_PROVIDED))
+				}
+
+				const payload = (await this.jwtService.verifyAsync(token)) as iJwtPayload
+				socket.data.user = payload
+				next()
+			} catch (error: any) {
+				next(new Error(error.message))
 			}
+		})
+	}
 
-			const payload = (await this.jwtService.verifyAsync(token)) as iJwtPayload
+	async handleConnection(client: Socket) {
+		const user = client.data.user
 
-			client.data.user = payload
-
-			this.logger.log(`Client authenticated: ${payload.email} (${client.id})`)
-		} catch (error: any) {
-			this.logger.error(`Connection denied: ${error.message}`)
-			client.disconnect()
-		}
+		this.logger.log(`Client authenticated: ${user.email} (${client.id})`)
 	}
 
 	handleDisconnect(client: Socket) {

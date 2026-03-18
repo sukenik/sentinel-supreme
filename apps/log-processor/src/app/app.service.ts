@@ -15,14 +15,15 @@ export class AppService implements OnModuleInit {
 
 	private async setupRabbitMQ() {
 		try {
-			const { RMQ_USER, RMQ_PASSWORD, RMQ_PORT, RMQ_VHOST } = ENV_VARS
+			const { RMQ_USER, RMQ_PASSWORD, RMQ_PORT, RMQ_VHOST, RMQ_HOST } = ENV_VARS
 
 			const rmqUser = this.config.getOrThrow<string>(RMQ_USER)
 			const rmqPassword = this.config.getOrThrow<string>(RMQ_PASSWORD)
 			const rmqPort = this.config.getOrThrow<string>(RMQ_PORT)
 			const rmqVhost = this.config.getOrThrow<string>(RMQ_VHOST)
+			const rmqHost = this.config.getOrThrow<string>(RMQ_HOST)
 
-			const rmqUrl = `amqp://${rmqUser}:${rmqPassword}@localhost:${rmqPort}/${rmqVhost}`
+			const rmqUrl = `amqp://${rmqUser}:${rmqPassword}@${rmqHost}:${rmqPort}/${rmqVhost}`
 
 			await validateRmqTopology(rmqUrl)
 

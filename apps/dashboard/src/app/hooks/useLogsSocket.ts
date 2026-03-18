@@ -1,27 +1,37 @@
-import { appConfig, GATEWAY_DASHBOARD_NAMESPACE, iLog, WS_EVENTS } from '@sentinel-supreme/shared'
+import {
+	appConfig,
+	GATEWAY_DASHBOARD_NAMESPACE,
+	iLog,
+	WS_ERRORS,
+	WS_EVENTS
+} from '@sentinel-supreme/shared'
 import { useEffect, useState } from 'react'
 import { io, Socket } from 'socket.io-client'
-import { useLogStore } from '../store/useLogStore'
 import { useAuthStore } from '../store/useAuthStore'
+import { useLogStore } from '../store/useLogStore'
 
 export const useLogsSocket = () => {
-	const addLog = useLogStore((state) => state.addLog)
 	const [isConnected, setIsConnected] = useState(false)
 
-	const { GATEWAY_URL } = appConfig
-
-	const token = useAuthStore((state) => state.access_token)
+	const { access_token, logout } = useAuthStore()
+	const addLog = useLogStore((state) => state.addLog)
 
 	useEffect(() => {
-		if (!token) return
+		if (!access_token) return
 
-		const socket: Socket = io(`${GATEWAY_URL}${GATEWAY_DASHBOARD_NAMESPACE}`, {
+		const socket: Socket = io(`${appConfig.GATEWAY_URL}${GATEWAY_DASHBOARD_NAMESPACE}`, {
 			transports: ['websocket'],
-			auth: { token }
+			auth: { token: access_token }
 		})
 
 		socket.on('connect', () => setIsConnected(true))
 		socket.on('disconnect', () => setIsConnected(false))
+
+		socket.on('connect_error', (err) => {
+			if (err.message === 'jwt expired' || err.message === WS_ERRORS.NO_TOKEN_PROVIDED) {
+				logout()
+			}
+		})
 
 		socket.on(WS_EVENTS.LOG_RECEIVED, (newLog: iLog) => {
 			addLog(newLog)
@@ -30,7 +40,7 @@ export const useLogsSocket = () => {
 		return () => {
 			socket.disconnect()
 		}
-	}, [addLog, token])
+	}, [access_token, addLog, logout])
 
 	return { isConnected }
 }
