@@ -1,16 +1,24 @@
-import { BrowserRouter, Navigate, Route, Routes } from 'react-router-dom'
+import { BrowserRouter, Route, Routes } from 'react-router-dom'
 import HomePage from './components/HomePage'
-import { LoginPage } from './components/LoginPage'
-import { useAuthStore } from './store/useAuthStore'
+import LoginPage from './components/LoginPage'
+import ProtectedRoute from './components/ProtectedRoute'
+import { ROUTES } from './consts'
 
 export function App() {
-	const token = useAuthStore((state) => state.access_token)
+	const { LOGIN_PAGE, HOME_PAGE } = ROUTES
 
 	return (
 		<BrowserRouter>
 			<Routes>
-				<Route path='/login' element={<LoginPage />} />
-				<Route path='/' element={token ? <HomePage /> : <Navigate to='/login' />} />
+				<Route path={LOGIN_PAGE} element={<LoginPage />} />
+				<Route
+					path={HOME_PAGE}
+					element={
+						<ProtectedRoute>
+							<HomePage />
+						</ProtectedRoute>
+					}
+				/>
 			</Routes>
 		</BrowserRouter>
 	)

@@ -9,7 +9,7 @@ export const LogLiveList: FC = () => {
 
 	return (
 		<div className='p-6 bg-slate-900 h-full text-blue-100 flex flex-col border border-slate-800 rounded-xl'>
-			<div className='flex justify-between items-center mb-6 shrink-0'>
+			<div className='flex justify-between items-center mb-6 shrink-0 h-10'>
 				<h1 className='text-2xl font-bold tracking-wider text-cyan-400'>
 					{'LIVE SECURITY FEED'}
 				</h1>

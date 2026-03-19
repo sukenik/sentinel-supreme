@@ -1,7 +1,18 @@
-import { FC } from 'react'
-import { LogLiveList } from './LogLiveList'
+import { FC, MouseEvent, useState } from 'react'
+import { eMenuOptions } from '../consts'
+import { getComponentByMenuOption, useMenuOptionsByRole } from '../utils'
 
-export const HomePage: FC = () => {
+const HomePage: FC = () => {
+	const [openOption, setOpenOption] = useState(eMenuOptions.DASHBOARD)
+
+	const options = useMenuOptionsByRole()
+
+	const handleMachinesClick = (e: MouseEvent) => {
+		setOpenOption(e.currentTarget.id as eMenuOptions)
+	}
+
+	const OpenComponent = getComponentByMenuOption(openOption)
+
 	return (
 		<div className='flex h-screen w-full bg-slate-950 text-white overflow-hidden'>
 			<aside className='w-64 bg-slate-900 border-r border-slate-800 flex flex-col'>
@@ -16,13 +27,16 @@ export const HomePage: FC = () => {
 					</div>
 				</div>
 				<nav className='flex-1 px-4 space-y-2'>
-					<div className='p-3 bg-slate-800 rounded-lg cursor-pointer'>{'Dashboard'}</div>
-					<div className='p-3 hover:bg-slate-800 rounded-lg cursor-pointer transition'>
-						{'Logs'}
-					</div>
-					<div className='p-3 hover:bg-slate-800 rounded-lg cursor-pointer transition'>
-						{'Security Events'}
-					</div>
+					{options.map((option) => (
+						<div
+							key={option}
+							id={option}
+							onClick={handleMachinesClick}
+							className={`${option === openOption ? '' : 'hover:'}bg-slate-800 p-3 rounded-lg cursor-pointer transition`}
+						>
+							{option}
+						</div>
+					))}
 				</nav>
 				<div className='p-4 border-t border-slate-800 text-sm text-slate-400'>
 					{'v1.0.0-alpha'}
@@ -38,7 +52,7 @@ export const HomePage: FC = () => {
 					</div>
 				</header>
 				<section className='flex-1 p-8 overflow-hidden flex flex-col'>
-					<LogLiveList />
+					{<OpenComponent />}
 				</section>
 			</main>
 		</div>

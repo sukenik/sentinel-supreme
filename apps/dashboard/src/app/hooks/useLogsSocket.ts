@@ -1,10 +1,4 @@
-import {
-	appConfig,
-	GATEWAY_DASHBOARD_NAMESPACE,
-	iLog,
-	WS_ERRORS,
-	WS_EVENTS
-} from '@sentinel-supreme/shared'
+import { appConfig, GATEWAY_ROUTES, iLog, WS_ERRORS, WS_EVENTS } from '@sentinel-supreme/shared'
 import { useEffect, useState } from 'react'
 import { io, Socket } from 'socket.io-client'
 import { useAuthStore } from '../store/useAuthStore'
@@ -19,7 +13,7 @@ export const useLogsSocket = () => {
 	useEffect(() => {
 		if (!access_token) return
 
-		const socket: Socket = io(`${appConfig.GATEWAY_URL}${GATEWAY_DASHBOARD_NAMESPACE}`, {
+		const socket: Socket = io(`${appConfig.GATEWAY_URL}${GATEWAY_ROUTES.WS_DASHBOARD_STREAM}`, {
 			transports: ['websocket'],
 			auth: { token: access_token }
 		})
