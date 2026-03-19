@@ -60,11 +60,11 @@ export const WS_ERRORS = {
 export const GATEWAY_ROUTES = {
 	PREFIX: 'api',
 	WS_DASHBOARD_STREAM: 'dashboard-stream',
-	AUTH: 'auth',
-	LOGS: 'logs',
-	USERS: 'users',
-	MACHINES: 'machines',
-	REGISTER: 'register',
-	LOGIN: 'login',
-	INGEST: 'ingest'
+	AUTH: '/auth',
+	LOGS: '/logs',
+	USERS: '/users',
+	MACHINES: '/machines',
+	REGISTER: '/register',
+	LOGIN: '/login',
+	INGEST: '/ingest'
 }
