@@ -144,7 +144,7 @@ I'm building **Sentinel-Supreme** in structured phases. You can track my progres
 
 - [x] Role-Based Access Control (RBAC)
 - [x] Rate Limiting & DDoS Protection
-- [ ] Caching with Redis - _Next Step_
+- [x] Caching with Redis
 - [ ] Full DevOps Pipeline (CI/CD)
 
 ---
