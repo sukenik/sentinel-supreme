@@ -72,7 +72,8 @@ export class IngestionController implements OnModuleInit {
 	@UseGuards(ApiKeyGuard)
 	async ingestLog(@Body() logDto: any, @Req() req: any) {
 		const machine = req.machine
-		console.log(`Log received from machine: ${machine.name}`)
+
+		this.logger.log(`Log received from machine: ${machine.name}`)
 
 		return { status: 'accepted' }
 	}
