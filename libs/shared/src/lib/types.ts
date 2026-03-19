@@ -49,3 +49,11 @@ export interface iBaseLog {
 export interface iLog extends iBaseLog {
 	fingerprint: string
 }
+
+export interface iMachine {
+	id: string
+	name: string
+	apiKey: string
+	isActive: boolean
+	createdAt: Date
+}

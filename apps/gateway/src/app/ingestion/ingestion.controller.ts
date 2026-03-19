@@ -1,13 +1,29 @@
-import { Body, Controller, Inject, Logger, OnModuleInit, Post, UseGuards } from '@nestjs/common'
+import {
+	Body,
+	Controller,
+	Inject,
+	Logger,
+	OnModuleInit,
+	Post,
+	Req,
+	UseGuards
+} from '@nestjs/common'
 import { ConfigService } from '@nestjs/config'
 import { ClientProxy } from '@nestjs/microservices'
-import { ENV_VARS, eUserRole, LOG_PATTERNS, LOG_SERVICE } from '@sentinel-supreme/shared'
+import {
+	ENV_VARS,
+	eUserRole,
+	GATEWAY_ROUTES,
+	LOG_PATTERNS,
+	LOG_SERVICE
+} from '@sentinel-supreme/shared'
 import { CreateLogDto, validateRmqTopology } from '@sentinel-supreme/shared/server'
 import { Roles } from '../auth/decorators/roles.decorator'
+import { ApiKeyGuard } from '../auth/guards/api-key.guard'
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard'
 import { RolesGuard } from '../auth/guards/roles.guard'
 
-@Controller('logs')
+@Controller(GATEWAY_ROUTES.LOGS)
 export class IngestionController implements OnModuleInit {
 	private readonly logger = new Logger(IngestionController.name)
 
@@ -49,5 +65,16 @@ export class IngestionController implements OnModuleInit {
 
 		this.rmqClient.emit(LOG_PATTERNS.NEW_LOG, logWithTime)
 		return { message: 'Log accepted' }
+	}
+
+	// TODO: change any
+	@Post(GATEWAY_ROUTES.INGEST)
+	@UseGuards(ApiKeyGuard)
+	async ingestLog(@Body() logDto: any, @Req() req: any) {
+		const machine = req.machine
+
+		this.logger.log(`Log received from machine: ${machine.name}`)
+
+		return { status: 'accepted' }
 	}
 }

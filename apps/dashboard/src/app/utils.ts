@@ -1,4 +1,8 @@
-import { eLogLevel } from '@sentinel-supreme/shared'
+import { eLogLevel, eUserRole } from '@sentinel-supreme/shared'
+import { LogLiveList } from './components/LogLiveList'
+import MachinesPage from './components/MachinesPage'
+import { eMenuOptions } from './consts'
+import { useAuthStore } from './store/useAuthStore'
 
 export const getLevelColor = (level: eLogLevel) => {
 	switch (level.toLowerCase()) {
@@ -10,5 +14,29 @@ export const getLevelColor = (level: eLogLevel) => {
 			return 'bg-purple-900/40 text-purple-400'
 		default:
 			return 'bg-green-900/40 text-green-400'
+	}
+}
+
+export const useMenuOptionsByRole = () => {
+	const role = useAuthStore().user?.role
+	const options = [eMenuOptions.DASHBOARD]
+
+	switch (role) {
+		case eUserRole.ADMIN:
+			options.push(eMenuOptions.MACHINES)
+			break
+		default:
+			break
+	}
+
+	return options
+}
+
+export const getComponentByMenuOption = (option: eMenuOptions) => {
+	switch (option) {
+		case eMenuOptions.DASHBOARD:
+			return LogLiveList
+		case eMenuOptions.MACHINES:
+			return MachinesPage
 	}
 }

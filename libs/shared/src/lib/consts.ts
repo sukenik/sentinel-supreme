@@ -1,6 +1,5 @@
 export const LOG_SERVICE = 'LOG_SERVICE'
 export const GATEWAY_SERVICE = 'GATEWAY_SERVICE'
-export const GATEWAY_DASHBOARD_NAMESPACE = 'dashboard-stream'
 
 export const appConfig = {
 	DASHBOARD_URL: 'http://localhost:4200',
@@ -56,4 +55,16 @@ export const WS_EVENTS = {
 
 export const WS_ERRORS = {
 	NO_TOKEN_PROVIDED: 'No token provided'
+}
+
+export const GATEWAY_ROUTES = {
+	PREFIX: 'api',
+	WS_DASHBOARD_STREAM: 'dashboard-stream',
+	AUTH: 'auth',
+	LOGS: 'logs',
+	USERS: 'users',
+	MACHINES: 'machines',
+	REGISTER: 'register',
+	LOGIN: 'login',
+	INGEST: 'ingest'
 }

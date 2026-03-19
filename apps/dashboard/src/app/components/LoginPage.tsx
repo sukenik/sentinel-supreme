@@ -1,10 +1,11 @@
-import { appConfig, iAuthResponse } from '@sentinel-supreme/shared'
+import { appConfig, GATEWAY_ROUTES, iAuthResponse } from '@sentinel-supreme/shared'
 import axios from 'axios'
 import { ChangeEvent, FC, SyntheticEvent, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
+import { ROUTES } from '../consts'
 import { useAuthStore } from '../store/useAuthStore'
 
-export const LoginPage: FC = () => {
+const LoginPage: FC = () => {
 	const [email, setEmail] = useState('')
 	const [password, setPassword] = useState('')
 	const [error, setError] = useState<string | null>(null)
@@ -19,18 +20,17 @@ export const LoginPage: FC = () => {
 		setError(null)
 
 		try {
-			const response = await axios.post<{ data: iAuthResponse }>(
-				`${appConfig.GATEWAY_URL}api/auth/login`,
-				{
-					email,
-					password
-				}
-			)
+			const loginRoute = `${appConfig.GATEWAY_URL}${GATEWAY_ROUTES.PREFIX}/${GATEWAY_ROUTES.AUTH}/${GATEWAY_ROUTES.LOGIN}`
+
+			const response = await axios.post<{ data: iAuthResponse }>(loginRoute, {
+				email,
+				password
+			})
 
 			const { user, access_token } = response.data.data
 
 			setAuth(user, access_token)
-			navigate('/')
+			navigate(ROUTES.HOME_PAGE)
 		} catch (err: any) {
 			setError(err.response?.data?.message || 'Authentication failed. Please try again.')
 		} finally {
@@ -112,3 +112,5 @@ export const LoginPage: FC = () => {
 		</div>
 	)
 }
+
+export default LoginPage

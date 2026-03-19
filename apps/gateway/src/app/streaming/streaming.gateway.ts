@@ -8,7 +8,7 @@ import {
 } from '@nestjs/websockets'
 import {
 	appConfig,
-	GATEWAY_DASHBOARD_NAMESPACE,
+	GATEWAY_ROUTES,
 	iJwtPayload,
 	iLog,
 	WS_ERRORS,
@@ -18,7 +18,7 @@ import { Server, Socket } from 'socket.io'
 
 @WebSocketGateway({
 	cors: { origin: appConfig.DASHBOARD_URL },
-	namespace: GATEWAY_DASHBOARD_NAMESPACE
+	namespace: GATEWAY_ROUTES.WS_DASHBOARD_STREAM
 })
 export class DashboardStreamGateway implements OnGatewayConnection, OnGatewayDisconnect {
 	@WebSocketServer()

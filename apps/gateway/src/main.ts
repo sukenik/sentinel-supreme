@@ -2,7 +2,7 @@ import { Logger, ValidationPipe } from '@nestjs/common'
 import { ConfigService } from '@nestjs/config'
 import { NestFactory } from '@nestjs/core'
 import { Transport } from '@nestjs/microservices'
-import { appConfig, ENV_VARS, QUEUES } from '@sentinel-supreme/shared'
+import { appConfig, ENV_VARS, GATEWAY_ROUTES, QUEUES } from '@sentinel-supreme/shared'
 import { AppModule } from './app/app.module'
 import { TransformInterceptor } from './app/interceptors/transform.interceptor'
 
@@ -20,7 +20,6 @@ async function bootstrap() {
 	const config = app.get(ConfigService)
 
 	const port = config.getOrThrow(ENV_VARS.GATEWAY_PORT)
-	const globalPrefix = 'api'
 
 	const rmqUser = config.getOrThrow<string>(ENV_VARS.RMQ_USER)
 	const rmqPassword = config.getOrThrow<string>(ENV_VARS.RMQ_PASSWORD)
@@ -46,11 +45,11 @@ async function bootstrap() {
 		new ValidationPipe({ transform: true, whitelist: true, forbidNonWhitelisted: true })
 	)
 	app.useGlobalInterceptors(new TransformInterceptor())
-	app.setGlobalPrefix(globalPrefix)
+	app.setGlobalPrefix(GATEWAY_ROUTES.PREFIX)
 
 	await app.startAllMicroservices()
 	await app.listen(port)
-	Logger.log(`🚀 Gateway is running on: ${GATEWAY_URL}/${globalPrefix}`)
+	Logger.log(`🚀 Gateway is running on: ${GATEWAY_URL}${GATEWAY_ROUTES.PREFIX}`)
 }
 
 bootstrap()

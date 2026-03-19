@@ -10,6 +10,7 @@ import { AppService } from './app.service'
 import { AuthModule } from './auth/auth.module'
 import { EventsModule } from './events/events.module'
 import { IngestionModule } from './ingestion/ingestion.module'
+import { MachinesModule } from './machines/machines.module'
 import { RedisModule } from './redis/redis.module'
 import { StreamingModule } from './streaming/streaming.module'
 import { UsersModule } from './users/users.module'
@@ -66,7 +67,8 @@ import { UsersModule } from './users/users.module'
 		EventsModule,
 		AuthModule,
 		StreamingModule,
-		RedisModule
+		RedisModule,
+		MachinesModule
 	],
 	controllers: [AppController],
 	providers: [
