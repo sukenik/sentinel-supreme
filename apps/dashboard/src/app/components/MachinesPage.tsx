@@ -7,10 +7,10 @@ const MachinesPage: FC = () => {
 	const [newMachineName, setNewMachineName] = useState('')
 	const [showModal, setShowModal] = useState(false)
 
-	const machinesRoute = `/${GATEWAY_ROUTES.MACHINES}`
+	const { MACHINES } = GATEWAY_ROUTES
 
 	const fetchMachines = async () => {
-		const { data } = await api.get(machinesRoute)
+		const { data } = await api.get(MACHINES)
 
 		setMachines(data.data)
 	}
@@ -18,7 +18,7 @@ const MachinesPage: FC = () => {
 	const createMachine = async () => {
 		if (!newMachineName) return
 
-		await api.post(machinesRoute, { name: newMachineName })
+		await api.post(MACHINES, { name: newMachineName })
 
 		setNewMachineName('')
 		setShowModal(false)

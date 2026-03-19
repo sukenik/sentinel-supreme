@@ -20,7 +20,7 @@ const LoginPage: FC = () => {
 		setError(null)
 
 		try {
-			const loginRoute = `${appConfig.GATEWAY_URL}${GATEWAY_ROUTES.PREFIX}/${GATEWAY_ROUTES.AUTH}/${GATEWAY_ROUTES.LOGIN}`
+			const loginRoute = `${appConfig.GATEWAY_URL}${GATEWAY_ROUTES.PREFIX}${GATEWAY_ROUTES.AUTH}${GATEWAY_ROUTES.LOGIN}`
 
 			const response = await axios.post<{ data: iAuthResponse }>(loginRoute, {
 				email,
