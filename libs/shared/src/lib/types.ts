@@ -50,9 +50,12 @@ export interface iLog extends iBaseLog {
 	fingerprint: string
 }
 
-export interface iMachine {
+export interface iBaseMachine {
 	id: string
 	name: string
+}
+
+export interface iMachine extends iBaseMachine {
 	apiKey: string
 	isActive: boolean
 	createdAt: Date
