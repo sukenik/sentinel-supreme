@@ -1,6 +1,6 @@
 import { createParamDecorator, ExecutionContext } from '@nestjs/common'
 import { iBaseMachine } from '@sentinel-supreme/shared'
-import { iRequestWithMetadata } from 'src/app/types'
+import { iRequestWithMetadata } from '../../types'
 
 export const GetMachine = createParamDecorator(
 	(data: keyof iBaseMachine | undefined, ctx: ExecutionContext) => {
