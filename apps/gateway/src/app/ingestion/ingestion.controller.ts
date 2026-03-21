@@ -1,13 +1,4 @@
-import {
-	Body,
-	Controller,
-	Inject,
-	Logger,
-	OnModuleInit,
-	Post,
-	Req,
-	UseGuards
-} from '@nestjs/common'
+import { Body, Controller, Inject, Logger, OnModuleInit, Post, UseGuards } from '@nestjs/common'
 import { ConfigService } from '@nestjs/config'
 import { ClientProxy } from '@nestjs/microservices'
 import {
@@ -22,6 +13,7 @@ import { Roles } from '../auth/decorators/roles.decorator'
 import { ApiKeyGuard } from '../auth/guards/api-key.guard'
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard'
 import { RolesGuard } from '../auth/guards/roles.guard'
+import { GetMachine } from '../machines/decorators/get-machine.decorator'
 
 @Controller(GATEWAY_ROUTES.LOGS)
 export class IngestionController implements OnModuleInit {
@@ -48,33 +40,38 @@ export class IngestionController implements OnModuleInit {
 
 			this.logger.log('✅ RabbitMQ Topology (Exchanges/Queues) verified and created.')
 		} catch (error) {
-			this.logger.error('❌ Failed to connect to RabbitMQ from Gateway', error)
+			this.logger.error('❌ Failed to setup RabbitMQ topology', error)
 		}
 	}
 
 	@Post()
 	@UseGuards(JwtAuthGuard, RolesGuard)
 	@Roles(eUserRole.USER, eUserRole.ADMIN)
-	async createLog(@Body() logData: CreateLogDto) {
+	async createLog(@Body() log: CreateLogDto) {
 		this.logger.log('Receiving new log event via HTTP')
 
 		const logWithTime = {
-			...logData,
-			createdAt: logData.createdAt || new Date().toISOString()
+			...log,
+			createdAt: log.createdAt || new Date().toISOString()
 		}
 
 		this.rmqClient.emit(LOG_PATTERNS.NEW_LOG, logWithTime)
+
 		return { message: 'Log accepted' }
 	}
 
-	// TODO: change any
 	@Post(GATEWAY_ROUTES.INGEST)
 	@UseGuards(ApiKeyGuard)
-	async ingestLog(@Body() logDto: any, @Req() req: any) {
-		const machine = req.machine
+	async ingestLog(@Body() log: CreateLogDto, @GetMachine('name') machineName: string) {
+		this.logger.log(`Receiving new log event from machine: ${machineName}`)
 
-		this.logger.log(`Log received from machine: ${machine.name}`)
+		const logWithTime = {
+			...log,
+			createdAt: log.createdAt || new Date().toISOString()
+		}
 
-		return { status: 'accepted' }
+		this.rmqClient.emit(LOG_PATTERNS.NEW_LOG, logWithTime)
+
+		return { message: 'Log accepted' }
 	}
 }
