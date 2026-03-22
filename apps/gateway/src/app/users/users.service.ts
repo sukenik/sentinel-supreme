@@ -69,4 +69,14 @@ export class UsersService implements OnModuleInit {
 			select: ['id', 'email', 'password', 'role']
 		})
 	}
+
+	async getAll(): Promise<iUser[]> {
+		return this.usersRepository.find({
+			order: { createdAt: 'DESC' }
+		})
+	}
+
+	async deleteById(id: string): Promise<void> {
+		this.usersRepository.delete({ id })
+	}
 }

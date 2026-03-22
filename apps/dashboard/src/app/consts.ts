@@ -5,5 +5,6 @@ export const ROUTES = {
 
 export enum eMenuOptions {
 	DASHBOARD = 'Dashboard',
-	MACHINES = 'Machines'
+	MACHINES = 'Machines',
+	SETTINGS = 'Settings'
 }
