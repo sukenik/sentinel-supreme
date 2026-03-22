@@ -1,6 +1,7 @@
 import { eLogLevel, eUserRole } from '@sentinel-supreme/shared'
 import { LogLiveList } from './components/LogLiveList'
 import MachinesPage from './components/MachinesPage'
+import SettingsPage from './components/SettingsPage'
 import { eMenuOptions } from './consts'
 import { useAuthStore } from './store/useAuthStore'
 
@@ -21,12 +22,8 @@ export const useMenuOptionsByRole = () => {
 	const role = useAuthStore().user?.role
 	const options = [eMenuOptions.DASHBOARD]
 
-	switch (role) {
-		case eUserRole.ADMIN:
-			options.push(eMenuOptions.MACHINES)
-			break
-		default:
-			break
+	if (role === eUserRole.ADMIN) {
+		return options.concat([eMenuOptions.MACHINES, eMenuOptions.SETTINGS])
 	}
 
 	return options
@@ -38,5 +35,9 @@ export const getComponentByMenuOption = (option: eMenuOptions) => {
 			return LogLiveList
 		case eMenuOptions.MACHINES:
 			return MachinesPage
+		case eMenuOptions.SETTINGS:
+			return SettingsPage
+		default:
+			return LogLiveList
 	}
 }
