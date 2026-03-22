@@ -3,11 +3,14 @@ import { ConfigService } from '@nestjs/config'
 import { NestFactory } from '@nestjs/core'
 import { Transport } from '@nestjs/microservices'
 import { appConfig, ENV_VARS, GATEWAY_ROUTES, QUEUES } from '@sentinel-supreme/shared'
+import cookieParser from 'cookie-parser'
 import { AppModule } from './app/app.module'
 import { TransformInterceptor } from './app/interceptors/transform.interceptor'
 
 async function bootstrap() {
 	const app = await NestFactory.create(AppModule)
+
+	app.use(cookieParser())
 
 	const { DASHBOARD_URL, GATEWAY_URL } = appConfig
 
