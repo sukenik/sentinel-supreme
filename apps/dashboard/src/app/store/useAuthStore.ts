@@ -3,18 +3,18 @@ import { create } from 'zustand'
 import { persist } from 'zustand/middleware'
 
 interface AuthState {
-	user: iRequestUser | null
 	access_token: string | null
-	setAuth: (user: iRequestUser, token: string) => void
+	user: iRequestUser | null
+	setAuth: (access_token: string, user: iRequestUser) => void
 	logout: () => void
 }
 
 export const useAuthStore = create<AuthState>()(
 	persist(
 		(set) => ({
-			user: null,
 			access_token: null,
-			setAuth: (user, access_token) => set({ user, access_token }),
+			user: null,
+			setAuth: (access_token, user) => set({ access_token, user }),
 			logout: () => set({ user: null, access_token: null })
 		}),
 		{
