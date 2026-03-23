@@ -1,10 +1,10 @@
 import { ConflictException, Injectable, Logger, OnModuleInit } from '@nestjs/common'
+import { ConfigService } from '@nestjs/config'
 import { InjectRepository } from '@nestjs/typeorm'
-import { ENV_VARS, eUserRole, iUser } from '@sentinel-supreme/shared'
+import { ENV_VARS, eUserRole, iUser, UpdateUser } from '@sentinel-supreme/shared'
 import * as bcrypt from 'bcrypt'
 import { Repository } from 'typeorm'
 import { User } from './entities/user.entity'
-import { ConfigService } from '@nestjs/config'
 
 @Injectable()
 export class UsersService implements OnModuleInit {
@@ -21,17 +21,19 @@ export class UsersService implements OnModuleInit {
 	}
 
 	private async seedAdminUser() {
+		const existingAdmin = await this.usersRepository.findOne({
+			where: { role: eUserRole.ADMIN }
+		})
+
+		if (existingAdmin) {
+			this.logger.log('✅ System already has an admin.')
+			return
+		}
+
 		const { INITIAL_ADMIN_EMAIL, INITIAL_ADMIN_PASSWORD } = ENV_VARS
 
 		const adminEmail = this.config.getOrThrow<string>(INITIAL_ADMIN_EMAIL)
 		const adminPassword = this.config.getOrThrow<string>(INITIAL_ADMIN_PASSWORD)
-
-		const existingUser = await this.usersRepository.findOne({ where: { email: adminEmail } })
-
-		if (existingUser) {
-			this.logger.log('✅ Admin user already exists.')
-			return
-		}
 
 		const hashedPassword = await bcrypt.hash(adminPassword, 10)
 
@@ -45,7 +47,7 @@ export class UsersService implements OnModuleInit {
 		this.logger.log('🚀 Default admin user created')
 	}
 
-	async create(email: string, pass: string): Promise<iUser> {
+	async create(email: string, pass: string, role: eUserRole): Promise<iUser> {
 		const existingUser = await this.usersRepository.findOne({ where: { email } })
 
 		if (existingUser) {
@@ -57,7 +59,8 @@ export class UsersService implements OnModuleInit {
 
 		const newUser = this.usersRepository.create({
 			email,
-			password: hashedPassword
+			password: hashedPassword,
+			role
 		})
 
 		return this.usersRepository.save(newUser)
@@ -72,11 +75,27 @@ export class UsersService implements OnModuleInit {
 
 	async getAll(): Promise<iUser[]> {
 		return this.usersRepository.find({
+			select: ['id', 'email', 'password', 'role', 'createdAt'],
 			order: { createdAt: 'DESC' }
 		})
 	}
 
 	async deleteById(id: string): Promise<void> {
 		this.usersRepository.delete({ id })
+	}
+
+	async update(id: string, updatedUser: UpdateUser): Promise<void> {
+		let newPassword = updatedUser.password
+
+		if (newPassword) {
+			const salt = await bcrypt.genSalt()
+			newPassword = await bcrypt.hash(newPassword, salt)
+		}
+
+		this.usersRepository.update(id, {
+			email: updatedUser.email,
+			role: updatedUser.role,
+			...(newPassword && { password: newPassword })
+		})
 	}
 }

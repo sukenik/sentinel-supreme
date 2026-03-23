@@ -1,5 +1,5 @@
 import { FC, useState } from 'react'
-import UserManager from './UserManager'
+import UserManager from '../components/UserManager'
 
 const SettingsPage: FC = () => {
 	const [showUserManager, setShowUserManager] = useState(false)

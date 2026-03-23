@@ -64,7 +64,6 @@ export const GATEWAY_ROUTES = {
 	LOGS: '/logs',
 	USERS: '/users',
 	MACHINES: '/machines',
-	REGISTER: '/register',
 	LOGIN: '/login',
 	INGEST: '/ingest',
 	REFRESH: '/refresh'

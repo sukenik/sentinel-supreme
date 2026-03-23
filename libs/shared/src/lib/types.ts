@@ -60,3 +60,14 @@ export interface iMachine extends iBaseMachine {
 	isActive: boolean
 	createdAt: Date
 }
+
+export interface iLoginUser {
+	email: string
+	password: string
+}
+
+export interface iRegisterUser extends iLoginUser {
+	role: eUserRole
+}
+
+export type UpdateUser = Pick<iUser, 'email' | 'password' | 'role'>

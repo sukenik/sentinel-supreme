@@ -1,6 +1,6 @@
 import { Body, Controller, Post, Req, Res, UnauthorizedException } from '@nestjs/common'
 import { GATEWAY_ROUTES, iAuthResponse } from '@sentinel-supreme/shared'
-import { RegisterDto } from '@sentinel-supreme/shared/server'
+import { LoginDto } from '@sentinel-supreme/shared/server'
 import type { Request, Response } from 'express'
 import { REFRESH_TOKEN_COOKIE_HEADER } from '../consts'
 import { AuthService } from './auth.service'
@@ -11,7 +11,7 @@ export class AuthController {
 
 	@Post(GATEWAY_ROUTES.LOGIN)
 	async login(
-		@Body() loginDto: RegisterDto,
+		@Body() loginDto: LoginDto,
 		@Res({ passthrough: true }) res: Response
 	): Promise<iAuthResponse> {
 		return this.authService.login(loginDto.email, loginDto.password, res)
