@@ -1,12 +1,11 @@
-import { IsEmail, IsNotEmpty, IsString, MinLength } from 'class-validator'
+import { eUserRole, iRegisterUser } from '@sentinel-supreme/shared'
+import { IsEnum, IsNotEmpty } from 'class-validator'
+import { LoginDto } from './login.dto'
 
-export class RegisterDto {
-	@IsEmail({}, { message: 'Please provide a valid email address' })
-	@IsNotEmpty()
-	email!: string
-
-	@IsString()
-	@IsNotEmpty()
-	@MinLength(8, { message: 'Password must be at least 8 characters long' })
-	password!: string
+export class RegisterDto extends LoginDto implements iRegisterUser {
+	@IsEnum(eUserRole, {
+		message: `Role must be one of the following: ${Object.values(eUserRole).join(', ')}`
+	})
+	@IsNotEmpty({ message: 'User role is required' })
+	role!: eUserRole
 }

@@ -1,8 +1,8 @@
 import { BrowserRouter, Route, Routes } from 'react-router-dom'
-import HomePage from './components/HomePage'
-import LoginPage from './components/LoginPage'
 import ProtectedRoute from './components/ProtectedRoute'
 import { ROUTES } from './consts'
+import HomePage from './pages/HomePage'
+import LoginPage from './pages/LoginPage'
 
 export function App() {
 	const { LOGIN_PAGE, HOME_PAGE } = ROUTES

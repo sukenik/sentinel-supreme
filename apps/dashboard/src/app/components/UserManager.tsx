@@ -1,19 +1,42 @@
-import { eUserRole, GATEWAY_ROUTES, iUser } from '@sentinel-supreme/shared'
-import { FC, MouseEvent, useEffect, useState } from 'react'
+import { eUserRole, GATEWAY_ROUTES, iUser, UpdateUser } from '@sentinel-supreme/shared'
+import { ChangeEvent, FC, MouseEvent, useEffect, useState } from 'react'
 import api from '../api/axiosInstance'
+import { useAuthStore } from '../store/useAuthStore'
+import { eToastType, iToastMessage } from '../types'
+import { getErrorMsg } from '../utils'
 import ConfirmModal from './ConfirmModal'
+import UserRow from './UserRow'
 
 const UserManager: FC = () => {
 	const [users, setUsers] = useState<iUser[]>([])
 	const [isLoading, setIsLoading] = useState(false)
 	const [isModalOpen, setIsModalOpen] = useState(false)
-	const [userToDelete, setUserToDelete] = useState<string | null>(null)
+	const [deleteUserId, setDeleteUserId] = useState<string | null>(null)
+	const [editUser, setEditUser] = useState<iUser | null>(null)
+	const [toastMessage, setToastMessage] = useState<iToastMessage | null>(null)
+
+	const { access_token, user, setAuth } = useAuthStore()
+	const currentUserId = user!.userId
+
+	const TEMP_NEW_USER_ID = 'new-user'
+	const isAdding = editUser?.id === TEMP_NEW_USER_ID
 
 	const fetchUsers = async () => {
 		setIsLoading(true)
 		try {
 			const { data } = await api.get(GATEWAY_ROUTES.USERS)
-			setUsers(data.data)
+
+			const sorted = (data.data as iUser[]).sort((a, b) => {
+				if (a.role === eUserRole.ADMIN && b.role !== eUserRole.ADMIN) {
+					return -1
+				}
+				if (a.role !== eUserRole.ADMIN && b.role === eUserRole.ADMIN) {
+					return 1
+				}
+				return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+			})
+
+			setUsers(sorted)
 		} catch (error) {
 			console.error('Failed to fetch users', error)
 		} finally {
@@ -27,45 +50,148 @@ const UserManager: FC = () => {
 
 	const handleDeleteUser = (e: MouseEvent) => {
 		const userId = e.currentTarget.id
-		setUserToDelete(userId)
+		setDeleteUserId(userId)
 		toggleDeleteModal()
 	}
 
-	const confirmDelete = async () => {
-		if (!userToDelete) return
+	const handleAddUser = () => {
+		setEditUser({
+			id: TEMP_NEW_USER_ID,
+			email: '',
+			password: '',
+			role: eUserRole.USER,
+			createdAt: new Date()
+		})
+	}
+
+	const handleEditUser = (e: MouseEvent) => {
+		const userId = e.currentTarget.id
+		const user = users.find(({ id }) => id === userId)
+
+		user && setEditUser({ ...user, password: '' })
+	}
+
+	const handleEditUserField = (e: ChangeEvent<HTMLInputElement>) => {
+		const { name, value } = e.currentTarget
+
+		setEditUser((prev) => (prev ? { ...prev, [name]: value } : null))
+	}
+
+	const handleSaveEditUser = async () => {
+		if (!editUser) return
+
+		const errMsg = getErrorMsg(
+			editUser.id,
+			editUser.email,
+			editUser.password!,
+			editUser.role,
+			users,
+			isAdding
+		)
+
+		if (errMsg) {
+			setToastMessage({
+				message: errMsg,
+				type: eToastType.ERROR
+			})
+			return
+		}
+
+		const action = isAdding
+			? api.post(GATEWAY_ROUTES.USERS, {
+					email: editUser.email,
+					password: editUser.password,
+					role: editUser.role
+				})
+			: api.put(`${GATEWAY_ROUTES.USERS}/${editUser.id}`, {
+					email: editUser.email,
+					role: editUser.role,
+					...(editUser.password && { password: editUser.password })
+				} as UpdateUser)
 
 		try {
-			await api.delete(`${GATEWAY_ROUTES.USERS}/${userToDelete}`)
-			setUsers(users.filter((u) => u.id !== userToDelete))
+			await action
+			if (currentUserId === editUser.id) {
+				setAuth(access_token!, { ...user!, email: editUser.email, role: editUser.role })
+			}
+			setEditUser(null)
+			setToastMessage({
+				message: `User ${isAdding ? 'created' : 'updated'} successfully`,
+				type: eToastType.SUCCESS
+			})
+			fetchUsers()
 		} catch (error) {
-			console.error('Failed to delete user', error)
-		} finally {
-			toggleDeleteModal()
-			setUserToDelete(null)
+			console.error(`Failed to ${isAdding ? 'create' : 'updated'} user`, error)
+			setToastMessage({
+				message: `Failed to ${isAdding ? 'create' : 'updated'} user`,
+				type: eToastType.ERROR
+			})
 		}
 	}
 
-	const handleToggleRole = async (user: iUser) => {
-		const newRole = user.role === eUserRole.ADMIN ? eUserRole.USER : eUserRole.ADMIN
+	const handleCancelEditUser = () => {
+		setEditUser(null)
+	}
+
+	const confirmDelete = async () => {
+		if (!deleteUserId) return
 
 		try {
-			await api.patch(`${GATEWAY_ROUTES.USERS}/${user.id}`, { role: newRole })
-			setUsers(users.map((u) => (u.id === user.id ? { ...u, role: newRole } : u)))
+			await api.delete(`${GATEWAY_ROUTES.USERS}/${deleteUserId}`)
+			setUsers(users.filter((u) => u.id !== deleteUserId))
+			setToastMessage({ message: 'User deleted successfully', type: eToastType.SUCCESS })
 		} catch (error) {
-			console.error('Failed to update role', error)
+			console.error('Failed to delete user', error)
+			setToastMessage({ message: 'Failed to delete user', type: eToastType.ERROR })
+		} finally {
+			toggleDeleteModal()
+			setDeleteUserId(null)
 		}
+	}
+
+	const handleToggleRole = () => {
+		if (!editUser) return
+
+		const newRole = editUser.role === eUserRole.ADMIN ? eUserRole.USER : eUserRole.ADMIN
+		setEditUser((prevState) => ({ ...prevState!, role: newRole }))
 	}
 
 	useEffect(() => {
 		fetchUsers()
 	}, [])
 
+	useEffect(() => {
+		if (toastMessage) {
+			const timer = setTimeout(() => {
+				setToastMessage(null)
+			}, 3000)
+			return () => clearTimeout(timer)
+		}
+
+		return
+	}, [toastMessage])
+
+	const userRowProps = {
+		editUser,
+		currentUserId,
+		handleEditUserField,
+		handleToggleRole,
+		handleSaveEditUser,
+		handleCancelEditUser,
+		handleEditUser,
+		handleDeleteUser
+	}
+
 	return (
 		<>
 			<div className='mt-8 animate-in fade-in slide-in-from-top-4 duration-300'>
 				<div className='flex justify-between items-center mb-4'>
 					<h3 className='text-xl font-bold text-cyan-400'>{'User Directory'}</h3>
-					<button className='bg-cyan-600 hover:bg-cyan-500 text-white text-xs px-4 py-2 rounded-lg font-bold transition-all'>
+					<button
+						onClick={handleAddUser}
+						className='bg-cyan-600 hover:bg-cyan-500 text-white text-xs px-4 py-2 rounded-lg font-bold transition-all disabled:bg-slate-500 cursor-pointer'
+						disabled={isAdding || !!editUser}
+					>
 						{'+ Add User'}
 					</button>
 				</div>
@@ -74,8 +200,9 @@ const UserManager: FC = () => {
 						<thead>
 							<tr className='bg-slate-800 text-slate-400 uppercase text-xs tracking-widest'>
 								<th className='px-6 py-4'>{'Email'}</th>
+								<th className='px-6 py-4'>{'Password'}</th>
 								<th className='px-6 py-4'>{'Role'}</th>
-								<th className='px-6 py-4'>{'Joined'}</th>
+								<th className='px-2 py-4'>{'Joined'}</th>
 								<th className='px-6 py-4 text-right'>{'Actions'}</th>
 							</tr>
 						</thead>
@@ -87,42 +214,18 @@ const UserManager: FC = () => {
 									</td>
 								</tr>
 							) : (
-								users.map((u) => (
-									<tr
-										key={u.id}
-										className='hover:bg-slate-700/20 transition-colors'
-									>
-										<td className='px-6 py-4 font-medium'>{u.email}</td>
-										<td className='px-6 py-4'>
-											<button
-												// TODO: Change
-												onClick={() => handleToggleRole(u)}
-												className={`px-2 py-1 rounded text-[10px] font-bold uppercase transition-all ${
-													u.role === eUserRole.ADMIN
-														? 'bg-purple-500/20 text-purple-400'
-														: 'bg-blue-500/20 text-blue-400'
-												}`}
-											>
-												{u.role}
-											</button>
-										</td>
-										<td className='px-6 py-4 text-slate-400 text-sm'>
-											{new Date(u.createdAt).toLocaleDateString()}
-										</td>
-										<td className='px-6 py-4 text-right space-x-3'>
-											<button className='text-slate-400 hover:text-cyan-400 transition-colors text-sm cursor-pointer'>
-												{'Edit'}
-											</button>
-											<button
-												id={u.id}
-												onClick={handleDeleteUser}
-												className='text-slate-400 hover:text-red-400 transition-colors text-sm cursor-pointer'
-											>
-												{'Delete'}
-											</button>
-										</td>
-									</tr>
-								))
+								<>
+									{isAdding && editUser && (
+										<UserRow
+											key={editUser.id}
+											user={editUser}
+											{...userRowProps}
+										/>
+									)}
+									{users.map((user) => (
+										<UserRow key={user.id} user={user} {...userRowProps} />
+									))}
+								</>
 							)}
 						</tbody>
 					</table>
@@ -137,6 +240,15 @@ const UserManager: FC = () => {
 						'Are you sure you want to delete this user? This action cannot be undone.'
 					}
 				/>
+			)}
+			{toastMessage && (
+				<div
+					className={`fixed bottom-5 right-5 text-white px-4 py-2 rounded-lg shadow-lg animate-in fade-in slide-in-from-bottom-5 duration-300 ${
+						toastMessage.type === eToastType.SUCCESS ? 'bg-green-600' : 'bg-red-600'
+					}`}
+				>
+					{toastMessage.message}
+				</div>
 			)}
 		</>
 	)

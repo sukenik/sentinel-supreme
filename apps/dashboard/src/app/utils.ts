@@ -1,7 +1,7 @@
-import { eLogLevel, eUserRole } from '@sentinel-supreme/shared'
+import { eLogLevel, eUserRole, iUser } from '@sentinel-supreme/shared'
 import { LogLiveList } from './components/LogLiveList'
-import MachinesPage from './components/MachinesPage'
-import SettingsPage from './components/SettingsPage'
+import MachinesPage from './pages/MachinesPage'
+import SettingsPage from './pages/SettingsPage'
 import { eMenuOptions } from './consts'
 import { useAuthStore } from './store/useAuthStore'
 
@@ -40,4 +40,50 @@ export const getComponentByMenuOption = (option: eMenuOptions) => {
 		default:
 			return LogLiveList
 	}
+}
+
+export const getStyleByRole = (role: eUserRole, isEditMode: boolean) =>
+	role === eUserRole.ADMIN
+		? `bg-purple-500/20 text-purple-400 ${isEditMode ? 'hover:bg-purple-500/40 cursor-pointer' : ''}`
+		: `bg-blue-500/20 text-blue-400 ${isEditMode ? 'hover:bg-blue-500/40 cursor-pointer' : ''}`
+
+export const getErrorMsg = (
+	id: string,
+	email: string,
+	password: string,
+	role: eUserRole,
+	users: iUser[],
+	isAdding: boolean
+): string => {
+	const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+
+	if (!emailRegex.test(email)) {
+		return 'Invalid email format'
+	}
+
+	const isEmailInUse = users.some(
+		(user) => user.email.toLowerCase() === email.toLowerCase() && user.id !== id
+	)
+
+	if (isEmailInUse) {
+		return 'Email already in use'
+	}
+
+	if (role !== eUserRole.ADMIN && users.length === 1 && !isAdding) {
+		return 'There must be at least one admin'
+	}
+
+	const passwordErrMsg = 'Password must be at least 8 characters long'
+
+	if (isAdding) {
+		if (!password) {
+			return passwordErrMsg
+		}
+	}
+
+	if (password.length && password?.length < 8) {
+		return passwordErrMsg
+	}
+
+	return ''
 }
