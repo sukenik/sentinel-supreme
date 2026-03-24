@@ -66,5 +66,6 @@ export const GATEWAY_ROUTES = {
 	MACHINES: '/machines',
 	LOGIN: '/login',
 	INGEST: '/ingest',
-	REFRESH: '/refresh'
+	REFRESH: '/refresh',
+	LOGOUT: '/logout'
 }

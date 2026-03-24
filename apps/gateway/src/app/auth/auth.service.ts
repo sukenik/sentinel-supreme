@@ -92,4 +92,8 @@ export class AuthService {
 
 		return { access_token: accessToken }
 	}
+
+	async logout(token: string): Promise<void> {
+		await this.redis.del(`${this.REDIS_REFRESH_TOKEN_PREFIX}${token}`)
+	}
 }

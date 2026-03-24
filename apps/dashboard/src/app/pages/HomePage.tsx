@@ -1,4 +1,6 @@
+import { GATEWAY_ROUTES } from '@sentinel-supreme/shared'
 import { FC, MouseEvent, useEffect, useRef, useState } from 'react'
+import api from '../api/axiosInstance'
 import { eMenuOptions } from '../consts'
 import { useAuthStore } from '../store/useAuthStore'
 import { getComponentByMenuOption, useMenuOptionsByRole } from '../utils'
@@ -19,8 +21,14 @@ const HomePage: FC = () => {
 		setIsPopupOpen(!isPopupOpen)
 	}
 
-	const handleLogout = () => {
-		logout()
+	const handleLogout = async () => {
+		try {
+			await api.post(`${GATEWAY_ROUTES.AUTH}${GATEWAY_ROUTES.LOGOUT}`)
+		} catch (err) {
+			console.error('Server logout failed', err)
+		} finally {
+			logout()
+		}
 	}
 
 	useEffect(() => {
