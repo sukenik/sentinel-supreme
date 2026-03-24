@@ -50,7 +50,7 @@ export class LogsService implements OnModuleDestroy {
 			})
 	}
 
-	private getFingerprint(data: CreateLogDto): string {
+	public getFingerprint(data: CreateLogDto): string {
 		const logDate = data.createdAt ? new Date(data.createdAt) : new Date()
 		const timeBucket = Math.floor(logDate.getTime() / 5000)
 
@@ -59,10 +59,8 @@ export class LogsService implements OnModuleDestroy {
 		return crypto.createHash('md5').update(str).digest('hex')
 	}
 
-	async saveLog(data: CreateLogDto): Promise<void> {
-		const fingerprint = this.getFingerprint(data)
-
-		this.logBuffer$.next({ ...data, fingerprint })
+	async saveLog(data: iLog): Promise<void> {
+		this.logBuffer$.next(data)
 	}
 
 	onModuleDestroy() {

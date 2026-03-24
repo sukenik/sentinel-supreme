@@ -53,6 +53,7 @@ docker-compose.override.yml
 
 test-output
 
+.vite
 vite.config.*.timestamp*
 vitest.config.*.timestamp*
 

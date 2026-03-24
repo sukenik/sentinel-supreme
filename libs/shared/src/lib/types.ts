@@ -1,3 +1,5 @@
+import { eSeverity } from './rules.types'
+
 export enum eUserRole {
 	USER = 'user',
 	ANALYST = 'analyst',
@@ -71,3 +73,14 @@ export interface iRegisterUser extends iLoginUser {
 }
 
 export type UpdateUser = Pick<iUser, 'email' | 'password' | 'role'>
+
+export interface iAlert {
+	id: string
+	ruleId: string
+	ruleName: string
+	severity: eSeverity
+	message: string
+	triggerLogFingerprint: string
+	createdAt: string
+	isRead: boolean
+}
