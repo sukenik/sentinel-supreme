@@ -1,5 +1,5 @@
-import { eUserRole, UpdateUser } from '@sentinel-supreme/shared'
 import { IsEmail, IsEnum, IsNotEmpty, IsOptional, IsString } from 'class-validator'
+import { eUserRole, UpdateUser } from '../../types'
 
 export class UpdateDto implements UpdateUser {
 	@IsEmail({}, { message: 'Please provide a valid email address' })

@@ -1,9 +1,9 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose'
-import { eLogLevel } from '@sentinel-supreme/shared'
+import { eLogLevel, iLog } from '@sentinel-supreme/shared'
 import { Document } from 'mongoose'
 
 @Schema({ timestamps: { createdAt: false, updatedAt: true } })
-export class Log extends Document {
+export class Log extends Document implements iLog {
 	@Prop({
 		required: true,
 		type: String,

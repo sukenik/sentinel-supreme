@@ -1,14 +1,16 @@
 import { Module } from '@nestjs/common'
+import { ConfigService } from '@nestjs/config'
 import { ClientsModule, Transport } from '@nestjs/microservices'
 import { MongooseModule } from '@nestjs/mongoose'
 import { ENV_VARS, GATEWAY_SERVICE, QUEUES } from '@sentinel-supreme/shared'
+import { RulesModule } from '../rules/rules.module'
 import { LogsController } from './logs.controller'
 import { LogsService } from './logs.service'
 import { Log, LogSchema } from './schemas/log.schema'
-import { ConfigService } from '@nestjs/config'
 
 @Module({
 	imports: [
+		RulesModule,
 		MongooseModule.forFeature([{ name: Log.name, schema: LogSchema }]),
 		ClientsModule.registerAsync([
 			{

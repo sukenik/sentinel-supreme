@@ -1,5 +1,5 @@
-import { iLoginUser } from '@sentinel-supreme/shared'
 import { IsEmail, IsNotEmpty, IsString, MinLength } from 'class-validator'
+import { iLoginUser } from '../../types'
 
 export class LoginDto implements iLoginUser {
 	@IsEmail({}, { message: 'Please provide a valid email address' })
