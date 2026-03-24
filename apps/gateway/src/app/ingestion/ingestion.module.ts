@@ -2,6 +2,7 @@ import { Module } from '@nestjs/common'
 import { ConfigService } from '@nestjs/config'
 import { ClientsModule, Transport } from '@nestjs/microservices'
 import { DL_CONFIG, ENV_VARS, LOG_SERVICE, QUEUES } from '@sentinel-supreme/shared'
+import { MachinesModule } from '../machines/machines.module'
 import { IngestionController } from './ingestion.controller'
 
 @Module({
@@ -27,7 +28,8 @@ import { IngestionController } from './ingestion.controller'
 					}
 				})
 			}
-		])
+		]),
+		MachinesModule
 	],
 	controllers: [IngestionController]
 })

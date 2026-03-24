@@ -48,4 +48,12 @@ export class MachinesService {
 			order: { createdAt: 'DESC' }
 		})
 	}
+
+	async getByApiKey(apiKey: string): Promise<iMachine | null> {
+		const machine = await this.machineRepo.findOne({
+			where: { apiKey, isActive: true }
+		})
+
+		return machine
+	}
 }
