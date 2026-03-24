@@ -1,5 +1,5 @@
-import { eUserRole, iRegisterUser } from '@sentinel-supreme/shared'
 import { IsEnum, IsNotEmpty } from 'class-validator'
+import { eUserRole, iRegisterUser } from '../../types'
 import { LoginDto } from './login.dto'
 
 export class RegisterDto extends LoginDto implements iRegisterUser {
