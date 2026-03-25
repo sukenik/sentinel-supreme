@@ -27,6 +27,9 @@ export class Log extends Document implements iLog {
 
 	@Prop({ type: Object })
 	metadata?: Record<string, any>
+
+	@Prop({ type: String })
+	sourceIp?: string
 }
 
 export const LogSchema = SchemaFactory.createForClass(Log)

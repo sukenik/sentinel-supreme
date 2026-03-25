@@ -1,4 +1,13 @@
-import { Body, Controller, Inject, Logger, OnModuleInit, Post, UseGuards } from '@nestjs/common'
+import {
+	Body,
+	Controller,
+	Inject,
+	Logger,
+	OnModuleInit,
+	Post,
+	Req,
+	UseGuards
+} from '@nestjs/common'
 import { ConfigService } from '@nestjs/config'
 import { ClientProxy } from '@nestjs/microservices'
 import {
@@ -9,6 +18,7 @@ import {
 	LOG_SERVICE
 } from '@sentinel-supreme/shared'
 import { CreateLogDto, validateRmqTopology } from '@sentinel-supreme/shared/server'
+import type { Request } from 'express'
 import { Roles } from '../auth/decorators/roles.decorator'
 import { ApiKeyGuard } from '../auth/guards/api-key.guard'
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard'
@@ -47,30 +57,43 @@ export class IngestionController implements OnModuleInit {
 	@Post()
 	@UseGuards(JwtAuthGuard, RolesGuard)
 	@Roles(eUserRole.USER, eUserRole.ADMIN)
-	async createLog(@Body() log: CreateLogDto) {
+	async createLog(@Body() log: CreateLogDto, @Req() req: Request) {
 		this.logger.log('Receiving new log event via HTTP')
 
-		const logWithTime = {
-			...log,
-			createdAt: log.createdAt || new Date().toISOString()
-		}
+		const ip = log.sourceIp || req.ip || req.headers['x-forwarded-for']
 
-		this.rmqClient.emit(LOG_PATTERNS.NEW_LOG, logWithTime)
+		const logWithData = {
+			...log,
+			sourceIp: ip,
+			createdAt: log.createdAt || new Date().toISOString()
+		} as CreateLogDto
+
+		this.rmqClient.emit(LOG_PATTERNS.NEW_LOG, logWithData)
 
 		return { message: 'Log accepted' }
 	}
 
 	@Post(GATEWAY_ROUTES.INGEST)
 	@UseGuards(ApiKeyGuard)
-	async ingestLog(@Body() log: CreateLogDto, @GetMachine('name') machineName: string) {
+	async ingestLog(
+		@Body() log: CreateLogDto,
+		@GetMachine('name') machineName: string,
+		@Req() req: Request
+	) {
 		this.logger.log(`Receiving new log event from machine: ${machineName}`)
 
-		const logWithTime = {
-			...log,
-			createdAt: log.createdAt || new Date().toISOString()
-		}
+		const sourceIp =
+			log.sourceIp ||
+			(req.headers['x-forwarded-for'] as string)?.split(',')[0] ||
+			req.socket.remoteAddress
 
-		this.rmqClient.emit(LOG_PATTERNS.NEW_LOG, logWithTime)
+		const logWithData = {
+			...log,
+			sourceIp,
+			createdAt: log.createdAt || new Date().toISOString()
+		} as CreateLogDto
+
+		this.rmqClient.emit(LOG_PATTERNS.NEW_LOG, logWithData)
 
 		return { message: 'Log accepted' }
 	}

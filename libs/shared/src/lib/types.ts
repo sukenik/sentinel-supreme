@@ -44,6 +44,7 @@ export interface iBaseLog {
 	service: string
 	level: eLogLevel
 	message: string
+	sourceIp?: string
 	metadata?: Record<string, any>
 	createdAt?: Date | string
 }
