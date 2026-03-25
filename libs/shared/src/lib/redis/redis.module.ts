@@ -1,7 +1,7 @@
 import { Global, Module } from '@nestjs/common'
 import { ConfigModule, ConfigService } from '@nestjs/config'
 import { RedisModule as NestRedisModule } from '@nestjs-modules/ioredis'
-import { ENV_VARS } from '@sentinel-supreme/shared'
+import { ENV_VARS } from '../consts'
 
 @Global()
 @Module({

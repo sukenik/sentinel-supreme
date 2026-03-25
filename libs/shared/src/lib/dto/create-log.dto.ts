@@ -13,6 +13,10 @@ export class CreateLogDto implements iBaseLog {
 	@IsNotEmpty()
 	service!: string
 
+	@IsString()
+	@IsOptional()
+	sourceIp?: string
+
 	@IsObject()
 	@IsOptional()
 	metadata?: Record<string, any>

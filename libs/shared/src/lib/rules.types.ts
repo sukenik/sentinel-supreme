@@ -13,13 +13,32 @@ export enum eSeverity {
 	CRITICAL = 'CRITICAL'
 }
 
-export interface iRule {
+export enum eRuleType {
+	STATIC = 'STATIC',
+	RATE_LIMIT = 'RATE_LIMIT'
+}
+
+interface iBaseRule {
 	id: string
 	name: string
 	description: string
+	severity: eSeverity
+	isActive: boolean
+	type: eRuleType
 	field: string
 	operator: eRuleOperator
 	value: any
-	severity: eSeverity
-	isActive: boolean
 }
+
+export interface iStaticRule extends iBaseRule {
+	type: eRuleType.STATIC
+}
+
+export interface iRateLimitRule extends iBaseRule {
+	type: eRuleType.RATE_LIMIT
+	limit: number
+	windowSeconds: number
+	groupBy: string
+}
+
+export type tRule = iStaticRule | iRateLimitRule
