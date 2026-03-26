@@ -10,17 +10,17 @@ export class AlertsService {
 
 	constructor(
 		@InjectRepository(AlertEntity)
-		private readonly repo: Repository<AlertEntity>
+		private readonly repo: Repository<iAlert>
 	) {}
 
-	async create(alertData: iAlert): Promise<AlertEntity> {
+	async create(alertData: iAlert): Promise<iAlert> {
 		const newAlert = this.repo.create(alertData)
 		const saved = await this.repo.save(newAlert)
 		this.logger.log(`✅ Alert saved to DB: ${saved.id}`)
 		return saved
 	}
 
-	async findAll(limit = 50): Promise<AlertEntity[]> {
+	async findAll(limit = 50): Promise<iAlert[]> {
 		return this.repo.find({
 			order: { createdAt: 'DESC' },
 			take: limit
