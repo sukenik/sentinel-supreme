@@ -1,8 +1,8 @@
 import { Injectable, Logger } from '@nestjs/common'
 import { InjectRepository } from '@nestjs/typeorm'
 import { Repository } from 'typeorm'
-import { AlertEntity } from './entities/alert.entity'
 import { iAlert } from '../types'
+import { AlertEntity } from './entities/alert.entity'
 
 @Injectable()
 export class AlertsService {
