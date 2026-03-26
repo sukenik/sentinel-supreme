@@ -24,7 +24,8 @@ import { LogsModule } from './logs/logs.module'
 				RMQ_VHOST: Joi.string().required(),
 				RMQ_HOST: Joi.string().required(),
 				REDIS_HOST: Joi.string().required(),
-				REDIS_PORT: Joi.string().required()
+				REDIS_PORT: Joi.string().required(),
+				VIRUSTOTAL_API_KEY: Joi.string().required()
 			})
 		}),
 		MongooseModule.forRootAsync({
