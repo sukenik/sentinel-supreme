@@ -10,6 +10,7 @@ import {
 	iRateLimitRule,
 	tRule
 } from '@sentinel-supreme/shared'
+import { AlertsService } from '@sentinel-supreme/shared/server'
 import Redis from 'ioredis'
 import { v4 as uuidv4 } from 'uuid'
 import { ExternalApiService } from '../external-api/external-api.service'
@@ -20,7 +21,8 @@ export class RulesService {
 
 	constructor(
 		@InjectRedis() private readonly redis: Redis,
-		private readonly externalApi: ExternalApiService
+		private readonly externalApi: ExternalApiService,
+		private readonly alertsService: AlertsService
 	) {}
 
 	// TOOD: Move to DB
@@ -78,10 +80,8 @@ export class RulesService {
 						alerts.push(rateLimitAlert)
 					}
 				} else {
-					this.logger.warn(
-						`🚨 Rule Match: [${rule.name}] triggered for log ${log.fingerprint}`
-					)
-					alerts.push(this.createAlert(log, rule))
+					const alert = await this.saveAlert(log, rule)
+					alerts.push(alert)
 				}
 			}
 		}
@@ -108,22 +108,21 @@ export class RulesService {
 			}
 
 			if (count >= rule.limit) {
-				this.logger.error(`🔥 Brute Force Detected! IP: ${identifier}, Count: ${count}`)
-				let reputationMsg = ''
-
 				if (count === rule.limit) {
+					this.logger.error(`🔥 Brute Force Detected! IP: ${identifier}, Count: ${count}`)
+
 					const reputation = await this.externalApi.getIpReputation(String(identifier))
 
-					if (reputation.maliciousCount > 0) {
-						reputationMsg = ` | ⚠️ HIGH RISK: Flagged by ${reputation.maliciousCount} security engines! (Network: ${reputation.network})`
-					} else {
-						reputationMsg = ` | Info: IP appears clean (Network: ${reputation.network})`
-					}
+					const reputationMsg =
+						reputation.maliciousCount > 0
+							? ` | ⚠️ HIGH RISK: Flagged by ${reputation.maliciousCount} security engines!`
+							: ` | Info: IP appears clean`
 
-					return this.createAlert(
+					return await this.saveAlert(
 						log,
 						rule,
-						`Brute Force detected from ${identifier}${reputationMsg}`
+						`Brute Force detected from ${identifier}${reputationMsg}`,
+						reputation
 					)
 				}
 			}
@@ -132,6 +131,29 @@ export class RulesService {
 		}
 
 		return null
+	}
+
+	private async saveAlert(
+		log: iLog,
+		rule: tRule,
+		customMessage?: string,
+		reputationData?: any
+	): Promise<iAlert> {
+		const alertPayload: iAlert = {
+			id: uuidv4(),
+			ruleId: rule.id,
+			ruleName: rule.name,
+			severity: rule.severity,
+			message: customMessage || `Rule '${rule.name}' triggered: ${rule.description}`,
+			triggerLogFingerprint: log.fingerprint || 'unknown',
+			createdAt: new Date().toISOString(),
+			isRead: false,
+			reputationData: reputationData || null
+		}
+
+		this.logger.log(`💾 Persisting alert to Postgres: ${rule.name}`)
+
+		return await this.alertsService.create(alertPayload)
 	}
 
 	private checkRule(log: iLog, rule: tRule): boolean {
@@ -154,19 +176,6 @@ export class RulesService {
 				return logValue !== undefined && logValue !== null
 			default:
 				return false
-		}
-	}
-
-	private createAlert(log: iLog, rule: tRule, customMessage?: string): iAlert {
-		return {
-			id: uuidv4(),
-			ruleId: rule.id,
-			ruleName: rule.name,
-			severity: rule.severity,
-			message: customMessage || `Rule '${rule.name}' triggered: ${rule.description}`,
-			triggerLogFingerprint: log.fingerprint || 'unknown',
-			createdAt: new Date().toISOString(),
-			isRead: false
 		}
 	}
 
