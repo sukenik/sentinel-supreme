@@ -2,7 +2,7 @@ import { Module } from '@nestjs/common'
 import { ConfigModule, ConfigService } from '@nestjs/config'
 import { MongooseModule } from '@nestjs/mongoose'
 import { ENV_VARS } from '@sentinel-supreme/shared'
-import { RedisModule } from '@sentinel-supreme/shared/server'
+import { PostgresModule, RedisModule } from '@sentinel-supreme/shared/server'
 import * as Joi from 'joi'
 import { AppController } from './app.controller'
 import { AppService } from './app.service'
@@ -25,7 +25,12 @@ import { LogsModule } from './logs/logs.module'
 				RMQ_HOST: Joi.string().required(),
 				REDIS_HOST: Joi.string().required(),
 				REDIS_PORT: Joi.string().required(),
-				VIRUSTOTAL_API_KEY: Joi.string().required()
+				VIRUSTOTAL_API_KEY: Joi.string().required(),
+				PG_USER: Joi.string().required(),
+				PG_PASSWORD: Joi.string().required(),
+				PG_DB: Joi.string().required(),
+				PG_PORT: Joi.number().required(),
+				PG_HOST: Joi.string().required()
 			})
 		}),
 		MongooseModule.forRootAsync({
@@ -36,7 +41,8 @@ import { LogsModule } from './logs/logs.module'
 			})
 		}),
 		LogsModule,
-		RedisModule
+		RedisModule,
+		PostgresModule
 	],
 	controllers: [AppController],
 	providers: [AppService]

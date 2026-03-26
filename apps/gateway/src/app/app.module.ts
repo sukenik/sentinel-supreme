@@ -1,10 +1,8 @@
 import { Module } from '@nestjs/common'
-import { ConfigModule, ConfigService } from '@nestjs/config'
+import { ConfigModule } from '@nestjs/config'
 import { APP_GUARD } from '@nestjs/core'
 import { ThrottlerGuard, ThrottlerModule } from '@nestjs/throttler'
-import { TypeOrmModule } from '@nestjs/typeorm'
-import { ENV_VARS } from '@sentinel-supreme/shared'
-import { RedisModule } from '@sentinel-supreme/shared/server'
+import { PostgresModule, RedisModule } from '@sentinel-supreme/shared/server'
 import Joi from 'joi'
 import { AppController } from './app.controller'
 import { AppService } from './app.service'
@@ -51,17 +49,7 @@ import { UsersModule } from './users/users.module'
 				REDIS_PORT: Joi.string().required()
 			})
 		}),
-		TypeOrmModule.forRootAsync({
-			imports: [ConfigModule],
-			inject: [ConfigService],
-			useFactory: (config: ConfigService) => ({
-				type: 'postgres',
-				url: `postgres://${config.getOrThrow(ENV_VARS.PG_USER)}:${config.getOrThrow(ENV_VARS.PG_PASSWORD)}@${config.getOrThrow(ENV_VARS.PG_HOST)}:${config.getOrThrow(ENV_VARS.PG_PORT)}/${config.getOrThrow(ENV_VARS.PG_DB)}`,
-				autoLoadEntities: true,
-				// TODO: Change for prod!
-				synchronize: true
-			})
-		}),
+		PostgresModule,
 		IngestionModule,
 		UsersModule,
 		EventsModule,

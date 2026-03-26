@@ -84,4 +84,5 @@ export interface iAlert {
 	triggerLogFingerprint: string
 	createdAt: string
 	isRead: boolean
+	reputationData?: any
 }
