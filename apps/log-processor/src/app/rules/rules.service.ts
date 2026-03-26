@@ -12,12 +12,16 @@ import {
 } from '@sentinel-supreme/shared'
 import Redis from 'ioredis'
 import { v4 as uuidv4 } from 'uuid'
+import { ExternalApiService } from '../external-api/external-api.service'
 
 @Injectable()
 export class RulesService {
 	private readonly logger = new Logger(RulesService.name)
 
-	constructor(@InjectRedis() private readonly redis: Redis) {}
+	constructor(
+		@InjectRedis() private readonly redis: Redis,
+		private readonly externalApi: ExternalApiService
+	) {}
 
 	// TOOD: Move to DB
 	// ביינתים נחזיק "סט חוקים" קשיח בקוד, בהמשך נשלוף מה-DB
@@ -105,13 +109,26 @@ export class RulesService {
 
 			if (count >= rule.limit) {
 				this.logger.error(`🔥 Brute Force Detected! IP: ${identifier}, Count: ${count}`)
+				let reputationMsg = ''
 
 				if (count === rule.limit) {
-					return this.createAlert(log, rule, `Threshold reached: ${count} occurrences`)
+					const reputation = await this.externalApi.getIpReputation(String(identifier))
+
+					if (reputation.maliciousCount > 0) {
+						reputationMsg = ` | ⚠️ HIGH RISK: Flagged by ${reputation.maliciousCount} security engines! (Network: ${reputation.network})`
+					} else {
+						reputationMsg = ` | Info: IP appears clean (Network: ${reputation.network})`
+					}
+
+					return this.createAlert(
+						log,
+						rule,
+						`Brute Force detected from ${identifier}${reputationMsg}`
+					)
 				}
 			}
 		} catch (error) {
-			this.logger.error(`❌ Redis error:`, error)
+			this.logger.error(`❌ Error:`, error)
 		}
 
 		return null
