@@ -1,4 +1,4 @@
-import { appConfig, GATEWAY_ROUTES, iLog, WS_EVENTS } from '@sentinel-supreme/shared'
+import { appConfig, GATEWAY_ROUTES, iAlert, iLog, WS_EVENTS } from '@sentinel-supreme/shared'
 import { useEffect, useState } from 'react'
 import { io, Socket } from 'socket.io-client'
 import api from '../api/axiosInstance'
@@ -48,6 +48,10 @@ export const useLogsSocket = () => {
 
 		socket.on(WS_EVENTS.LOG_RECEIVED, (newLog: iLog) => {
 			addLog(newLog)
+		})
+
+		socket.on(WS_EVENTS.ALERT_RECEIVED, (data: iAlert) => {
+			console.log(data)
 		})
 
 		return () => {

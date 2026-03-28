@@ -1,19 +1,17 @@
-export const LOG_SERVICE = 'LOG_SERVICE'
-export const GATEWAY_SERVICE = 'GATEWAY_SERVICE'
-
 export const appConfig = {
 	DASHBOARD_URL: 'http://localhost:4200',
 	GATEWAY_URL: 'http://localhost:3000/'
 }
 
 export const QUEUES = {
-	LOG_QUEUE: 'log_queue',
-	UI_UPDATES_QUEUE: 'ui_updates_queue'
+	LOGS: 'log_queue',
+	UI_UPDATES: 'ui_updates_queue'
 }
 
 export const LOG_PATTERNS = {
 	NEW_LOG: 'log_message',
-	BROADCAST_TO_UI: 'broadcast_to_ui'
+	PROCESSED_LOG: 'processed_log',
+	NEW_ALERT: 'new_alert'
 }
 
 export const ENV_VARS = {
@@ -51,7 +49,8 @@ export const DL_CONFIG = {
 }
 
 export const WS_EVENTS = {
-	LOG_RECEIVED: 'log_received'
+	LOG_RECEIVED: 'log_received',
+	ALERT_RECEIVED: 'alert_received'
 }
 
 export const WS_ERRORS = {

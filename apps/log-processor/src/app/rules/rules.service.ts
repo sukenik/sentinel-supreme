@@ -1,5 +1,6 @@
 import { InjectRedis } from '@nestjs-modules/ioredis'
-import { Injectable, Logger } from '@nestjs/common'
+import { Inject, Injectable, Logger } from '@nestjs/common'
+import { ClientProxy } from '@nestjs/microservices'
 import {
 	eLogLevel,
 	eRuleOperator,
@@ -8,11 +9,14 @@ import {
 	iAlert,
 	iLog,
 	iRateLimitRule,
+	LOG_PATTERNS,
 	tRule
 } from '@sentinel-supreme/shared'
 import { AlertsService } from '@sentinel-supreme/shared/server'
 import Redis from 'ioredis'
+import { firstValueFrom } from 'rxjs'
 import { v4 as uuidv4 } from 'uuid'
+import { ALERTS_CLIENT } from '../consts'
 import { ExternalApiService } from '../external-api/external-api.service'
 
 @Injectable()
@@ -20,6 +24,7 @@ export class RulesService {
 	private readonly logger = new Logger(RulesService.name)
 
 	constructor(
+		@Inject(ALERTS_CLIENT) private readonly rmqClient: ClientProxy,
 		@InjectRedis() private readonly redis: Redis,
 		private readonly externalApi: ExternalApiService,
 		private readonly alertsService: AlertsService
@@ -139,7 +144,7 @@ export class RulesService {
 		customMessage?: string,
 		reputationData?: any
 	): Promise<iAlert> {
-		const alertPayload: iAlert = {
+		const alert: iAlert = {
 			id: uuidv4(),
 			ruleId: rule.id,
 			ruleName: rule.name,
@@ -151,9 +156,20 @@ export class RulesService {
 			reputationData: reputationData || null
 		}
 
-		this.logger.log(`💾 Persisting alert to Postgres: ${rule.name}`)
+		try {
+			this.logger.log(`🚀 Processing Alert & Broadcast for: ${rule.name}`)
 
-		return await this.alertsService.create(alertPayload)
+			await Promise.all([
+				this.alertsService.create(alert),
+				firstValueFrom(this.rmqClient.emit(LOG_PATTERNS.NEW_ALERT, alert))
+			])
+
+			this.logger.log(`✅ Alert ${alert.id} is now Persisted and Broadcasted.`)
+			return alert
+		} catch (error) {
+			this.logger.error(`❌ Critical error in alert pipeline for ${alert.id}`, error)
+			throw error
+		}
 	}
 
 	private checkRule(log: iLog, rule: tRule): boolean {

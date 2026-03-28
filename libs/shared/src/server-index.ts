@@ -1,4 +1,5 @@
-export * from './lib/rmq-setup'
+export * from './lib/rmq/rmq-setup'
+export * from './lib/rmq/rmq.module'
 export * from './lib/dto/auth/register.dto'
 export * from './lib/dto/auth/login.dto'
 export * from './lib/dto/auth/update.dto'

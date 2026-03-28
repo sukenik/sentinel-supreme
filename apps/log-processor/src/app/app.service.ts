@@ -1,7 +1,6 @@
 import { Injectable, Logger, OnModuleInit } from '@nestjs/common'
 import { ConfigService } from '@nestjs/config'
-import { ENV_VARS } from '@sentinel-supreme/shared'
-import { validateRmqTopology } from '@sentinel-supreme/shared/server'
+import { SharedRmqModule, validateRmqTopology } from '@sentinel-supreme/shared/server'
 
 @Injectable()
 export class AppService implements OnModuleInit {
@@ -15,15 +14,7 @@ export class AppService implements OnModuleInit {
 
 	private async setupRabbitMQ() {
 		try {
-			const { RMQ_USER, RMQ_PASSWORD, RMQ_PORT, RMQ_VHOST, RMQ_HOST } = ENV_VARS
-
-			const rmqUser = this.config.getOrThrow<string>(RMQ_USER)
-			const rmqPassword = this.config.getOrThrow<string>(RMQ_PASSWORD)
-			const rmqPort = this.config.getOrThrow<string>(RMQ_PORT)
-			const rmqVhost = this.config.getOrThrow<string>(RMQ_VHOST)
-			const rmqHost = this.config.getOrThrow<string>(RMQ_HOST)
-
-			const rmqUrl = `amqp://${rmqUser}:${rmqPassword}@${rmqHost}:${rmqPort}/${rmqVhost}`
+			const rmqUrl = SharedRmqModule.getUrl(this.config)
 
 			await validateRmqTopology(rmqUrl)
 
