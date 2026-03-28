@@ -47,6 +47,7 @@ export class DashboardStreamGateway implements OnGatewayConnection, OnGatewayDis
 	}
 
 	async handleConnection(client: Socket) {
+		// TODO: Add type
 		const user = client.data.user
 
 		this.logger.log(`Client authenticated: ${user.email} (${client.id})`)

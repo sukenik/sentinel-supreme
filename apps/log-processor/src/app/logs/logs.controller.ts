@@ -21,27 +21,17 @@ export class LogsController {
 
 		try {
 			const fingerprint = this.logsService.getFingerprint(data)
+			const log = { ...data, fingerprint } as iLog
 
-			const logWithId = { ...data, fingerprint } as iLog
-
-			const alerts = await this.rulesService.evaluateLog(logWithId)
-
-			if (alerts.length > 0) {
-				// TODO: Save in PG & and send in ws
-				// ביינתים רק נדפיס, ביום 4 נשמור ב-Postgres וביום 5 נשלח ב-Socket
-				this.logger.debug(
-					`🚨 Generated ${alerts.length} alerts for fingerprint: ${fingerprint}`
-				)
-
-				// TODO: כאן נשלח את ה-Alerts ל-Postgres בהמשך השבוע
-			}
-
-			await this.logsService.saveLog(logWithId)
+			await this.logsService.saveLog(log)
 
 			channel.ack(originalMsg)
+
+			this.rulesService.evaluateLog(log).catch((err) => {
+				this.logger.error(`❌ Rules evaluation failed for log ${log.fingerprint}`, err)
+			})
 		} catch (error) {
 			this.logger.error('❌ Processing failed, sending to DLX...', error)
-
 			channel.nack(originalMsg, false, false)
 		}
 	}

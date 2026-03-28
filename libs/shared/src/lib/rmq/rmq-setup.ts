@@ -1,5 +1,5 @@
 import * as amqp from 'amqplib'
-import { DL_CONFIG, QUEUES } from './consts'
+import { DL_CONFIG, QUEUES } from '../consts'
 
 export async function validateRmqTopology(url: string) {
 	const { DLX_EXCHANGE, DLQ_NAME, DL_ROUTING_KEY, DLX_HEADER, DL_ROUTING_KEY_HEADER } = DL_CONFIG
@@ -12,7 +12,7 @@ export async function validateRmqTopology(url: string) {
 
 	await channel.bindQueue(DLQ_NAME, DLX_EXCHANGE, DL_ROUTING_KEY)
 
-	await channel.assertQueue(QUEUES.LOG_QUEUE, {
+	await channel.assertQueue(QUEUES.LOGS, {
 		durable: true,
 		arguments: {
 			[DLX_HEADER]: DLX_EXCHANGE,
@@ -20,7 +20,7 @@ export async function validateRmqTopology(url: string) {
 		}
 	})
 
-	await channel.assertQueue(QUEUES.UI_UPDATES_QUEUE, {
+	await channel.assertQueue(QUEUES.UI_UPDATES, {
 		durable: true
 	})
 
