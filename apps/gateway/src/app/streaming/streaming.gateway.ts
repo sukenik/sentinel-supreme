@@ -9,6 +9,7 @@ import {
 import {
 	appConfig,
 	GATEWAY_ROUTES,
+	iAlert,
 	iJwtPayload,
 	iLog,
 	WS_ERRORS,
@@ -47,8 +48,7 @@ export class DashboardStreamGateway implements OnGatewayConnection, OnGatewayDis
 	}
 
 	async handleConnection(client: Socket) {
-		// TODO: Add type
-		const user = client.data.user
+		const user = client.data.user as iJwtPayload
 
 		this.logger.log(`Client authenticated: ${user.email} (${client.id})`)
 	}
@@ -57,7 +57,11 @@ export class DashboardStreamGateway implements OnGatewayConnection, OnGatewayDis
 		this.logger.log(`Client disconnected: ${client.id}`)
 	}
 
-	sendToClients(log: iLog) {
+	emitNewLog(log: iLog) {
 		this.server.emit(WS_EVENTS.LOG_RECEIVED, log)
+	}
+
+	emitNewAlert(alert: iAlert) {
+		this.server.emit(WS_EVENTS.ALERT_RECEIVED, alert)
 	}
 }

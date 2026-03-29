@@ -1,18 +1,31 @@
 import { appConfig, GATEWAY_ROUTES, iAlert, iLog, WS_EVENTS } from '@sentinel-supreme/shared'
-import { useEffect, useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 import { io, Socket } from 'socket.io-client'
 import api from '../api/axiosInstance'
+import { useAlertStore } from '../store/useAlertStore'
 import { useAuthStore } from '../store/useAuthStore'
 import { useLogStore } from '../store/useLogStore'
 
-export const useLogsSocket = () => {
+export const useDashboardSocket = () => {
 	const [isConnected, setIsConnected] = useState(false)
 
 	const { access_token, logout } = useAuthStore()
 	const addLog = useLogStore((state) => state.addLog)
+	const { addAlert, setAlerts } = useAlertStore()
+
+	const fetchInitialData = useCallback(async () => {
+		try {
+			const { data } = await api.get(GATEWAY_ROUTES.ALERTS)
+			setAlerts(data.data)
+		} catch (err) {
+			console.error('Failed to fetch initial alerts', err)
+		}
+	}, [setAlerts])
 
 	useEffect(() => {
 		if (!access_token) return
+
+		fetchInitialData()
 
 		const socket: Socket = io(`${appConfig.GATEWAY_URL}${GATEWAY_ROUTES.WS_DASHBOARD_STREAM}`, {
 			transports: ['websocket'],
@@ -28,7 +41,7 @@ export const useLogsSocket = () => {
 
 				try {
 					const response = await api.post(
-						`${appConfig.GATEWAY_URL}${GATEWAY_ROUTES.PREFIX}${GATEWAY_ROUTES.AUTH}${GATEWAY_ROUTES.REFRESH}`,
+						`${GATEWAY_ROUTES.AUTH}${GATEWAY_ROUTES.REFRESH}`,
 						{},
 						{ withCredentials: true }
 					)
@@ -51,7 +64,7 @@ export const useLogsSocket = () => {
 		})
 
 		socket.on(WS_EVENTS.ALERT_RECEIVED, (data: iAlert) => {
-			console.log(data)
+			addAlert(data)
 		})
 
 		return () => {

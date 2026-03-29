@@ -17,7 +17,7 @@ export class AlertsService {
 		return saved
 	}
 
-	async findAll(limit = 50): Promise<iAlert[]> {
+	async getAll(limit = 50): Promise<iAlert[]> {
 		return this.repo.find({
 			order: { createdAt: 'DESC' },
 			take: limit

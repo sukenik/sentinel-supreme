@@ -67,5 +67,6 @@ export const GATEWAY_ROUTES = {
 	LOGIN: '/login',
 	INGEST: '/ingest',
 	REFRESH: '/refresh',
-	LOGOUT: '/logout'
+	LOGOUT: '/logout',
+	ALERTS: '/alerts'
 }

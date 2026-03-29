@@ -9,8 +9,8 @@ const SettingsPage: FC = () => {
 	}
 
 	return (
-		<div className='p-6 bg-slate-900 h-full text-blue-100 flex flex-col border border-slate-800 rounded-xl'>
-			<div className='mb-6 h-10'>
+		<div className='p-6 bg-slate-900 h-full text-blue-100 flex flex-col border border-slate-800 rounded-xl overflow-hidden'>
+			<div className='mb-6 shrink-0'>
 				<h1 className='text-3xl font-bold tracking-tight'>{'System Settings'}</h1>
 				<p className='text-slate-400 text-sm'>
 					{'Manage global configurations and user permissions.'}
@@ -42,7 +42,11 @@ const SettingsPage: FC = () => {
 				</div>
 			</div>
 
-			{showUserManager && <UserManager />}
+			{showUserManager && (
+				<div className='flex-1 min-h-0 mt-8'>
+					<UserManager />
+				</div>
+			)}
 		</div>
 	)
 }
