@@ -8,6 +8,6 @@ export class AlertsController {
 
 	@Get()
 	async getAll(): Promise<iAlert[]> {
-		return this.alertsService.getAll(100)
+		return this.alertsService.getAll()
 	}
 }
