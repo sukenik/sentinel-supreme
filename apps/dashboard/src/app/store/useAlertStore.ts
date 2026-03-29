@@ -22,19 +22,21 @@ export const useAlertStore = create<AlertState>((set) => ({
 	},
 	setAlerts: (alerts) => set({ alerts }),
 	addAlert: (alert) =>
-		set((state) => ({
-			alerts: (state.alerts.find(({ id }) => alert.id === id)
-				? state.alerts
-				: [alert, ...state.alerts]
-			).slice(0, 100),
-			stats: {
-				...state.stats,
-				criticalToday:
-					alert.severity === eSeverity.CRITICAL
-						? state.stats.criticalToday + 1
-						: state.stats.criticalToday
+		set((state) => {
+			const isDuplicate = state.alerts.some(({ id }) => alert.id === id)
+			if (isDuplicate) return state
+
+			return {
+				alerts: [alert, ...state.alerts].slice(0, 100),
+				stats: {
+					...state.stats,
+					criticalToday:
+						alert.severity === eSeverity.CRITICAL
+							? state.stats.criticalToday + 1
+							: state.stats.criticalToday
+				}
 			}
-		})),
+		}),
 	updateStats: (newStats) =>
 		set((state) => ({
 			stats: { ...state.stats, ...newStats }

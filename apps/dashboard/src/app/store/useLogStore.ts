@@ -10,11 +10,15 @@ interface LogState {
 export const useLogStore = create<LogState>((set) => ({
 	logs: [],
 	addLog: (log) =>
-		set((state) => ({
-			logs: (state.logs.find(({ fingerprint }) => log.fingerprint === fingerprint)
-				? state.logs
-				: [log, ...state.logs]
-			).slice(0, 100)
-		})),
+		set((state) => {
+			const isDuplicate = state.logs.some(
+				({ fingerprint }) => log.fingerprint === fingerprint
+			)
+			if (isDuplicate) return state
+
+			return {
+				logs: [log, ...state.logs].slice(0, 100)
+			}
+		}),
 	clearLogs: () => set({ logs: [] })
 }))
