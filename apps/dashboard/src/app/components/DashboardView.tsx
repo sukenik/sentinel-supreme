@@ -1,4 +1,3 @@
-// apps/dashboard/src/views/DashboardView.tsx
 import { FC } from 'react'
 import AlertsTable from '../components/AlertsTable'
 import LiveLogList from '../components/LiveLogList'
@@ -6,7 +5,7 @@ import { useDashboardSocket } from '../hooks/useDashboardSocket'
 import { useAlertStore } from '../store/useAlertStore'
 import StatCard from './StatCard'
 
-export const DashboardView: FC = () => {
+const DashboardView: FC = () => {
 	const { isConnected } = useDashboardSocket()
 	const { alerts, stats } = useAlertStore()
 

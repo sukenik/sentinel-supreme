@@ -1,6 +1,6 @@
 import { Column, Entity, PrimaryColumn } from 'typeorm'
 import { eSeverity } from '../../rules.types'
-import { iAlert } from '../../types'
+import type { iAlert, iReputationData } from '../../types'
 
 @Entity('alerts')
 export class AlertEntity implements iAlert {
@@ -32,7 +32,7 @@ export class AlertEntity implements iAlert {
 	isRead!: boolean
 
 	@Column({ type: 'jsonb', nullable: true })
-	reputationData?: any
+	reputationData?: iReputationData
 
 	@Column({ nullable: true })
 	logSourceIp?: string

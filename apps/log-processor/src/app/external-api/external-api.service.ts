@@ -1,6 +1,6 @@
 import { Injectable, Logger } from '@nestjs/common'
 import { ConfigService } from '@nestjs/config'
-import { ENV_VARS } from '@sentinel-supreme/shared'
+import { ENV_VARS, iReputationData } from '@sentinel-supreme/shared'
 import axios from 'axios'
 
 @Injectable()
@@ -12,7 +12,7 @@ export class ExternalApiService {
 		this.apiKey = this.configService.getOrThrow<string>(ENV_VARS.VIRUSTOTAL_API_KEY)
 	}
 
-	async getIpReputation(ip: string): Promise<{ maliciousCount: number; network: string }> {
+	async getIpReputation(ip: string): Promise<iReputationData> {
 		if (ip === '::1' || ip === '127.0.0.1') {
 			return { maliciousCount: 0, network: 'localhost' }
 		}
@@ -27,12 +27,12 @@ export class ExternalApiService {
 				}
 			)
 
-			const stats = response.data.data.attributes.last_analysis_stats
+			const maliciousCount = response.data.data.attributes.last_analysis_stats.malicious || 0
 			const network = response.data.data.attributes.as_owner || 'Unknown Network'
 
 			return {
-				maliciousCount: stats.malicious || 0,
-				network: network
+				maliciousCount,
+				network
 			}
 		} catch (error) {
 			const { message } = error as { message: string }

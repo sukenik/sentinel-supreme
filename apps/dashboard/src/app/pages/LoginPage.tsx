@@ -4,6 +4,7 @@ import { useNavigate } from 'react-router-dom'
 import api from '../api/axiosInstance'
 import { ROUTES } from '../consts'
 import { useAuthStore } from '../store/useAuthStore'
+import { AxiosError } from 'axios'
 
 const LoginPage: FC = () => {
 	const [email, setEmail] = useState('')
@@ -31,8 +32,9 @@ const LoginPage: FC = () => {
 
 			setAuth(access_token, user)
 			navigate(ROUTES.HOME_PAGE)
-		} catch (err: any) {
-			setError(err.response?.data?.message || 'Authentication failed. Please try again.')
+		} catch (error) {
+			const err = error as AxiosError
+			setError(err.message || 'Authentication failed. Please try again.')
 		} finally {
 			setIsLoading(false)
 		}
