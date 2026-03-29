@@ -153,7 +153,8 @@ export class RulesService {
 			triggerLogFingerprint: log.fingerprint || 'unknown',
 			createdAt: new Date().toISOString(),
 			isRead: false,
-			reputationData: reputationData || null
+			reputationData: reputationData || null,
+			logSourceIp: log.sourceIp
 		}
 
 		try {

@@ -1,8 +1,8 @@
 import { eLogLevel, eUserRole, iUser } from '@sentinel-supreme/shared'
-import { LogLiveList } from './components/LogLiveList'
+import { DashboardView } from './components/DashboardView'
+import { eMenuOptions } from './consts'
 import MachinesPage from './pages/MachinesPage'
 import SettingsPage from './pages/SettingsPage'
-import { eMenuOptions } from './consts'
 import { useAuthStore } from './store/useAuthStore'
 
 export const getLevelColor = (level: eLogLevel) => {
@@ -32,13 +32,13 @@ export const useMenuOptionsByRole = () => {
 export const getComponentByMenuOption = (option: eMenuOptions) => {
 	switch (option) {
 		case eMenuOptions.DASHBOARD:
-			return LogLiveList
+			return DashboardView
 		case eMenuOptions.MACHINES:
 			return MachinesPage
 		case eMenuOptions.SETTINGS:
 			return SettingsPage
 		default:
-			return LogLiveList
+			return DashboardView
 	}
 }
 

@@ -1,11 +1,11 @@
 import { FC } from 'react'
-import { useLogsSocket } from '../hooks/useLogsSocket'
+import { useDashboardSocket } from '../hooks/useDashboardSocket'
 import { useLogStore } from '../store/useLogStore'
 import { getLevelColor } from '../utils'
 
-export const LogLiveList: FC = () => {
+const LiveLogList: FC = () => {
 	const logs = useLogStore((state) => state.logs)
-	const { isConnected } = useLogsSocket()
+	const { isConnected } = useDashboardSocket()
 
 	return (
 		<div className='p-6 bg-slate-900 h-full text-blue-100 flex flex-col border border-slate-800 rounded-xl'>
@@ -72,3 +72,5 @@ export const LogLiveList: FC = () => {
 		</div>
 	)
 }
+
+export default LiveLogList

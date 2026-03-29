@@ -184,8 +184,8 @@ const UserManager: FC = () => {
 
 	return (
 		<>
-			<div className='mt-8 animate-in fade-in slide-in-from-top-4 duration-300'>
-				<div className='flex justify-between items-center mb-4'>
+			<div className='h-full flex flex-col animate-in fade-in slide-in-from-top-4 duration-300'>
+				<div className='flex justify-between items-center mb-4 shrink-0'>
 					<h3 className='text-xl font-bold text-cyan-400'>{'User Directory'}</h3>
 					<button
 						onClick={handleAddUser}
@@ -195,40 +195,42 @@ const UserManager: FC = () => {
 						{'+ Add User'}
 					</button>
 				</div>
-				<div className='overflow-hidden border border-slate-700 rounded-xl bg-slate-800/30 backdrop-blur-sm'>
-					<table className='w-full text-left border-collapse'>
-						<thead>
-							<tr className='bg-slate-800 text-slate-400 uppercase text-xs tracking-widest'>
-								<th className='px-6 py-4'>{'Email'}</th>
-								<th className='px-6 py-4'>{'Password'}</th>
-								<th className='px-6 py-4'>{'Role'}</th>
-								<th className='px-2 py-4'>{'Joined'}</th>
-								<th className='px-6 py-4 text-right'>{'Actions'}</th>
-							</tr>
-						</thead>
-						<tbody className='divide-y divide-slate-800'>
-							{isLoading ? (
-								<tr>
-									<td colSpan={4} className='p-10 text-center text-slate-500'>
-										{'Loading users...'}
-									</td>
+				<div className='flex-1 min-h-0 border border-slate-700 rounded-xl bg-slate-800/30 backdrop-blur-sm flex flex-col overflow-hidden'>
+					<div className='overflow-y-auto custom-scrollbar flex-1'>
+						<table className='w-full text-left border-collapse'>
+							<thead className='sticky top-0 z-10 bg-slate-800 shadow-md'>
+								<tr className='text-slate-400 uppercase text-xs tracking-widest'>
+									<th className='px-6 py-4'>{'Email'}</th>
+									<th className='px-6 py-4'>{'Password'}</th>
+									<th className='px-6 py-4'>{'Role'}</th>
+									<th className='px-2 py-4'>{'Joined'}</th>
+									<th className='px-6 py-4 text-right'>{'Actions'}</th>
 								</tr>
-							) : (
-								<>
-									{isAdding && editUser && (
-										<UserRow
-											key={editUser.id}
-											user={editUser}
-											{...userRowProps}
-										/>
-									)}
-									{users.map((user) => (
-										<UserRow key={user.id} user={user} {...userRowProps} />
-									))}
-								</>
-							)}
-						</tbody>
-					</table>
+							</thead>
+							<tbody className='divide-y divide-slate-800'>
+								{isLoading ? (
+									<tr>
+										<td colSpan={4} className='p-10 text-center text-slate-500'>
+											{'Loading users...'}
+										</td>
+									</tr>
+								) : (
+									<>
+										{isAdding && editUser && (
+											<UserRow
+												key={editUser.id}
+												user={editUser}
+												{...userRowProps}
+											/>
+										)}
+										{users.map((user) => (
+											<UserRow key={user.id} user={user} {...userRowProps} />
+										))}
+									</>
+								)}
+							</tbody>
+						</table>
+					</div>
 				</div>
 			</div>
 			{isModalOpen && (

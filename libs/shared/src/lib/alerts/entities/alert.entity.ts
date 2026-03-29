@@ -33,4 +33,7 @@ export class AlertEntity implements iAlert {
 
 	@Column({ type: 'jsonb', nullable: true })
 	reputationData?: any
+
+	@Column({ nullable: true })
+	logSourceIp?: string
 }

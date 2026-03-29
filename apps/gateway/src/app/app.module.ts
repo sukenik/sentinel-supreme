@@ -12,6 +12,7 @@ import { IngestionModule } from './ingestion/ingestion.module'
 import { MachinesModule } from './machines/machines.module'
 import { StreamingModule } from './streaming/streaming.module'
 import { UsersModule } from './users/users.module'
+import { AlertsModule } from './alerts/alerts.module'
 
 @Module({
 	imports: [
@@ -56,7 +57,8 @@ import { UsersModule } from './users/users.module'
 		AuthModule,
 		StreamingModule,
 		RedisModule,
-		MachinesModule
+		MachinesModule,
+		AlertsModule
 	],
 	controllers: [AppController],
 	providers: [

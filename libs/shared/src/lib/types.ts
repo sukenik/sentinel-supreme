@@ -85,4 +85,5 @@ export interface iAlert {
 	createdAt: string
 	isRead: boolean
 	reputationData?: any
+	logSourceIp?: string
 }

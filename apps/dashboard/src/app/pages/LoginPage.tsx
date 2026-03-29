@@ -20,7 +20,7 @@ const LoginPage: FC = () => {
 		setError(null)
 
 		try {
-			const loginRoute = `${appConfig.GATEWAY_URL}${GATEWAY_ROUTES.PREFIX}${GATEWAY_ROUTES.AUTH}${GATEWAY_ROUTES.LOGIN}`
+			const loginRoute = `${GATEWAY_ROUTES.AUTH}${GATEWAY_ROUTES.LOGIN}`
 
 			const response = await api.post<{ data: iAuthResponse }>(loginRoute, {
 				email,
