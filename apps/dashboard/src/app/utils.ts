@@ -1,5 +1,5 @@
 import { eLogLevel, eUserRole, iUser } from '@sentinel-supreme/shared'
-import { DashboardView } from './components/DashboardView'
+import DashboardView from './components/DashboardView'
 import { eMenuOptions } from './consts'
 import MachinesPage from './pages/MachinesPage'
 import SettingsPage from './pages/SettingsPage'

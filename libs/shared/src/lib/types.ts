@@ -84,6 +84,11 @@ export interface iAlert {
 	triggerLogFingerprint: string
 	createdAt: string
 	isRead: boolean
-	reputationData?: any
+	reputationData?: iReputationData
 	logSourceIp?: string
+}
+
+export interface iReputationData {
+	maliciousCount: number
+	network: string
 }

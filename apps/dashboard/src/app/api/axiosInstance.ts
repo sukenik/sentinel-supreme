@@ -1,5 +1,5 @@
 import { appConfig, GATEWAY_ROUTES } from '@sentinel-supreme/shared'
-import axios from 'axios'
+import axios, { AxiosError } from 'axios'
 import { ROUTES } from '../consts'
 import { useAuthStore } from '../store/useAuthStore'
 
@@ -19,9 +19,12 @@ api.interceptors.request.use((config) => {
 })
 
 let isRefreshing = false
-let failedQueue: any[] = []
+let failedQueue: {
+	resolve: (value: unknown) => void
+	reject: (reason?: unknown) => void
+}[] = []
 
-const processQueue = (error: any, token: string | null = null) => {
+const processQueue = (error: AxiosError | null, token: string | null = null) => {
 	failedQueue.forEach((prom) => {
 		if (error) {
 			prom.reject(error)
@@ -70,7 +73,8 @@ api.interceptors.response.use(
 
 				return api(originalRequest)
 			} catch (refreshError) {
-				processQueue(refreshError, null)
+				const err = refreshError as AxiosError
+				processQueue(err, null)
 				useAuthStore.getState().logout()
 				window.location.href = ROUTES.LOGIN_PAGE
 

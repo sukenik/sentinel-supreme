@@ -9,6 +9,7 @@ import {
 	iAlert,
 	iLog,
 	iRateLimitRule,
+	iReputationData,
 	LOG_PATTERNS,
 	tRule
 } from '@sentinel-supreme/shared'
@@ -142,7 +143,7 @@ export class RulesService {
 		log: iLog,
 		rule: tRule,
 		customMessage?: string,
-		reputationData?: any
+		reputationData?: iReputationData
 	): Promise<iAlert> {
 		const alert: iAlert = {
 			id: uuidv4(),
@@ -153,7 +154,7 @@ export class RulesService {
 			triggerLogFingerprint: log.fingerprint || 'unknown',
 			createdAt: new Date().toISOString(),
 			isRead: false,
-			reputationData: reputationData || null,
+			reputationData: reputationData,
 			logSourceIp: log.sourceIp
 		}
 

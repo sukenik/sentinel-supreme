@@ -41,8 +41,9 @@ export class DashboardStreamGateway implements OnGatewayConnection, OnGatewayDis
 				const payload = (await this.jwtService.verifyAsync(token)) as iJwtPayload
 				socket.data.user = payload
 				next()
-			} catch (error: any) {
-				next(new Error(error.message))
+			} catch (error) {
+				const { message } = error as { message: string }
+				next(new Error(message))
 			}
 		})
 	}
