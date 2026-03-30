@@ -27,7 +27,7 @@ interface iBaseRule {
 	type: eRuleType
 	field: string
 	operator: eRuleOperator
-	value: any
+	value: string
 }
 
 export interface iStaticRule extends iBaseRule {

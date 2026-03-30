@@ -2,6 +2,7 @@ import { eLogLevel, eUserRole, iUser } from '@sentinel-supreme/shared'
 import DashboardView from './components/DashboardView'
 import { eMenuOptions } from './consts'
 import MachinesPage from './pages/MachinesPage'
+import RulesPage from './pages/RulesPage'
 import SettingsPage from './pages/SettingsPage'
 import { useAuthStore } from './store/useAuthStore'
 
@@ -23,7 +24,7 @@ export const useMenuOptionsByRole = () => {
 	const options = [eMenuOptions.DASHBOARD]
 
 	if (role === eUserRole.ADMIN) {
-		return options.concat([eMenuOptions.MACHINES, eMenuOptions.SETTINGS])
+		return options.concat([eMenuOptions.MACHINES, eMenuOptions.RULES, eMenuOptions.SETTINGS])
 	}
 
 	return options
@@ -35,6 +36,8 @@ export const getComponentByMenuOption = (option: eMenuOptions) => {
 			return DashboardView
 		case eMenuOptions.MACHINES:
 			return MachinesPage
+		case eMenuOptions.RULES:
+			return RulesPage
 		case eMenuOptions.SETTINGS:
 			return SettingsPage
 		default:
