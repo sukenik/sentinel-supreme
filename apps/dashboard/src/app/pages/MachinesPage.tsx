@@ -60,9 +60,10 @@ const MachinesPage: FC = () => {
 					</thead>
 					<tbody className='divide-y divide-slate-800'>
 						{machines.map((m) => (
-							<tr key={m.id} className='hover:bg-slate-800/30 transition-colors'>
+							<tr key={m.id} className='hover:bg-blue-900/10 transition-colors group'>
 								<td className='px-6 py-4 font-medium'>{m.name}</td>
 								<td className='px-6 py-4 font-mono text-cyan-400 text-sm'>
+									{/* TODO: wtf we do with dis */}
 									{m.apiKey.slice(0, 8)}
 									{'... (Hidden)'}
 								</td>
@@ -78,9 +79,30 @@ const MachinesPage: FC = () => {
 								</td>
 							</tr>
 						))}
+						{/* TODO: Test: */}
+						{!machines.length && (
+							<tr>
+								<td colSpan={5} className='p-12 text-center text-slate-500 italic'>
+									{'No Machines connected.'}
+								</td>
+							</tr>
+						)}
 					</tbody>
 				</table>
 			</div>
+			{/* 
+				TODO:
+				{isModalOpen && (
+					<ConfirmModal
+						onClose={toggleDeleteModal}
+						onConfirm={confirmDelete}
+						title={'Confirm Deletion'}
+						message={
+							'Are you sure you want to delete this machine? This action cannot be undone.'
+						}
+					/>
+				)}
+			 */}
 			{showModal && (
 				<div className='fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4'>
 					<div className='bg-slate-900 border border-slate-800 p-8 rounded-2xl max-w-md w-full'>

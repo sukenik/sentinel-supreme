@@ -53,7 +53,7 @@ const AlertsTable: FC<iProps> = ({ alerts }) => {
 								</td>
 								<td className='p-4 text-right'>
 									<button className='text-xs bg-blue-600 hover:bg-blue-500 text-white px-3 py-1 rounded transition'>
-										Investigate
+										{'Investigate'}
 									</button>
 								</td>
 							</tr>

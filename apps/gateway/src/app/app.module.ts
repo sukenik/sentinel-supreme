@@ -4,15 +4,16 @@ import { APP_GUARD } from '@nestjs/core'
 import { ThrottlerGuard, ThrottlerModule } from '@nestjs/throttler'
 import { PostgresModule, RedisModule } from '@sentinel-supreme/shared/server'
 import Joi from 'joi'
+import { AlertsModule } from './alerts/alerts.module'
 import { AppController } from './app.controller'
 import { AppService } from './app.service'
 import { AuthModule } from './auth/auth.module'
 import { EventsModule } from './events/events.module'
 import { IngestionModule } from './ingestion/ingestion.module'
 import { MachinesModule } from './machines/machines.module'
+import { RulesModule } from './rules/rules.module'
 import { StreamingModule } from './streaming/streaming.module'
 import { UsersModule } from './users/users.module'
-import { AlertsModule } from './alerts/alerts.module'
 
 @Module({
 	imports: [
@@ -58,7 +59,8 @@ import { AlertsModule } from './alerts/alerts.module'
 		StreamingModule,
 		RedisModule,
 		MachinesModule,
-		AlertsModule
+		AlertsModule,
+		RulesModule
 	],
 	controllers: [AppController],
 	providers: [

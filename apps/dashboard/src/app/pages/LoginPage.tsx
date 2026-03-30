@@ -1,10 +1,10 @@
-import { appConfig, GATEWAY_ROUTES, iAuthResponse } from '@sentinel-supreme/shared'
+import { GATEWAY_ROUTES, iAuthResponse } from '@sentinel-supreme/shared'
+import { AxiosError } from 'axios'
 import { ChangeEvent, FC, SyntheticEvent, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import api from '../api/axiosInstance'
 import { ROUTES } from '../consts'
 import { useAuthStore } from '../store/useAuthStore'
-import { AxiosError } from 'axios'
 
 const LoginPage: FC = () => {
 	const [email, setEmail] = useState('')
@@ -99,7 +99,7 @@ const LoginPage: FC = () => {
 					<button
 						type='submit'
 						disabled={isLoading}
-						className='w-full bg-cyan-600 hover:bg-cyan-500 text-white font-bold py-3 rounded-lg transition-all shadow-lg shadow-cyan-900/20 disabled:opacity-50'
+						className='w-full bg-cyan-600 hover:bg-cyan-500 text-white font-bold py-3 rounded-lg transition-all shadow-lg shadow-cyan-900/20 disabled:opacity-50 cursor-pointer'
 					>
 						{isLoading ? 'Authenticating...' : 'Authorize Access'}
 					</button>
