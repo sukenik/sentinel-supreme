@@ -14,7 +14,12 @@ import { ENV_VARS } from '../consts'
 				url: `postgres://${config.getOrThrow(ENV_VARS.PG_USER)}:${config.getOrThrow(ENV_VARS.PG_PASSWORD)}@${config.getOrThrow(ENV_VARS.PG_HOST)}:${config.getOrThrow(ENV_VARS.PG_PORT)}/${config.getOrThrow(ENV_VARS.PG_DB)}`,
 				autoLoadEntities: true,
 				// TODO: Change for prod!
-				synchronize: true
+				synchronize: true,
+				extra: {
+					max: 20,
+					idleTimeoutMillis: 30000,
+					connectionTimeoutMillis: 2000
+				}
 			})
 		})
 	],

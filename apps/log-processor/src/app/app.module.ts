@@ -40,9 +40,9 @@ import { LogsModule } from './logs/logs.module'
 				uri: `mongodb://${config.getOrThrow(ENV_VARS.MONGO_USER)}:${config.getOrThrow(ENV_VARS.MONGO_PASSWORD)}@${config.getOrThrow(ENV_VARS.MONGO_HOST)}:${config.getOrThrow(ENV_VARS.MONGO_PORT)}/${config.getOrThrow(ENV_VARS.MONGO_DB)}?authSource=admin`
 			})
 		}),
-		LogsModule,
 		RedisModule,
-		PostgresModule
+		PostgresModule,
+		LogsModule
 	],
 	controllers: [AppController],
 	providers: [AppService]

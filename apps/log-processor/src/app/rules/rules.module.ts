@@ -1,17 +1,24 @@
 import { Module } from '@nestjs/common'
 import { QUEUES } from '@sentinel-supreme/shared'
-import { SharedAlertsModule, SharedRmqModule } from '@sentinel-supreme/shared/server'
+import {
+	RedisModule,
+	SharedAlertsModule,
+	SharedRmqModule,
+	SharedRulesModule
+} from '@sentinel-supreme/shared/server'
 import { ALERTS_CLIENT } from '../consts'
 import { ExternalApiModule } from '../external-api/external-api.module'
-import { RulesService } from './rules.service'
+import { RulesEngineService } from './rules.service'
 
 @Module({
 	imports: [
 		SharedRmqModule.register(ALERTS_CLIENT, QUEUES.UI_UPDATES),
+		RedisModule,
 		ExternalApiModule,
-		SharedAlertsModule
+		SharedAlertsModule,
+		SharedRulesModule
 	],
-	providers: [RulesService],
-	exports: [RulesService]
+	providers: [RulesEngineService],
+	exports: [RulesEngineService]
 })
 export class RulesModule {}

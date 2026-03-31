@@ -2,18 +2,18 @@ import { InjectRedis } from '@nestjs-modules/ioredis'
 import { Inject, Injectable, Logger } from '@nestjs/common'
 import { ClientProxy } from '@nestjs/microservices'
 import {
-	eLogLevel,
 	eRuleOperator,
 	eRuleType,
-	eSeverity,
 	iAlert,
 	iLog,
 	iRateLimitRule,
 	iReputationData,
 	LOG_PATTERNS,
+	REDIS_CHANNELS,
+	REDIS_SUBSCRIBER,
 	tRule
 } from '@sentinel-supreme/shared'
-import { AlertsService } from '@sentinel-supreme/shared/server'
+import { AlertsService, RulesManagerService } from '@sentinel-supreme/shared/server'
 import Redis from 'ioredis'
 import { firstValueFrom } from 'rxjs'
 import { v4 as uuidv4 } from 'uuid'
@@ -21,56 +21,23 @@ import { ALERTS_CLIENT } from '../consts'
 import { ExternalApiService } from '../external-api/external-api.service'
 
 @Injectable()
-export class RulesService {
-	private readonly logger = new Logger(RulesService.name)
+export class RulesEngineService {
+	private readonly logger = new Logger(RulesEngineService.name)
+	private rules: tRule[] = []
 
 	constructor(
 		@Inject(ALERTS_CLIENT) private readonly rmqClient: ClientProxy,
 		@InjectRedis() private readonly redis: Redis,
+		@Inject(REDIS_SUBSCRIBER) private readonly redisSub: Redis,
 		private readonly externalApi: ExternalApiService,
-		private readonly alertsService: AlertsService
+		private readonly alertsService: AlertsService,
+		private readonly rulesManager: RulesManagerService
 	) {}
 
-	// TOOD: Move to DB
-	// ביינתים נחזיק "סט חוקים" קשיח בקוד, בהמשך נשלוף מה-DB
-	private rules: tRule[] = [
-		{
-			id: '1',
-			name: 'Critical Severity Alert',
-			description: 'Triggers when a log level is critical',
-			field: 'level',
-			operator: eRuleOperator.EQUALS,
-			value: eLogLevel.ERROR,
-			severity: eSeverity.CRITICAL,
-			isActive: true,
-			type: eRuleType.STATIC
-		},
-		{
-			id: '2',
-			name: 'Auth Failure Detection',
-			description: 'Detects unauthorized access attempts',
-			field: 'message',
-			operator: eRuleOperator.CONTAINS,
-			value: 'unauthorized',
-			severity: eSeverity.HIGH,
-			isActive: true,
-			type: eRuleType.STATIC
-		},
-		{
-			id: 'rule_brute_force',
-			name: 'Brute Force Detection',
-			description: '5 failed logins within 60 seconds',
-			field: 'message',
-			operator: eRuleOperator.CONTAINS,
-			value: 'unauthorized',
-			severity: eSeverity.HIGH,
-			isActive: true,
-			type: eRuleType.RATE_LIMIT,
-			limit: 5,
-			windowSeconds: 60,
-			groupBy: 'sourceIp'
-		}
-	]
+	async onModuleInit() {
+		await this.refreshRules()
+		this.initSubscriber()
+	}
 
 	async evaluateLog(log: iLog): Promise<iAlert[]> {
 		const alerts: iAlert[] = []
@@ -93,6 +60,56 @@ export class RulesService {
 		}
 
 		return alerts
+	}
+
+	private async refreshRules() {
+		try {
+			this.logger.log('🔄 Fetching rules from Postgres...')
+			const rules = await this.rulesManager.getAllActiveRules()
+
+			if (rules && rules.length > 0) {
+				this.rules = rules
+				this.logger.log(`✅ Loaded ${this.rules.length} active rules.`)
+			} else {
+				this.logger.warn('⚠️ No rules found in Postgres. System is running with 0 rules.')
+				this.rules = []
+			}
+		} catch (error) {
+			this.logger.error('❌ Failed to refresh rules from Postgres:', error)
+		}
+	}
+
+	private initSubscriber() {
+		this.redisSub.subscribe(REDIS_CHANNELS.RULES_UPDATED, (err) => {
+			if (err) {
+				this.logger.error('❌ Failed to subscribe to rules channel:', err)
+				return
+			}
+			this.logger.log(`📡 Subscribed to [${REDIS_CHANNELS.RULES_UPDATED}] channel.`)
+		})
+
+		this.redisSub.removeAllListeners('message')
+
+		this.redisSub.on('message', async (channel, message) => {
+			if (channel === REDIS_CHANNELS.RULES_UPDATED) {
+				try {
+					this.logger.log('🔔 Rules update received via Redis Pub/Sub.')
+
+					const newRules = JSON.parse(message) as tRule[]
+
+					if (Array.isArray(newRules)) {
+						this.rules = newRules
+						this.logger.log(`✅ Cache updated locally with ${this.rules.length} rules.`)
+					}
+				} catch (error) {
+					this.logger.error(
+						'❌ Failed to parse rules from Redis, falling back to DB...',
+						error
+					)
+					await this.refreshRules()
+				}
+			}
+		})
 	}
 
 	private async handleRateLimit(log: iLog, rule: iRateLimitRule): Promise<iAlert | null> {

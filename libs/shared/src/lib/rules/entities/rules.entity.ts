@@ -1,4 +1,4 @@
-import { eRuleOperator, eRuleType, eSeverity } from '@sentinel-supreme/shared'
+import { eRuleOperator, eRuleType, eSeverity } from '../../rules.types'
 import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm'
 
 @Entity('rules')

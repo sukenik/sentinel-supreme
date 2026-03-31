@@ -6,7 +6,7 @@ import { eToastType, iToastMessage } from '../types'
 import ConfirmModal from '../components/ConfirmModal'
 
 const RulesPage: FC = () => {
-	const { rules, fetchRules, toggleRuleStatus, deleteRule } = useRuleStore()
+	const { rules, fetchRules, deleteRule, updateRule } = useRuleStore()
 	const [isModalOpen, setIsModalOpen] = useState(false)
 	const [selectedRule, setSelectedRule] = useState<tRule | undefined>(undefined)
 	const [deleteRuleId, setDeleteRuleId] = useState<string | undefined>(undefined)
@@ -48,6 +48,16 @@ const RulesPage: FC = () => {
 	const handleEditRule = (e: MouseEvent) => {
 		const ruleId = e.currentTarget.id
 		openModal(rules.find(({ id }) => ruleId === id))
+	}
+
+	const handleToggleStatus = (e: MouseEvent) => {
+		const ruleId = e.currentTarget.id
+		const ruleToUpdate = rules.find(({ id }) => ruleId === id)!
+
+		updateRule(ruleId, {
+			...ruleToUpdate,
+			isActive: !ruleToUpdate.isActive
+		})
 	}
 
 	const confirmDelete = async () => {
@@ -115,10 +125,8 @@ const RulesPage: FC = () => {
 										</td>
 										<td className='px-6 py-4'>
 											<button
-												// TODO: Change
-												onClick={() =>
-													toggleRuleStatus(rule.id, !rule.isActive)
-												}
+												id={rule.id}
+												onClick={handleToggleStatus}
 												className={`w-10 h-5 rounded-full transition-all relative cursor-pointer ${rule.isActive ? 'bg-emerald-500 shadow-[0_0_10px_rgba(16,185,129,0.4)]' : 'bg-slate-700'}`}
 											>
 												<div

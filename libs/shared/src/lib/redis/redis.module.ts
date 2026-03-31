@@ -1,7 +1,8 @@
+import { RedisModule as NestRedisModule, getRedisConnectionToken } from '@nestjs-modules/ioredis'
 import { Global, Module } from '@nestjs/common'
 import { ConfigModule, ConfigService } from '@nestjs/config'
-import { RedisModule as NestRedisModule } from '@nestjs-modules/ioredis'
-import { ENV_VARS } from '../consts'
+import { Redis } from 'ioredis'
+import { ENV_VARS, REDIS_SUBSCRIBER } from '../consts'
 
 @Global()
 @Module({
@@ -15,6 +16,15 @@ import { ENV_VARS } from '../consts'
 			})
 		})
 	],
-	exports: [NestRedisModule]
+	providers: [
+		{
+			provide: REDIS_SUBSCRIBER,
+			inject: [getRedisConnectionToken()],
+			useFactory: (redis: Redis) => {
+				return redis.duplicate()
+			}
+		}
+	],
+	exports: [NestRedisModule, REDIS_SUBSCRIBER]
 })
 export class RedisModule {}
