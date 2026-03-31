@@ -24,7 +24,6 @@ export const useRuleForm = (initialData: tRule | undefined, onClose: () => void)
 		}
 
 		if (initialData?.id) {
-			Reflect.deleteProperty(payload, 'id')
 			await updateRule(initialData.id, payload)
 		} else {
 			await addRule(payload)

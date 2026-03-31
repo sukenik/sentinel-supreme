@@ -10,9 +10,9 @@ import { Log, LogSchema } from './schemas/log.schema'
 
 @Module({
 	imports: [
-		RulesModule,
 		MongooseModule.forFeature([{ name: Log.name, schema: LogSchema }]),
-		SharedRmqModule.register(PROCESSOR_CLIENT, QUEUES.UI_UPDATES)
+		SharedRmqModule.register(PROCESSOR_CLIENT, QUEUES.UI_UPDATES),
+		RulesModule
 	],
 	providers: [LogsService],
 	controllers: [LogsController]

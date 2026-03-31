@@ -2,7 +2,7 @@ import { Controller, Logger } from '@nestjs/common'
 import { Ctx, MessagePattern, Payload, RmqContext } from '@nestjs/microservices'
 import { iLog, LOG_PATTERNS } from '@sentinel-supreme/shared'
 import { CreateLogDto } from '@sentinel-supreme/shared/server'
-import { RulesService } from '../rules/rules.service'
+import { RulesEngineService } from '../rules/rules.service'
 import { LogsService } from './logs.service'
 
 @Controller('logs')
@@ -11,7 +11,7 @@ export class LogsController {
 
 	constructor(
 		private readonly logsService: LogsService,
-		private readonly rulesService: RulesService
+		private readonly rulesEngine: RulesEngineService
 	) {}
 
 	@MessagePattern(LOG_PATTERNS.NEW_LOG)
@@ -27,7 +27,7 @@ export class LogsController {
 
 			channel.ack(originalMsg)
 
-			this.rulesService.evaluateLog(log).catch((err) => {
+			this.rulesEngine.evaluateLog(log).catch((err) => {
 				this.logger.error(`❌ Rules evaluation failed for log ${log.fingerprint}`, err)
 			})
 		} catch (error) {

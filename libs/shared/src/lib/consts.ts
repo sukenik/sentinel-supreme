@@ -71,3 +71,9 @@ export const GATEWAY_ROUTES = {
 	ALERTS: '/alerts',
 	RULES: '/rules'
 }
+
+export const REDIS_CHANNELS = {
+	RULES_UPDATED: 'RULES_UPDATED'
+}
+
+export const REDIS_SUBSCRIBER = 'subscriber'

@@ -10,7 +10,6 @@ interface RuleState {
 	addRule: (rule: Partial<tRule>) => Promise<void>
 	updateRule: (id: string, updates: Partial<tRule>) => Promise<void>
 	deleteRule: (id: string) => Promise<void>
-	toggleRuleStatus: (id: string, isActive: boolean) => Promise<void>
 }
 
 export const useRuleStore = create<RuleState>((set, get) => ({
@@ -33,6 +32,7 @@ export const useRuleStore = create<RuleState>((set, get) => ({
 	},
 
 	updateRule: async (id, updates) => {
+		Reflect.deleteProperty(updates, 'id')
 		const { data } = await api.patch(`${GATEWAY_ROUTES.RULES}/${id}`, updates)
 		set({ rules: get().rules.map((r) => (r.id === id ? data.data : r)) })
 	},
@@ -40,9 +40,5 @@ export const useRuleStore = create<RuleState>((set, get) => ({
 	deleteRule: async (id) => {
 		await api.delete(`${GATEWAY_ROUTES.RULES}/${id}`)
 		set({ rules: get().rules.filter((r) => r.id !== id) })
-	},
-
-	toggleRuleStatus: async (id, isActive) => {
-		await get().updateRule(id, { isActive })
 	}
 }))
