@@ -1,5 +1,5 @@
-import { create } from 'zustand'
 import { iLog } from '@sentinel-supreme/shared'
+import { create } from 'zustand'
 
 interface LogState {
 	logs: iLog[]
@@ -11,11 +11,6 @@ export const useLogStore = create<LogState>((set) => ({
 	logs: [],
 	addLog: (log) =>
 		set((state) => {
-			const isDuplicate = state.logs.some(
-				({ fingerprint }) => log.fingerprint === fingerprint
-			)
-			if (isDuplicate) return state
-
 			return {
 				logs: [log, ...state.logs].slice(0, 100)
 			}

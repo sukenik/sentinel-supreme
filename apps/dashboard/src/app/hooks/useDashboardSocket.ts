@@ -1,26 +1,58 @@
-import { appConfig, GATEWAY_ROUTES, iAlert, iLog, WS_EVENTS } from '@sentinel-supreme/shared'
+import {
+	appConfig,
+	eSeverity,
+	GATEWAY_ROUTES,
+	iAlert,
+	iLog,
+	WS_EVENTS
+} from '@sentinel-supreme/shared'
 import { useCallback, useEffect, useState } from 'react'
 import { io, Socket } from 'socket.io-client'
 import api from '../api/axiosInstance'
 import { useAlertStore } from '../store/useAlertStore'
 import { useAuthStore } from '../store/useAuthStore'
 import { useLogStore } from '../store/useLogStore'
+import { useRuleStore } from '../store/useRuleStore'
+import { useStatStore } from '../store/useStatStore'
+
+const getCriticalTodayAlerts = (alerts: iAlert[]) => {
+	const criticalAlerts = alerts.filter(({ severity }) => severity === eSeverity.CRITICAL)
+	const twentyFourHoursAgo = new Date(Date.now() - 24 * 60 * 60 * 1000)
+
+	return criticalAlerts.filter((alert) => {
+		const alertDate = new Date(alert.createdAt)
+		return alertDate >= twentyFourHoursAgo
+	})
+}
 
 export const useDashboardSocket = () => {
 	const [isConnected, setIsConnected] = useState(false)
 
 	const { access_token, logout } = useAuthStore()
-	const addLog = useLogStore((state) => state.addLog)
+	const { addLog } = useLogStore()
 	const { addAlert, setAlerts } = useAlertStore()
+	const { updateStats, incrementCritical, incrementLogs } = useStatStore()
+	const { fetchRules } = useRuleStore()
 
 	const fetchInitialData = useCallback(async () => {
 		try {
-			const { data } = await api.get(GATEWAY_ROUTES.ALERTS)
-			setAlerts(data.data)
+			const { data: alertsData } = await api.get(GATEWAY_ROUTES.ALERTS)
+			const rules = await fetchRules()
+
+			const alerts = alertsData.data as iAlert[]
+			const activeRules = rules.filter(({ isActive }) => isActive)
+
+			const criticalTodayAlerts = getCriticalTodayAlerts(alerts)
+
+			setAlerts(alerts)
+			updateStats({
+				activeRules: activeRules.length,
+				criticalAlertsToday: criticalTodayAlerts.length
+			})
 		} catch (err) {
 			console.error('Failed to fetch initial alerts', err)
 		}
-	}, [setAlerts])
+	}, [setAlerts, updateStats, fetchRules])
 
 	useEffect(() => {
 		if (!access_token) return
@@ -61,16 +93,18 @@ export const useDashboardSocket = () => {
 
 		socket.on(WS_EVENTS.LOG_RECEIVED, (newLog: iLog) => {
 			addLog(newLog)
+			incrementLogs()
 		})
 
-		socket.on(WS_EVENTS.ALERT_RECEIVED, (data: iAlert) => {
-			addAlert(data)
+		socket.on(WS_EVENTS.ALERT_RECEIVED, (newAlert: iAlert) => {
+			addAlert(newAlert)
+			newAlert.severity === eSeverity.CRITICAL && incrementCritical()
 		})
 
 		return () => {
 			socket.disconnect()
 		}
-	}, [access_token, addLog, logout])
+	}, [access_token, fetchInitialData, addLog, addAlert, incrementCritical, incrementLogs, logout])
 
 	return { isConnected }
 }

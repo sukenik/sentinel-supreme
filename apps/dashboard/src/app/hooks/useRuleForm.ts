@@ -1,9 +1,11 @@
 import { eRuleOperator, eRuleType, eSeverity, tRule } from '@sentinel-supreme/shared'
 import { useForm } from 'react-hook-form'
 import { useRuleStore } from '../store/useRuleStore'
+import { useStatStore } from '../store/useStatStore'
 
 export const useRuleForm = (initialData: tRule | undefined, onClose: () => void) => {
 	const { addRule, updateRule } = useRuleStore()
+	const { incrementRules, decrementRules } = useStatStore()
 
 	const methods = useForm<tRule>({
 		defaultValues: initialData || {
@@ -25,8 +27,12 @@ export const useRuleForm = (initialData: tRule | undefined, onClose: () => void)
 
 		if (initialData?.id) {
 			await updateRule(initialData.id, payload)
+
+			!payload.isActive && decrementRules()
 		} else {
 			await addRule(payload)
+
+			payload.isActive && incrementRules()
 		}
 
 		onClose()
