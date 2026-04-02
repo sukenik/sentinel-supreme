@@ -35,6 +35,7 @@ export class RulesManagerService {
 
 	async deleteById(id: string) {
 		await this.repo.delete(id)
+		await this.notifyProcessors()
 	}
 
 	async update(id: string, dto: CreateRuleDto) {
