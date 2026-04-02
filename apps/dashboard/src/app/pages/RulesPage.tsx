@@ -1,16 +1,19 @@
 import { eSeverity, tRule } from '@sentinel-supreme/shared'
 import { FC, MouseEvent, useEffect, useState } from 'react'
+import ConfirmModal from '../components/ConfirmModal'
 import RuleModal from '../components/RuleModal/RuleModal'
 import { useRuleStore } from '../store/useRuleStore'
+import { useStatStore } from '../store/useStatStore'
 import { eToastType, iToastMessage } from '../types'
-import ConfirmModal from '../components/ConfirmModal'
 
 const RulesPage: FC = () => {
-	const { rules, fetchRules, deleteRule, updateRule } = useRuleStore()
 	const [isModalOpen, setIsModalOpen] = useState(false)
 	const [selectedRule, setSelectedRule] = useState<tRule | undefined>(undefined)
 	const [deleteRuleId, setDeleteRuleId] = useState<string | undefined>(undefined)
 	const [toastMessage, setToastMessage] = useState<iToastMessage | null>(null)
+
+	const { rules, fetchRules, deleteRule, updateRule } = useRuleStore()
+	const { decrementRules } = useStatStore()
 
 	useEffect(() => {
 		fetchRules()
@@ -43,6 +46,9 @@ const RulesPage: FC = () => {
 	const handleDeleteRule = (e: MouseEvent) => {
 		const ruleId = e.currentTarget.id
 		setDeleteRuleId(ruleId)
+
+		const rule = rules.find(({ id }) => ruleId === id)
+		rule?.isActive && decrementRules()
 	}
 
 	const handleEditRule = (e: MouseEvent) => {

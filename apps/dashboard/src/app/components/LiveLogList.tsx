@@ -1,11 +1,13 @@
 import { FC } from 'react'
-import { useDashboardSocket } from '../hooks/useDashboardSocket'
 import { useLogStore } from '../store/useLogStore'
 import { getLevelColor } from '../utils'
 
-const LiveLogList: FC = () => {
+interface iProps {
+	isConnected: boolean
+}
+
+const LiveLogList: FC<iProps> = ({ isConnected }) => {
 	const logs = useLogStore((state) => state.logs)
-	const { isConnected } = useDashboardSocket()
 
 	return (
 		<div className='p-6 bg-slate-900 h-full text-blue-100 flex flex-col border border-slate-800 rounded-xl'>
