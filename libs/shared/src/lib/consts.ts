@@ -70,7 +70,8 @@ export const GATEWAY_ROUTES = {
 	LOGOUT: '/logout',
 	ALERTS: '/alerts',
 	RULES: '/rules',
-	LOG_SERACH: '/log-search'
+	LOG_SEARCH: '/log-search',
+	SEARCH: '/search'
 }
 
 export const REDIS_CHANNELS = {
