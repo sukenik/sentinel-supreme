@@ -2,7 +2,12 @@ import { Module } from '@nestjs/common'
 import { ConfigModule } from '@nestjs/config'
 import { APP_GUARD } from '@nestjs/core'
 import { ThrottlerGuard, ThrottlerModule } from '@nestjs/throttler'
-import { PostgresModule, RedisModule, SharedRulesModule } from '@sentinel-supreme/shared/server'
+import {
+	MongoModule,
+	PostgresModule,
+	RedisModule,
+	SharedRulesModule
+} from '@sentinel-supreme/shared/server'
 import Joi from 'joi'
 import { AlertsModule } from './alerts/alerts.module'
 import { AppController } from './app.controller'
@@ -10,6 +15,7 @@ import { AppService } from './app.service'
 import { AuthModule } from './auth/auth.module'
 import { EventsModule } from './events/events.module'
 import { IngestionModule } from './ingestion/ingestion.module'
+import { LogSearchModule } from './log-search/log-search.module'
 import { MachinesModule } from './machines/machines.module'
 import { StreamingModule } from './streaming/streaming.module'
 import { UsersModule } from './users/users.module'
@@ -47,19 +53,26 @@ import { UsersModule } from './users/users.module'
 				INITIAL_ADMIN_EMAIL: Joi.string().required(),
 				INITIAL_ADMIN_PASSWORD: Joi.string().required(),
 				REDIS_HOST: Joi.string().required(),
-				REDIS_PORT: Joi.string().required()
+				REDIS_PORT: Joi.string().required(),
+				MONGO_USER: Joi.string().required(),
+				MONGO_PASSWORD: Joi.string().required(),
+				MONGO_PORT: Joi.number().required(),
+				MONGO_DB: Joi.string().required(),
+				MONGO_HOST: Joi.string().required()
 			})
 		}),
 		PostgresModule,
+		MongoModule,
+		RedisModule,
 		IngestionModule,
 		UsersModule,
 		EventsModule,
 		AuthModule,
 		StreamingModule,
-		RedisModule,
 		MachinesModule,
 		AlertsModule,
-		SharedRulesModule
+		SharedRulesModule,
+		LogSearchModule
 	],
 	controllers: [AppController],
 	providers: [

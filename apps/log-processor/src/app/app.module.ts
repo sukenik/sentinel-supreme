@@ -1,8 +1,6 @@
 import { Module } from '@nestjs/common'
-import { ConfigModule, ConfigService } from '@nestjs/config'
-import { MongooseModule } from '@nestjs/mongoose'
-import { ENV_VARS } from '@sentinel-supreme/shared'
-import { PostgresModule, RedisModule } from '@sentinel-supreme/shared/server'
+import { ConfigModule } from '@nestjs/config'
+import { MongoModule, PostgresModule, RedisModule } from '@sentinel-supreme/shared/server'
 import * as Joi from 'joi'
 import { AppController } from './app.controller'
 import { AppService } from './app.service'
@@ -33,13 +31,7 @@ import { LogsModule } from './logs/logs.module'
 				PG_HOST: Joi.string().required()
 			})
 		}),
-		MongooseModule.forRootAsync({
-			imports: [ConfigModule],
-			inject: [ConfigService],
-			useFactory: (config: ConfigService) => ({
-				uri: `mongodb://${config.getOrThrow(ENV_VARS.MONGO_USER)}:${config.getOrThrow(ENV_VARS.MONGO_PASSWORD)}@${config.getOrThrow(ENV_VARS.MONGO_HOST)}:${config.getOrThrow(ENV_VARS.MONGO_PORT)}/${config.getOrThrow(ENV_VARS.MONGO_DB)}?authSource=admin`
-			})
-		}),
+		MongoModule,
 		RedisModule,
 		PostgresModule,
 		LogsModule

@@ -10,13 +10,10 @@ import {
 } from '@nestjs/common'
 import { ConfigService } from '@nestjs/config'
 import { ClientProxy } from '@nestjs/microservices'
-import { eUserRole, GATEWAY_ROUTES, LOG_PATTERNS } from '@sentinel-supreme/shared'
+import { GATEWAY_ROUTES, LOG_PATTERNS } from '@sentinel-supreme/shared'
 import { CreateLogDto, SharedRmqModule, validateRmqTopology } from '@sentinel-supreme/shared/server'
 import type { Request } from 'express'
-import { Roles } from '../auth/decorators/roles.decorator'
 import { ApiKeyGuard } from '../auth/guards/api-key.guard'
-import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard'
-import { RolesGuard } from '../auth/guards/roles.guard'
 import { GATEWAY_CLIENT } from '../consts'
 import { GetMachine } from '../machines/decorators/get-machine.decorator'
 
@@ -39,25 +36,6 @@ export class IngestionController implements OnModuleInit {
 		} catch (error) {
 			this.logger.error('❌ Failed to setup RabbitMQ topology', error)
 		}
-	}
-
-	@Post()
-	@UseGuards(JwtAuthGuard, RolesGuard)
-	@Roles(eUserRole.USER, eUserRole.ADMIN)
-	async createLog(@Body() log: CreateLogDto, @Req() req: Request) {
-		this.logger.log('Receiving new log event via HTTP')
-
-		const ip = log.sourceIp || req.ip || req.headers['x-forwarded-for']
-
-		const logWithData = {
-			...log,
-			sourceIp: ip,
-			createdAt: log.createdAt || new Date().toISOString()
-		} as CreateLogDto
-
-		this.rmqClient.emit(LOG_PATTERNS.NEW_LOG, logWithData)
-
-		return { message: 'Log accepted' }
 	}
 
 	@Post(GATEWAY_ROUTES.INGEST)

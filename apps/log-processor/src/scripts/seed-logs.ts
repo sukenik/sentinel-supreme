@@ -1,10 +1,10 @@
 import { NestFactory } from '@nestjs/core'
 import { getModelToken } from '@nestjs/mongoose'
 import { eLogLevel } from '@sentinel-supreme/shared'
+import { Log } from '@sentinel-supreme/shared/server'
 import * as crypto from 'crypto'
 import { Model } from 'mongoose'
 import { AppModule } from '../app/app.module'
-import { Log } from '../app/logs/schemas/log.schema'
 
 async function runSeed() {
 	console.log('🌱 Starting Seed process...')
