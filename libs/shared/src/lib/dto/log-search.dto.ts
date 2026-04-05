@@ -16,10 +16,8 @@ export class LogSearchDto implements iLogSearchParams {
 	serviceName?: string
 
 	@IsOptional()
-	@Type(() => Number)
-	@IsInt()
-	@Min(1)
-	page = 1
+	@IsString()
+	lastId?: string
 
 	@IsOptional()
 	@Type(() => Number)

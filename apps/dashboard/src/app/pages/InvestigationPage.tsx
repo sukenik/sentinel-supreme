@@ -1,4 +1,4 @@
-import { eLogLevel } from '@sentinel-supreme/shared'
+import { eLogLevel, iLog } from '@sentinel-supreme/shared'
 import { ChangeEvent, FC } from 'react'
 import {
 	Area,
@@ -21,6 +21,12 @@ const InvestigationPage: FC = () => {
 
 	const handleSourceIpChange = (e: ChangeEvent<HTMLInputElement>) => {
 		updateParams({ sourceIp: e.target.value })
+	}
+
+	const handleLoadMoreClick = () => {
+		if (!meta?.nextCursor || loading) return
+
+		updateParams({ lastId: meta?.nextCursor })
 	}
 
 	return (
@@ -102,7 +108,7 @@ const InvestigationPage: FC = () => {
 						<span className='text-[10px] text-cyan-400 font-bold uppercase'>
 							{'Total Hits'}
 						</span>
-						<span className='text-2xl font-mono'>{meta.total}</span>
+						<span className='text-2xl font-mono'>{meta?.total || 0}</span>
 					</div>
 				</div>
 			</div>
@@ -119,7 +125,47 @@ const InvestigationPage: FC = () => {
 							</tr>
 						</thead>
 						<tbody className='divide-y divide-slate-800'>
-							{loading ? (
+							{logs.map((log: iLog) => (
+								<tr
+									key={log.fingerprint}
+									className='hover:bg-blue-900/10 transition-colors group text-sm'
+								>
+									<td className='px-6 py-4 text-slate-400 font-mono'>
+										{log.createdAt
+											? new Date(log.createdAt).toLocaleString()
+											: 'Unknown'}
+									</td>
+									<td className='px-6 py-4'>
+										<span className='bg-slate-900/80 px-2 py-1 rounded border border-slate-700 text-xs'>
+											{log.service}
+										</span>
+									</td>
+									<td className='px-6 py-4'>
+										<span
+											className={`px-2 py-1 rounded text-xs font-bold ${getLevelColor(log.level)}`}
+										>
+											{log.level}
+										</span>
+									</td>
+									<td className='px-6 py-4 text-slate-300 italic max-w-md truncate'>
+										{log.message}
+									</td>
+									<td className='px-6 py-4 font-mono text-cyan-400'>
+										{log.sourceIp || '0.0.0.0'}
+									</td>
+								</tr>
+							))}
+							{loading && logs.length > 0 && (
+								<tr>
+									<td
+										colSpan={5}
+										className='p-4 text-center text-cyan-500 animate-pulse bg-slate-800/30'
+									>
+										{'Fetching older records from archives...'}
+									</td>
+								</tr>
+							)}
+							{loading && logs.length === 0 && (
 								<tr>
 									<td
 										colSpan={5}
@@ -128,37 +174,7 @@ const InvestigationPage: FC = () => {
 										{'Scanning historical archives...'}
 									</td>
 								</tr>
-							) : (
-								logs.map((log: any) => (
-									<tr
-										key={log.fingerprint}
-										className='hover:bg-blue-900/10 transition-colors group text-sm'
-									>
-										<td className='px-6 py-4 text-slate-400 font-mono'>
-											{new Date(log.createdAt).toLocaleString()}
-										</td>
-										<td className='px-6 py-4'>
-											<span className='bg-slate-900/80 px-2 py-1 rounded border border-slate-700 text-xs'>
-												{log.service}
-											</span>
-										</td>
-										<td className='px-6 py-4'>
-											<span
-												className={`px-2 py-1 rounded text-xs font-bold ${getLevelColor(log.level)}`}
-											>
-												{log.level}
-											</span>
-										</td>
-										<td className='px-6 py-4 text-slate-300 italic max-w-md truncate'>
-											{log.message}
-										</td>
-										<td className='px-6 py-4 font-mono text-cyan-400'>
-											{log.sourceIp || '0.0.0.0'}
-										</td>
-									</tr>
-								))
 							)}
-
 							{!loading && !logs.length && (
 								<tr>
 									<td
@@ -172,9 +188,20 @@ const InvestigationPage: FC = () => {
 						</tbody>
 					</table>
 				</div>
-				<div className='bg-slate-800/80 p-3 border-t border-blue-900 flex justify-between items-center text-xs text-slate-500'>
-					<span>{`Showing ${logs.length} logs`}</span>
-					<span>{`Total found: ${meta.total}`}</span>
+				<div
+					onClick={handleLoadMoreClick}
+					className={`p-4 border-t border-blue-900 flex justify-center bg-slate-800/50 ${!meta?.nextCursor || loading ? '' : 'cursor-pointer'}`}
+				>
+					<button
+						disabled={!meta?.nextCursor || loading}
+						className={`flex items-center gap-2 text-cyan-400 hover:text-cyan-300 disabled:text-slate-600 transition-colors font-bold uppercase text-xs tracking-widest ${!meta?.nextCursor || loading ? '' : 'cursor-pointer'}`}
+					>
+						{meta?.nextCursor
+							? loading
+								? 'Decrypting more logs...'
+								: 'Fetch Older Logs ↓'
+							: 'We fetched all of them :)'}
+					</button>
 				</div>
 			</div>
 		</div>
