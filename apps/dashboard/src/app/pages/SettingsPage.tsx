@@ -16,7 +16,6 @@ const SettingsPage: FC = () => {
 					{'Manage global configurations and user permissions.'}
 				</p>
 			</div>
-
 			<div className='grid grid-cols-1 md:grid-cols-2 gap-6 mt-4'>
 				<div className='p-6 bg-slate-800/50 border border-slate-700 rounded-xl hover:border-cyan-500/50 transition-colors'>
 					<h3 className='text-lg font-bold mb-2 text-cyan-400'>{'User Management'}</h3>
@@ -30,7 +29,6 @@ const SettingsPage: FC = () => {
 						{`${showUserManager ? 'Close' : 'Open'} User Manager`}
 					</button>
 				</div>
-
 				<div className='p-6 bg-slate-800/50 border border-slate-700 rounded-xl hover:border-cyan-500/50 transition-colors'>
 					<h3 className='text-lg font-bold mb-2 text-cyan-400'>{'Alert Thresholds'}</h3>
 					<p className='text-sm text-slate-400 mb-4'>
@@ -41,7 +39,6 @@ const SettingsPage: FC = () => {
 					</button>
 				</div>
 			</div>
-
 			{showUserManager && (
 				<div className='flex-1 min-h-0 mt-8'>
 					<UserManager />

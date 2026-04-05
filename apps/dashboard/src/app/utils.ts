@@ -1,6 +1,7 @@
 import { eLogLevel, eUserRole, iUser } from '@sentinel-supreme/shared'
 import DashboardView from './components/DashboardView'
 import { eMenuOptions } from './consts'
+import InvestigationPage from './pages/InvestigationPage'
 import MachinesPage from './pages/MachinesPage'
 import RulesPage from './pages/RulesPage'
 import SettingsPage from './pages/SettingsPage'
@@ -21,7 +22,7 @@ export const getLevelColor = (level: eLogLevel) => {
 
 export const useMenuOptionsByRole = () => {
 	const role = useAuthStore().user?.role
-	const options = [eMenuOptions.DASHBOARD]
+	const options = [eMenuOptions.DASHBOARD, eMenuOptions.INVESTIGATION]
 
 	if (role === eUserRole.ADMIN) {
 		return options.concat([eMenuOptions.MACHINES, eMenuOptions.RULES, eMenuOptions.SETTINGS])
@@ -34,6 +35,8 @@ export const getComponentByMenuOption = (option: eMenuOptions) => {
 	switch (option) {
 		case eMenuOptions.DASHBOARD:
 			return DashboardView
+		case eMenuOptions.INVESTIGATION:
+			return InvestigationPage
 		case eMenuOptions.MACHINES:
 			return MachinesPage
 		case eMenuOptions.RULES:
