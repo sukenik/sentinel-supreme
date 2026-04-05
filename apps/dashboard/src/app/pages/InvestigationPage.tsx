@@ -1,9 +1,19 @@
+import { eLogLevel } from '@sentinel-supreme/shared'
 import { ChangeEvent, FC } from 'react'
+import {
+	Area,
+	AreaChart,
+	CartesianGrid,
+	ResponsiveContainer,
+	Tooltip,
+	XAxis,
+	YAxis
+} from 'recharts'
 import { useLogsSearch } from '../hooks/useLogSearch'
 import { getLevelColor } from '../utils'
 
 const InvestigationPage: FC = () => {
-	const { logs, loading, params, updateParams, meta } = useLogsSearch()
+	const { logs, loading, params, updateParams, stats, timeline, meta } = useLogsSearch()
 
 	const handleSearchTermChange = (e: ChangeEvent<HTMLInputElement>) => {
 		updateParams({ searchTerm: e.target.value })
@@ -32,6 +42,68 @@ const InvestigationPage: FC = () => {
 						className='bg-slate-800 border border-slate-700 rounded-lg px-4 py-2 text-sm focus:ring-2 focus:ring-cyan-500 outline-none w-40 transition-all'
 						onChange={handleSourceIpChange}
 					/>
+				</div>
+			</div>
+			<div className='grid grid-cols-12 gap-4 mb-16 h-48'>
+				<div className='col-span-9 bg-slate-800/40 border border-blue-900/50 rounded-lg p-4 backdrop-blur-sm relative overflow-hidden'>
+					<h3 className='text-[10px] font-bold text-cyan-500 uppercase mb-2 tracking-[0.2em]'>
+						{'Activity distribution (Hourly)'}
+					</h3>
+					<ResponsiveContainer width='100%' height='85%'>
+						<AreaChart data={timeline}>
+							<defs>
+								<linearGradient id='colorCount' x1='0' y1='0' x2='0' y2='1'>
+									<stop offset='5%' stopColor='#22d3ee' stopOpacity={0.3} />
+									<stop offset='95%' stopColor='#22d3ee' stopOpacity={0} />
+								</linearGradient>
+							</defs>
+							<CartesianGrid
+								strokeDasharray='3 3'
+								stroke='#1e293b'
+								vertical={false}
+							/>
+							<XAxis dataKey='time' hide={true} />
+							<YAxis hide={true} domain={['auto', 'auto']} />
+							<Tooltip
+								contentStyle={{
+									backgroundColor: '#0f172a',
+									border: '1px solid #1e293b',
+									borderRadius: '8px'
+								}}
+								labelStyle={{ color: '#94a3b8' }}
+								itemStyle={{ color: '#22d3ee' }}
+								labelFormatter={(label) => new Date(label).toLocaleString()}
+							/>
+							<Area
+								type='monotone'
+								dataKey='count'
+								stroke='#22d3ee'
+								strokeWidth={2}
+								fillOpacity={1}
+								fill='url(#colorCount)'
+							/>
+						</AreaChart>
+					</ResponsiveContainer>
+				</div>
+				<div className='col-span-3 flex flex-col gap-2'>
+					<div className='flex-1 bg-slate-800/40 border border-red-900/30 p-3 rounded-lg flex flex-col justify-center'>
+						<span className='text-[10px] text-red-400 font-bold uppercase'>
+							{'Errors'}
+						</span>
+						<span className='text-2xl font-mono'>{stats?.[eLogLevel.ERROR] || 0}</span>
+					</div>
+					<div className='flex-1 bg-slate-800/40 border border-yellow-900/30 p-3 rounded-lg flex flex-col justify-center'>
+						<span className='text-[10px] text-yellow-400 font-bold uppercase'>
+							{'Warnings'}
+						</span>
+						<span className='text-2xl font-mono'>{stats?.[eLogLevel.WARN] || 0}</span>
+					</div>
+					<div className='flex-1 bg-slate-800/40 border border-blue-900/30 p-3 rounded-lg flex flex-col justify-center'>
+						<span className='text-[10px] text-cyan-400 font-bold uppercase'>
+							{'Total Hits'}
+						</span>
+						<span className='text-2xl font-mono'>{meta.total}</span>
+					</div>
 				</div>
 			</div>
 			<div className='flex-1 overflow-hidden border border-blue-900 rounded-lg bg-slate-800/50 backdrop-blur-sm flex flex-col'>
