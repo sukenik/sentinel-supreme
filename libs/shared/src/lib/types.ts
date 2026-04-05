@@ -92,3 +92,11 @@ export interface iReputationData {
 	maliciousCount: number
 	network: string
 }
+
+export interface iLogSearchParams {
+	searchTerm?: string
+	sourceIp?: string
+	serviceName?: string
+	page?: number
+	limit?: number
+}

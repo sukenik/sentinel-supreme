@@ -1,7 +1,8 @@
 import { Type } from 'class-transformer'
 import { IsInt, IsOptional, IsString, Min } from 'class-validator'
+import { iLogSearchParams } from '../types'
 
-export class LogSearchDto {
+export class LogSearchDto implements iLogSearchParams {
 	@IsOptional()
 	@IsString()
 	searchTerm?: string
