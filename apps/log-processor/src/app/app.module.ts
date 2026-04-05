@@ -1,10 +1,12 @@
 import { Module } from '@nestjs/common'
 import { ConfigModule } from '@nestjs/config'
+import { ScheduleModule } from '@nestjs/schedule'
 import { MongoModule, PostgresModule, RedisModule } from '@sentinel-supreme/shared/server'
 import * as Joi from 'joi'
 import { AppController } from './app.controller'
 import { AppService } from './app.service'
 import { LogsModule } from './logs/logs.module'
+import { RetentionModule } from './retention/retention.module'
 
 @Module({
 	imports: [
@@ -28,13 +30,16 @@ import { LogsModule } from './logs/logs.module'
 				PG_PASSWORD: Joi.string().required(),
 				PG_DB: Joi.string().required(),
 				PG_PORT: Joi.number().required(),
-				PG_HOST: Joi.string().required()
+				PG_HOST: Joi.string().required(),
+				LOG_RETENTION_DAYS: Joi.number().required()
 			})
 		}),
+		ScheduleModule.forRoot(),
 		MongoModule,
 		RedisModule,
 		PostgresModule,
-		LogsModule
+		LogsModule,
+		RetentionModule
 	],
 	controllers: [AppController],
 	providers: [AppService]
