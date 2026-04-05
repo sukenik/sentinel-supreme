@@ -100,3 +100,18 @@ export interface iLogSearchParams {
 	page?: number
 	limit?: number
 }
+
+export interface iLogSearchReturnType {
+	data: iLog[]
+	stats: Record<string, number>
+	timeline: {
+		time: Date | string
+		count: number
+	}[]
+	meta: {
+		total: number
+		page: number
+		limit: number
+		lastPage: number
+	}
+}
