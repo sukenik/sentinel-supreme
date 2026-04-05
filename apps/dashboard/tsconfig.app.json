@@ -3,7 +3,6 @@
 	"compilerOptions": {
 		"outDir": "../../dist/out-tsc",
 		"rootDir": "../../",
-		"baseUrl": ".",
 		"tsBuildInfoFile": "dist/tsconfig.app.tsbuildinfo",
 		"jsx": "react-jsx",
 		"lib": ["dom"],
@@ -14,7 +13,9 @@
 			"vite/client"
 		],
 		"module": "esnext",
-		"moduleResolution": "bundler"
+		"moduleResolution": "bundler",
+		"allowImportingTsExtensions": true,
+		"noEmit": true
 	},
 	"exclude": [
 		"out-tsc",
