@@ -97,7 +97,7 @@ export interface iLogSearchParams {
 	searchTerm?: string
 	sourceIp?: string
 	serviceName?: string
-	page?: number
+	lastId?: string
 	limit?: number
 }
 
@@ -110,8 +110,7 @@ export interface iLogSearchReturnType {
 	}[]
 	meta: {
 		total: number
-		page: number
+		nextCursor?: string
 		limit: number
-		lastPage: number
 	}
 }

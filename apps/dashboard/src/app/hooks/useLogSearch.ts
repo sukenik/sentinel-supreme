@@ -7,12 +7,12 @@ import {
 import { useCallback, useEffect, useState } from 'react'
 import axiosInstance from '../api/axiosInstance'
 
-export const useLogsSearch = (initialParams: iLogSearchParams = { page: 1, limit: 50 }) => {
+export const useLogsSearch = (initialParams: iLogSearchParams = { limit: 50 }) => {
 	const [logs, setLogs] = useState<iLog[]>([])
 	const [loading, setLoading] = useState(false)
 	const [stats, setStats] = useState<iLogSearchReturnType['stats']>()
 	const [timeline, setTimeline] = useState<iLogSearchReturnType['timeline']>([])
-	const [meta, setMeta] = useState({ total: 0, lastPage: 1 })
+	const [meta, setMeta] = useState<iLogSearchReturnType['meta']>()
 	const [params, setParams] = useState(initialParams)
 	const [debouncedParams, setDebouncedParams] = useState(initialParams)
 
@@ -35,7 +35,7 @@ export const useLogsSearch = (initialParams: iLogSearchParams = { page: 1, limit
 
 			const { data, stats, timeline, meta } = res.data as iLogSearchReturnType
 
-			setLogs(data)
+			setLogs((prev) => (debouncedParams.lastId ? [...prev, ...data] : data))
 			setStats(stats)
 			setTimeline(timeline)
 			setMeta(meta)
@@ -51,7 +51,16 @@ export const useLogsSearch = (initialParams: iLogSearchParams = { page: 1, limit
 	}, [fetchLogs])
 
 	const updateParams = (newParams: Partial<iLogSearchParams>) => {
-		setParams((prev) => ({ ...prev, ...newParams, page: newParams.page || 1 }))
+		setParams((prevState) => {
+			const isNewSearch =
+				newParams.searchTerm !== undefined || newParams.sourceIp !== undefined
+
+			return {
+				...prevState,
+				...newParams,
+				lastId: isNewSearch ? undefined : newParams.lastId
+			}
+		})
 	}
 
 	return { logs, loading, stats, timeline, meta, params, updateParams, refresh: fetchLogs }

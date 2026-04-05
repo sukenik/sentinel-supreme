@@ -19,10 +19,9 @@
 		"strict": true,
 		"target": "es2022",
 		"customConditions": ["sentinel-supreme"],
-		"baseUrl": ".",
 		"paths": {
-			"@sentinel-supreme/shared": ["libs/shared/src/index.ts"],
-			"@sentinel-supreme/shared/server/*": ["libs/shared/src/index-server.ts"]
+			"@sentinel-supreme/shared": ["./libs/shared/src/index.ts"],
+			"@sentinel-supreme/shared/server/*": ["./libs/shared/src/index-server.ts"]
 		}
 	}
 }
