@@ -1,13 +1,13 @@
 import { FC, ReactNode } from 'react'
 
-interface TooltipProps {
+interface iProps {
 	text: string
 	children: ReactNode
 	position?: 'top' | 'right'
 	show?: boolean
 }
 
-const Tooltip: FC<TooltipProps> = ({ text, children, position = 'top', show = true }) => {
+const Tooltip: FC<iProps> = ({ text, children, position = 'top', show = true }) => {
 	if (!show) return <>{children}</>
 
 	const positionClasses = {
