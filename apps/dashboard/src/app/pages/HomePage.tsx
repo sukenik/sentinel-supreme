@@ -2,6 +2,7 @@ import { GATEWAY_ROUTES } from '@sentinel-supreme/shared'
 import { Menu } from 'lucide-react'
 import { FC, MouseEvent, useEffect, useRef, useState } from 'react'
 import api from '../api/axiosInstance'
+import Tooltip from '../components/Tooltip'
 import { eMenuOptions, SIDEBAR_COLLAPSED_LOCAL_STORAGE } from '../consts'
 import { useAuthStore } from '../store/useAuthStore'
 import { getComponentByMenuOption, getIconByMenuOption, useMenuOptionsByRole } from '../utils'
@@ -68,7 +69,7 @@ const HomePage: FC = () => {
 				className={`${isCollapsed ? 'w-20' : 'w-64'} bg-slate-900 border-r border-slate-800 flex flex-col transition-all duration-300 ease-in-out relative`}
 			>
 				<div
-					className={`flex items-center p-4 h-16 ${isCollapsed ? 'justify-center' : 'justify-between'}`}
+					className={`flex items-center p-4 h-16 ${isCollapsed ? 'justify-start' : 'justify-between'}`}
 				>
 					{!isCollapsed && (
 						<div className='flex items-center gap-2 overflow-hidden whitespace-nowrap'>
@@ -87,11 +88,12 @@ const HomePage: FC = () => {
 				</div>
 				<nav className='flex-1 px-3 space-y-2 mt-4'>
 					{options.map((option) => (
-						<div
-							key={option}
-							id={option}
-							onClick={handleMachinesClick}
-							className={`
+						<Tooltip key={option} text={option} position='right' show={isCollapsed}>
+							<div
+								key={option}
+								id={option}
+								onClick={handleMachinesClick}
+								className={`
 								group relative flex items-center gap-3 p-3 rounded-lg cursor-pointer transition-all
 								${
 									option === openOption
@@ -100,26 +102,17 @@ const HomePage: FC = () => {
 								}
 								${isCollapsed ? 'justify-center' : ''}
 							`}
-						>
-							<span className={option === openOption ? 'text-accent' : ''}>
-								{getIconByMenuOption(option)}
-							</span>
-							{!isCollapsed && (
-								<span className='font-medium overflow-hidden whitespace-nowrap animate-in fade-in slide-in-from-left-2 duration-200'>
-									{option}
+							>
+								<span className={option === openOption ? 'text-accent' : ''}>
+									{getIconByMenuOption(option)}
 								</span>
-							)}
-							{isCollapsed && (
-								<div
-									className='absolute left-full ml-4 px-3 py-1 bg-slate-800 text-white text-xs rounded-md 
-										whitespace-nowrap opacity-0 group-hover:opacity-100 pointer-events-none 
-										transition-opacity duration-200 border border-slate-700 shadow-xl z-50'
-								>
-									{option}
-									<div className='absolute top-1/2 -left-1 -translate-y-1/2 w-2 h-2 bg-slate-800 border-l border-b border-slate-700 rotate-45' />
-								</div>
-							)}
-						</div>
+								{!isCollapsed && (
+									<span className='font-medium overflow-hidden whitespace-nowrap animate-in fade-in slide-in-from-left-2 duration-200'>
+										{option}
+									</span>
+								)}
+							</div>
+						</Tooltip>
 					))}
 				</nav>
 				<div
