@@ -189,7 +189,7 @@ const UserManager: FC = () => {
 					<h3 className='text-xl font-bold text-cyan-400'>{'User Directory'}</h3>
 					<button
 						onClick={handleAddUser}
-						className='bg-cyan-600 hover:bg-cyan-500 text-white text-xs px-4 py-2 rounded-lg font-bold transition-all disabled:bg-slate-500 cursor-pointer'
+						className={`bg-cyan-600 hover:bg-cyan-500 text-white text-xs px-4 py-2 rounded-lg font-bold transition-all disabled:bg-slate-500 ${isAdding || !!editUser ? '' : 'cursor-pointer'}`}
 						disabled={isAdding || !!editUser}
 					>
 						{'+ Add User'}
@@ -201,9 +201,9 @@ const UserManager: FC = () => {
 							<thead className='sticky top-0 z-10 bg-slate-800 shadow-md'>
 								<tr className='text-slate-400 uppercase text-xs tracking-widest'>
 									<th className='px-6 py-4'>{'Email'}</th>
-									<th className='px-6 py-4'>{'Password'}</th>
-									<th className='px-6 py-4'>{'Role'}</th>
-									<th className='px-2 py-4'>{'Joined'}</th>
+									<th className='pr-16 py-4'>{'Password'}</th>
+									<th className='pr-16 py-4'>{'Role'}</th>
+									<th className='pr-16 py-4'>{'Joined'}</th>
 									<th className='px-6 py-4 text-right'>{'Actions'}</th>
 								</tr>
 							</thead>
