@@ -1,7 +1,8 @@
+import { Column, Entity, Index, PrimaryGeneratedColumn } from 'typeorm'
 import { eRuleOperator, eRuleType, eSeverity } from '../../rules.types'
-import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm'
 
 @Entity('rules')
+@Index(['isActive'], { where: '"isActive" = true' })
 export class RuleEntity {
 	@PrimaryGeneratedColumn('uuid')
 	id!: string

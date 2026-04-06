@@ -1,6 +1,6 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose'
-import { eLogLevel, iLog } from '../../types'
 import { Document } from 'mongoose'
+import { eLogLevel, iLog } from '../../types'
 
 @Schema({ timestamps: { createdAt: false, updatedAt: true } })
 export class Log extends Document implements iLog {
@@ -36,3 +36,5 @@ export const LogSchema = SchemaFactory.createForClass(Log)
 
 LogSchema.index({ createdAt: -1 })
 LogSchema.index({ message: 'text' })
+LogSchema.index({ serviceName: 1, createdAt: -1 })
+LogSchema.index({ sourceIp: 1, createdAt: -1 })
