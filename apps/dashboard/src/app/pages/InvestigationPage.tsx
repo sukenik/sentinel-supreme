@@ -196,11 +196,11 @@ const InvestigationPage: FC = () => {
 						disabled={!meta?.nextCursor || loading}
 						className={`flex items-center gap-2 text-cyan-400 hover:text-cyan-300 disabled:text-slate-600 transition-colors font-bold uppercase text-xs tracking-widest ${!meta?.nextCursor || loading ? '' : 'cursor-pointer'}`}
 					>
-						{meta?.nextCursor
-							? loading
-								? 'Decrypting more logs...'
-								: 'Fetch Older Logs ↓'
-							: 'We fetched all of them :)'}
+						{loading
+							? 'Decrypting more logs...'
+							: meta?.nextCursor
+								? 'Fetch Older Logs ↓'
+								: 'We fetched all of them :)'}
 					</button>
 				</div>
 			</div>

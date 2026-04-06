@@ -34,7 +34,7 @@ export class LogSearchService {
 						data: [
 							{ $match: paginationQuery },
 							{ $sort: { _id: -1 } },
-							{ $limit: limit }
+							{ $limit: limit + 1 }
 						],
 						stats: [
 							{
@@ -65,6 +65,11 @@ export class LogSearchService {
 			.exec()
 
 		const facetResult = result[0]
+		const hasMore = facetResult.data.length === limit
+
+		if (hasMore) {
+			facetResult.data.pop()
+		}
 
 		const timeline = facetResult.timeline.map((t) => ({
 			time: t._id,
@@ -85,7 +90,7 @@ export class LogSearchService {
 			meta: {
 				total,
 				nextCursor:
-					facetResult.data.length > 0
+					hasMore && facetResult.data.length > 0
 						? facetResult.data[facetResult.data.length - 1]._id.toString()
 						: undefined,
 				limit
