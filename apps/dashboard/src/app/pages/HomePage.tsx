@@ -2,7 +2,7 @@ import { GATEWAY_ROUTES } from '@sentinel-supreme/shared'
 import { Menu } from 'lucide-react'
 import { FC, MouseEvent, useEffect, useRef, useState } from 'react'
 import api from '../api/axiosInstance'
-import { eMenuOptions } from '../consts'
+import { eMenuOptions, SIDEBAR_COLLAPSED_LOCAL_STORAGE } from '../consts'
 import { useAuthStore } from '../store/useAuthStore'
 import { getComponentByMenuOption, getIconByMenuOption, useMenuOptionsByRole } from '../utils'
 
@@ -10,7 +10,7 @@ const HomePage: FC = () => {
 	const [openOption, setOpenOption] = useState(eMenuOptions.DASHBOARD)
 	const [isPopupOpen, setIsPopupOpen] = useState(false)
 	const [isCollapsed, setIsCollapsed] = useState<boolean>(() => {
-		const saved = localStorage.getItem('sidebar-collapsed')
+		const saved = localStorage.getItem(SIDEBAR_COLLAPSED_LOCAL_STORAGE)
 		return saved ? JSON.parse(saved) : false
 	})
 	const popupRef = useRef<HTMLDivElement>(null)
@@ -41,7 +41,7 @@ const HomePage: FC = () => {
 	}
 
 	useEffect(() => {
-		localStorage.setItem('sidebar-collapsed', JSON.stringify(isCollapsed))
+		localStorage.setItem(SIDEBAR_COLLAPSED_LOCAL_STORAGE, JSON.stringify(isCollapsed))
 	}, [isCollapsed])
 
 	useEffect(() => {

@@ -10,3 +10,5 @@ export enum eMenuOptions {
 	RULES = 'Rules',
 	SETTINGS = 'Settings'
 }
+
+export const SIDEBAR_COLLAPSED_LOCAL_STORAGE = 'sidebar-collapsed'
