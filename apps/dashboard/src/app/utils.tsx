@@ -1,4 +1,5 @@
 import { eLogLevel, eUserRole, iUser } from '@sentinel-supreme/shared'
+import { LayoutDashboard, Search, Server, Settings, ShieldAlert } from 'lucide-react'
 import DashboardView from './components/DashboardView'
 import { eMenuOptions } from './consts'
 import InvestigationPage from './pages/InvestigationPage'
@@ -92,4 +93,23 @@ export const getErrorMsg = (
 	}
 
 	return ''
+}
+
+export const getIconByMenuOption = (option: eMenuOptions) => {
+	const props = { size: 20 }
+
+	switch (option) {
+		case eMenuOptions.DASHBOARD:
+			return <LayoutDashboard {...props} />
+		case eMenuOptions.INVESTIGATION:
+			return <Search {...props} />
+		case eMenuOptions.MACHINES:
+			return <Server {...props} />
+		case eMenuOptions.RULES:
+			return <ShieldAlert {...props} />
+		case eMenuOptions.SETTINGS:
+			return <Settings {...props} />
+		default:
+			return <LayoutDashboard {...props} />
+	}
 }
