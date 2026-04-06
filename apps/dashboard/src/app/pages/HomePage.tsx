@@ -91,24 +91,33 @@ const HomePage: FC = () => {
 							key={option}
 							id={option}
 							onClick={handleMachinesClick}
-							title={isCollapsed ? option : ''}
 							className={`
-                                flex items-center gap-3 p-3 rounded-lg cursor-pointer transition-all
-                                ${
+								group relative flex items-center gap-3 p-3 rounded-lg cursor-pointer transition-all
+								${
 									option === openOption
 										? 'bg-accent/10 text-accent border border-accent/20'
 										: 'hover:bg-slate-800 text-slate-400 hover:text-white border border-transparent'
 								}
-                                ${isCollapsed ? 'justify-center' : ''}
-                            `}
+								${isCollapsed ? 'justify-center' : ''}
+							`}
 						>
 							<span className={option === openOption ? 'text-accent' : ''}>
 								{getIconByMenuOption(option)}
 							</span>
 							{!isCollapsed && (
-								<span className='font-medium overflow-hidden whitespace-nowrap'>
+								<span className='font-medium overflow-hidden whitespace-nowrap animate-in fade-in slide-in-from-left-2 duration-200'>
 									{option}
 								</span>
+							)}
+							{isCollapsed && (
+								<div
+									className='absolute left-full ml-4 px-3 py-1 bg-slate-800 text-white text-xs rounded-md 
+										whitespace-nowrap opacity-0 group-hover:opacity-100 pointer-events-none 
+										transition-opacity duration-200 border border-slate-700 shadow-xl z-50'
+								>
+									{option}
+									<div className='absolute top-1/2 -left-1 -translate-y-1/2 w-2 h-2 bg-slate-800 border-l border-b border-slate-700 rotate-45' />
+								</div>
 							)}
 						</div>
 					))}
