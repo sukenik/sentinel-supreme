@@ -65,7 +65,7 @@ export class LogSearchService {
 			.exec()
 
 		const facetResult = result[0]
-		const hasMore = facetResult.data.length === limit
+		const hasMore = facetResult.data.length > limit
 
 		if (hasMore) {
 			facetResult.data.pop()
