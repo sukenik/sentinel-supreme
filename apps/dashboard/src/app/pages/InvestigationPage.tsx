@@ -1,5 +1,5 @@
 import { eLogLevel, iLog } from '@sentinel-supreme/shared'
-import { ChangeEvent, FC } from 'react'
+import { ChangeEvent, FC, useEffect } from 'react'
 import {
 	Area,
 	AreaChart,
@@ -10,10 +10,19 @@ import {
 	YAxis
 } from 'recharts'
 import { useLogsSearch } from '../hooks/useLogSearch'
+import { useMenuStore } from '../store/useMenuStore'
 import { getLevelColor } from '../utils'
 
 const InvestigationPage: FC = () => {
+	const { searchContext, clearSearchContext } = useMenuStore()
 	const { logs, loading, params, updateParams, stats, timeline, meta } = useLogsSearch()
+
+	useEffect(() => {
+		if (searchContext) {
+			updateParams({ sourceIp: searchContext })
+			clearSearchContext()
+		}
+	}, [searchContext, updateParams, clearSearchContext])
 
 	const handleSearchTermChange = (e: ChangeEvent<HTMLInputElement>) => {
 		updateParams({ searchTerm: e.target.value })

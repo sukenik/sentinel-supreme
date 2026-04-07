@@ -5,10 +5,10 @@ import api from '../api/axiosInstance'
 import Tooltip from '../components/Tooltip'
 import { eMenuOptions, SIDEBAR_COLLAPSED_LOCAL_STORAGE } from '../consts'
 import { useAuthStore } from '../store/useAuthStore'
+import { useMenuStore } from '../store/useMenuStore'
 import { getComponentByMenuOption, getIconByMenuOption, useMenuOptionsByRole } from '../utils'
 
 const HomePage: FC = () => {
-	const [openOption, setOpenOption] = useState(eMenuOptions.DASHBOARD)
 	const [isPopupOpen, setIsPopupOpen] = useState(false)
 	const [isCollapsed, setIsCollapsed] = useState<boolean>(() => {
 		const saved = localStorage.getItem(SIDEBAR_COLLAPSED_LOCAL_STORAGE)
@@ -16,10 +16,11 @@ const HomePage: FC = () => {
 	})
 	const popupRef = useRef<HTMLDivElement>(null)
 
-	const options = useMenuOptionsByRole()
+	const { openOption, setOpenOption } = useMenuStore()
 	const { user, logout } = useAuthStore()
+	const options = useMenuOptionsByRole()
 
-	const handleMachinesClick = (e: MouseEvent) => {
+	const handleOptionClick = (e: MouseEvent) => {
 		setOpenOption(e.currentTarget.id as eMenuOptions)
 	}
 
@@ -92,7 +93,7 @@ const HomePage: FC = () => {
 							<div
 								key={option}
 								id={option}
-								onClick={handleMachinesClick}
+								onClick={handleOptionClick}
 								className={`
 								group relative flex items-center gap-3 p-3 rounded-lg cursor-pointer transition-all
 								${

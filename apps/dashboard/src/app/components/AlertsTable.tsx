@@ -1,15 +1,26 @@
-import { FC } from 'react'
 import { eSeverity, iAlert } from '@sentinel-supreme/shared'
+import { FC, MouseEvent } from 'react'
+import { eMenuOptions } from '../consts'
+import { useMenuStore } from '../store/useMenuStore'
 
 interface iProps {
 	alerts: iAlert[]
 }
 
 const AlertsTable: FC<iProps> = ({ alerts }) => {
+	const setOpenOption = useMenuStore((state) => state.setOpenOption)
+
+	const handleInvestigateClick = (e: MouseEvent) => {
+		const logSourceIp = e.currentTarget.id
+		setOpenOption(eMenuOptions.INVESTIGATION, logSourceIp)
+	}
+
 	return (
 		<div className='flex-1 bg-slate-900 border border-slate-800 rounded-xl overflow-hidden flex flex-col'>
 			<div className='p-6 border-b border-slate-800 flex justify-between items-center bg-slate-900/50'>
-				<h2 className='text-xl font-semibold text-white'>High-Priority Security Alerts</h2>
+				<h2 className='text-xl font-semibold text-white'>
+					{'High-Priority Security Alerts'}
+				</h2>
 				<div className='flex gap-2'>
 					<select className='bg-slate-800 border border-slate-700 text-sm rounded px-3 py-1 outline-none focus:border-accent'>
 						<option>Filter by Severity</option>
@@ -18,7 +29,6 @@ const AlertsTable: FC<iProps> = ({ alerts }) => {
 					</select>
 				</div>
 			</div>
-
 			<div className='flex-1 overflow-auto custom-scrollbar'>
 				<table className='w-full text-left border-collapse'>
 					<thead className='sticky top-0 z-10 bg-slate-800 shadow-sm'>
@@ -52,7 +62,11 @@ const AlertsTable: FC<iProps> = ({ alerts }) => {
 									{alert.logSourceIp || 'N/A'}
 								</td>
 								<td className='p-4 text-right'>
-									<button className='text-xs bg-blue-600 hover:bg-blue-500 text-white px-3 py-1 rounded transition'>
+									<button
+										id={alert.logSourceIp}
+										onClick={handleInvestigateClick}
+										className='text-xs bg-blue-600 hover:bg-blue-500 text-white px-3 py-1 rounded transition cursor-pointer'
+									>
 										{'Investigate'}
 									</button>
 								</td>
