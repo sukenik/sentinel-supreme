@@ -2,13 +2,17 @@ import { InjectRedis } from '@nestjs-modules/ioredis'
 import { Inject, Injectable, Logger } from '@nestjs/common'
 import { ClientProxy } from '@nestjs/microservices'
 import {
+	eLogLevel,
+	eNotificationChannel,
 	eRuleOperator,
 	eRuleType,
+	eSeverity,
 	iAlert,
 	iLog,
 	iRateLimitRule,
 	iReputationData,
 	LOG_PATTERNS,
+	NOTIFICATION_PATTERNS,
 	REDIS_CHANNELS,
 	REDIS_SUBSCRIBER,
 	tRule
@@ -17,7 +21,7 @@ import { AlertsService, RulesManagerService } from '@sentinel-supreme/shared/ser
 import Redis from 'ioredis'
 import { firstValueFrom } from 'rxjs'
 import { v4 as uuidv4 } from 'uuid'
-import { ALERTS_CLIENT } from '../consts'
+import { ALERTS_CLIENT, NOTIFICATIONS_CLIENT } from '../consts'
 import { ExternalApiService } from '../external-api/external-api.service'
 
 @Injectable()
@@ -26,7 +30,8 @@ export class RulesEngineService {
 	private rules: tRule[] = []
 
 	constructor(
-		@Inject(ALERTS_CLIENT) private readonly rmqClient: ClientProxy,
+		@Inject(ALERTS_CLIENT) private readonly alertsClient: ClientProxy,
+		@Inject(NOTIFICATIONS_CLIENT) private readonly notificationsClient: ClientProxy,
 		@InjectRedis() private readonly redis: Redis,
 		@Inject(REDIS_SUBSCRIBER) private readonly redisSub: Redis,
 		private readonly externalApi: ExternalApiService,
@@ -40,6 +45,15 @@ export class RulesEngineService {
 	}
 
 	async evaluateLog(log: iLog): Promise<iAlert[]> {
+		if (log.level === eLogLevel.ERROR) {
+			this.notificationsClient.emit(NOTIFICATION_PATTERNS.SEND, {
+				severity: eSeverity.CRITICAL,
+				title: `Critical Error in ${log.service}`,
+				message: log.message,
+				channels: [eNotificationChannel.EMAIL, eNotificationChannel.SLACK]
+			})
+		}
+
 		const alerts: iAlert[] = []
 
 		for (const rule of this.rules.filter((r) => r.isActive)) {
@@ -180,7 +194,7 @@ export class RulesEngineService {
 
 			await Promise.all([
 				this.alertsService.create(alert),
-				firstValueFrom(this.rmqClient.emit(LOG_PATTERNS.NEW_ALERT, alert))
+				firstValueFrom(this.alertsClient.emit(LOG_PATTERNS.NEW_ALERT, alert))
 			])
 
 			this.logger.log(`✅ Alert ${alert.id} is now Persisted and Broadcasted.`)

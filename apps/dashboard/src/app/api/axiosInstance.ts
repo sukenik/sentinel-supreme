@@ -1,11 +1,11 @@
-import { appConfig, GATEWAY_ROUTES } from '@sentinel-supreme/shared'
+import { appConfig, GATEWAY_ROUTES, SERVER_GLOBAL_PREFIX } from '@sentinel-supreme/shared'
 import axios, { AxiosError } from 'axios'
 import { ROUTES } from '../consts'
 import { useAuthStore } from '../store/useAuthStore'
 
 const api = axios.create({
 	withCredentials: true,
-	baseURL: `${appConfig.GATEWAY_URL}${GATEWAY_ROUTES.PREFIX}`
+	baseURL: `${appConfig.GATEWAY_URL}${SERVER_GLOBAL_PREFIX}`
 })
 
 api.interceptors.request.use((config) => {
@@ -58,7 +58,7 @@ api.interceptors.response.use(
 
 			try {
 				const { data } = await axios.post(
-					`${appConfig.GATEWAY_URL}${GATEWAY_ROUTES.PREFIX}${GATEWAY_ROUTES.AUTH}${GATEWAY_ROUTES.REFRESH}`,
+					`${appConfig.GATEWAY_URL}${SERVER_GLOBAL_PREFIX}${GATEWAY_ROUTES.AUTH}${GATEWAY_ROUTES.REFRESH}`,
 					{},
 					{ withCredentials: true }
 				)
