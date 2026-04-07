@@ -1,17 +1,23 @@
 export const appConfig = {
 	DASHBOARD_URL: 'http://localhost:4200',
-	GATEWAY_URL: 'http://localhost:3000/'
+	GATEWAY_URL: 'http://localhost:3000/',
+	NOTIFICATION_SERVICE_URL: 'http://localhost:3005/'
 }
 
 export const QUEUES = {
 	LOGS: 'log_queue',
-	UI_UPDATES: 'ui_updates_queue'
+	UI_UPDATES: 'ui_updates_queue',
+	NOTIFICATIONS: 'notifications_queue'
 }
 
 export const LOG_PATTERNS = {
 	NEW_LOG: 'log_message',
 	PROCESSED_LOG: 'processed_log',
 	NEW_ALERT: 'new_alert'
+}
+
+export const NOTIFICATION_PATTERNS = {
+	SEND: 'notification.send'
 }
 
 export const ENV_VARS = {
@@ -43,10 +49,19 @@ export const ENV_VARS = {
 
 export const DL_CONFIG = {
 	DLX_HEADER: 'x-dead-letter-exchange',
-	DL_ROUTING_KEY_HEADER: 'x-dead-letter-routing-key',
-	DLX_EXCHANGE: 'log_dlx',
+	DL_ROUTING_KEY_HEADER: 'x-dead-letter-routing-key'
+}
+
+export const LOG_DLX = {
+	DLX_NAME: 'log_dlx',
 	DLQ_NAME: 'log_queue_dead_letters',
 	DL_ROUTING_KEY: 'log_dead_letter_key'
+}
+
+export const NOTIFICATIONS_DLX = {
+	DLX_NAME: 'notifications_dlx',
+	DLQ_NAME: 'notifications_queue_dead_letters',
+	DL_ROUTING_KEY: 'notifications_dead_letter_key'
 }
 
 export const WS_EVENTS = {
@@ -58,8 +73,9 @@ export const WS_ERRORS = {
 	NO_TOKEN_PROVIDED: 'No token provided'
 }
 
+export const SERVER_GLOBAL_PREFIX = 'api'
+
 export const GATEWAY_ROUTES = {
-	PREFIX: 'api',
 	WS_DASHBOARD_STREAM: 'dashboard-stream',
 	AUTH: '/auth',
 	LOGS: '/logs',
@@ -72,7 +88,9 @@ export const GATEWAY_ROUTES = {
 	ALERTS: '/alerts',
 	RULES: '/rules',
 	LOG_SEARCH: '/log-search',
-	SEARCH: '/search'
+	SEARCH: '/search',
+	NOTIFICATIONS: '/notifications',
+	SEND_NOTIFICATION: '/send'
 }
 
 export const REDIS_CHANNELS = {

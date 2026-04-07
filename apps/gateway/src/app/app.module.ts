@@ -17,6 +17,7 @@ import { EventsModule } from './events/events.module'
 import { IngestionModule } from './ingestion/ingestion.module'
 import { LogSearchModule } from './log-search/log-search.module'
 import { MachinesModule } from './machines/machines.module'
+import { NotificationsModule } from './notifications/notifications.module'
 import { StreamingModule } from './streaming/streaming.module'
 import { UsersModule } from './users/users.module'
 
@@ -72,7 +73,8 @@ import { UsersModule } from './users/users.module'
 		MachinesModule,
 		AlertsModule,
 		SharedRulesModule,
-		LogSearchModule
+		LogSearchModule,
+		NotificationsModule
 	],
 	controllers: [AppController],
 	providers: [

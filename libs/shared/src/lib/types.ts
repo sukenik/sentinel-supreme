@@ -114,3 +114,18 @@ export interface iLogSearchReturnType {
 		limit: number
 	}
 }
+
+export enum eNotificationChannel {
+	EMAIL = 'EMAIL',
+	SLACK = 'SLACK',
+	DISCORD = 'DISCORD'
+}
+
+export interface iNotificationPayload {
+	severity: eSeverity
+	title: string
+	message: string
+	channels: eNotificationChannel[]
+	userId?: string
+	metadata?: any
+}

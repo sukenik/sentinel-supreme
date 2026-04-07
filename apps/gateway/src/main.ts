@@ -1,7 +1,7 @@
 import { Logger, ValidationPipe } from '@nestjs/common'
 import { ConfigService } from '@nestjs/config'
 import { NestFactory } from '@nestjs/core'
-import { appConfig, ENV_VARS, GATEWAY_ROUTES, QUEUES } from '@sentinel-supreme/shared'
+import { appConfig, ENV_VARS, QUEUES, SERVER_GLOBAL_PREFIX } from '@sentinel-supreme/shared'
 import { SharedRmqModule } from '@sentinel-supreme/shared/server'
 import cookieParser from 'cookie-parser'
 import { AppModule } from './app/app.module'
@@ -30,11 +30,11 @@ async function bootstrap() {
 		new ValidationPipe({ transform: true, whitelist: true, forbidNonWhitelisted: true })
 	)
 	app.useGlobalInterceptors(new TransformInterceptor())
-	app.setGlobalPrefix(GATEWAY_ROUTES.PREFIX)
+	app.setGlobalPrefix(SERVER_GLOBAL_PREFIX)
 
 	await app.startAllMicroservices()
 	await app.listen(port)
-	Logger.log(`🚀 Gateway is running on: ${GATEWAY_URL}${GATEWAY_ROUTES.PREFIX}`)
+	Logger.log(`🚀 Gateway is running on: ${GATEWAY_URL}${SERVER_GLOBAL_PREFIX}`)
 }
 
 bootstrap()
