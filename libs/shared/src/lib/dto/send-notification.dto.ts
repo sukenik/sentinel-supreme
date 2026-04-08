@@ -1,4 +1,5 @@
-import { eNotificationChannel, eSeverity, iNotificationPayload } from '@sentinel-supreme/shared'
+import { eNotificationChannel, iNotificationPayload } from '../types'
+import { eSeverity } from '../rules.types'
 import { IsArray, IsEnum, IsNotEmpty, IsObject, IsOptional, IsString } from 'class-validator'
 
 export class SendNotificationDto implements iNotificationPayload {
