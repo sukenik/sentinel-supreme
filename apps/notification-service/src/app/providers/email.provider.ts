@@ -3,10 +3,11 @@ import { ConfigService } from '@nestjs/config'
 import { ENV_VARS } from '@sentinel-supreme/shared'
 import { SendNotificationDto } from '@sentinel-supreme/shared/server'
 import * as nodemailer from 'nodemailer'
+import { iNotificationProvider } from './notification-provider.interface'
 
 @Injectable()
-export class EmailService implements OnModuleInit {
-	private readonly logger = new Logger(EmailService.name)
+export class EmailProvider implements OnModuleInit, iNotificationProvider {
+	private readonly logger = new Logger(EmailProvider.name)
 	private transporter!: nodemailer.Transporter
 
 	constructor(private readonly config: ConfigService) {}
@@ -40,7 +41,7 @@ export class EmailService implements OnModuleInit {
 		}
 	}
 
-	async sendCriticalAlert(data: SendNotificationDto) {
+	async send(data: SendNotificationDto) {
 		const { title, message, severity } = data
 
 		const mailOptions = {

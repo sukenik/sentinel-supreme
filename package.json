@@ -5,10 +5,10 @@
 	"private": true,
 	"scripts": {
 		"start": "nx run-many --target=serve --all --parallel",
-		"start:gateway": "nx serve gateway",
+		"start:gateway": "nx serve gateway --output-style=stream",
 		"start:dashboard": "nx serve dashboard",
-		"start:log-processor": "nx serve log-processor",
-		"start:notification-service": "nx serve notification-service",
+		"start:log-processor": "nx serve log-processor --output-style=stream",
+		"start:notification-service": "nx serve notification-service --output-style=stream",
 		"build:gateway": "nx build gateway",
 		"build:dashboard": "nx build dashboard",
 		"build:log-processor": "nx build log-processor",
