@@ -3,7 +3,7 @@ import { ConfigModule } from '@nestjs/config'
 import * as Joi from 'joi'
 import { AppController } from './app.controller'
 import { AppService } from './app.service'
-import { EmailModule } from './email/email.module'
+import { NotificationOrchestratorModule } from './notification-orchestrator/notification-orchestrator.module'
 
 @Module({
 	imports: [
@@ -18,10 +18,11 @@ import { EmailModule } from './email/email.module'
 				SMTP_HOST: Joi.string().required(),
 				SMTP_PORT: Joi.number().required(),
 				SMTP_USER: Joi.string().required(),
-				SMTP_PASS: Joi.string().required()
+				SMTP_PASS: Joi.string().required(),
+				SLACK_WEBHOOK_URL: Joi.string().required()
 			})
 		}),
-		EmailModule
+		NotificationOrchestratorModule
 	],
 	controllers: [AppController],
 	providers: [AppService]

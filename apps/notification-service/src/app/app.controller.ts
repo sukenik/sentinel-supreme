@@ -3,13 +3,13 @@ import { RmqContext } from '@nestjs/microservices/ctx-host'
 import { Ctx, MessagePattern, Payload } from '@nestjs/microservices/decorators'
 import { NOTIFICATION_PATTERNS } from '@sentinel-supreme/shared'
 import { SendNotificationDto } from '@sentinel-supreme/shared/server'
-import { EmailService } from './email/email.service'
+import { NotificationOrchestrator } from './notification-orchestrator/notification-orchestrator.service'
 
 @Controller()
 export class AppController {
 	private readonly logger: Logger = new Logger(AppController.name)
 
-	constructor(private readonly emailService: EmailService) {}
+	constructor(private readonly orchestrator: NotificationOrchestrator) {}
 
 	@MessagePattern(NOTIFICATION_PATTERNS.SEND)
 	async handleNotification(@Payload() data: SendNotificationDto, @Ctx() context: RmqContext) {
@@ -19,7 +19,7 @@ export class AppController {
 		try {
 			this.logger.log(`Processing: ${data.title}`)
 
-			await this.emailService.sendCriticalAlert(data)
+			await this.orchestrator.process(data)
 
 			channel.ack(originalMsg)
 		} catch (error) {
