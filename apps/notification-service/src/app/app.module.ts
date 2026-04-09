@@ -19,7 +19,8 @@ import { NotificationOrchestratorModule } from './notification-orchestrator/noti
 				SMTP_PORT: Joi.number().required(),
 				SMTP_USER: Joi.string().required(),
 				SMTP_PASS: Joi.string().required(),
-				SLACK_WEBHOOK_URL: Joi.string().required()
+				SLACK_WEBHOOK_URL: Joi.string().required(),
+				DISCORD_WEBHOOK_URL: Joi.string().required()
 			})
 		}),
 		NotificationOrchestratorModule
