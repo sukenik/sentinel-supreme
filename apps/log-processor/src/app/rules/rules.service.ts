@@ -50,7 +50,11 @@ export class RulesEngineService {
 				severity: eSeverity.CRITICAL,
 				title: `Critical Error in ${log.service}`,
 				message: log.message,
-				channels: [eNotificationChannel.EMAIL, eNotificationChannel.SLACK]
+				channels: [
+					eNotificationChannel.EMAIL,
+					eNotificationChannel.SLACK,
+					eNotificationChannel.DISCORD
+				]
 			})
 		}
 

@@ -1,6 +1,7 @@
 import { Injectable, Logger } from '@nestjs/common'
 import { eNotificationChannel } from '@sentinel-supreme/shared'
 import { SendNotificationDto } from '@sentinel-supreme/shared/server'
+import { DiscordProvider } from '../providers/discord.provider'
 import { EmailProvider } from '../providers/email.provider'
 import { SlackProvider } from '../providers/slack.provider'
 
@@ -10,7 +11,8 @@ export class NotificationOrchestrator {
 
 	constructor(
 		private readonly emailProvider: EmailProvider,
-		private readonly slackProvider: SlackProvider
+		private readonly slackProvider: SlackProvider,
+		private readonly discordProvider: DiscordProvider
 	) {}
 
 	async process(data: SendNotificationDto) {
@@ -22,6 +24,8 @@ export class NotificationOrchestrator {
 					return this.emailProvider.send(data)
 				case eNotificationChannel.SLACK:
 					return this.slackProvider.send(data)
+				case eNotificationChannel.DISCORD:
+					return this.discordProvider.send(data)
 				default:
 					this.logger.warn(`Unknown channel: ${channel}`)
 					return Promise.resolve()
