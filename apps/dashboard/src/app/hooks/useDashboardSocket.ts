@@ -4,6 +4,7 @@ import {
 	GATEWAY_ROUTES,
 	iAlert,
 	iLog,
+	twentyFourHoursAgo,
 	WS_EVENTS
 } from '@sentinel-supreme/shared'
 import { useCallback, useEffect, useState } from 'react'
@@ -17,7 +18,6 @@ import { useStatStore } from '../store/useStatStore'
 
 const getCriticalTodayAlerts = (alerts: iAlert[]) => {
 	const criticalAlerts = alerts.filter(({ severity }) => severity === eSeverity.CRITICAL)
-	const twentyFourHoursAgo = new Date(Date.now() - 24 * 60 * 60 * 1000)
 
 	return criticalAlerts.filter((alert) => {
 		const alertDate = new Date(alert.createdAt)
@@ -36,10 +36,14 @@ export const useDashboardSocket = () => {
 
 	const fetchInitialData = useCallback(async () => {
 		try {
-			const { data: alertsData } = await api.get(GATEWAY_ROUTES.ALERTS)
-			const rules = await fetchRules()
+			const [alertsRes, rules, logsCountRes] = await Promise.all([
+				api.get(GATEWAY_ROUTES.ALERTS),
+				fetchRules(),
+				api.get(`${GATEWAY_ROUTES.LOG_SEARCH}${GATEWAY_ROUTES.LOG_COUNT}`)
+			])
 
-			const alerts = alertsData.data as iAlert[]
+			const alerts = alertsRes.data.data as iAlert[]
+			const totalLogsLastDay = logsCountRes.data.data as number
 			const activeRules = rules.filter(({ isActive }) => isActive)
 
 			const criticalTodayAlerts = getCriticalTodayAlerts(alerts)
@@ -47,6 +51,7 @@ export const useDashboardSocket = () => {
 			setAlerts(alerts)
 			updateStats({
 				activeRules: activeRules.length,
+				totalLogsLastDay: totalLogsLastDay,
 				criticalAlertsToday: criticalTodayAlerts.length
 			})
 		} catch (err) {

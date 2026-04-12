@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common'
 import { InjectModel } from '@nestjs/mongoose'
-import { eLogLevel, iLogSearchReturnType } from '@sentinel-supreme/shared'
+import { eLogLevel, iLogSearchReturnType, twentyFourHoursAgo } from '@sentinel-supreme/shared'
 import { Log, LogSearchDto } from '@sentinel-supreme/shared/server'
 import { Model, QueryFilter, Types } from 'mongoose'
 
@@ -96,5 +96,11 @@ export class LogSearchService {
 				limit
 			}
 		}
+	}
+
+	async getLogsCountLast24Hours(): Promise<number> {
+		return this.logModel.countDocuments({
+			createdAt: { $gte: twentyFourHoursAgo }
+		})
 	}
 }
