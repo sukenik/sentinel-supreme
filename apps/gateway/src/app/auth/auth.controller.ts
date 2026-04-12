@@ -1,10 +1,9 @@
 import { Body, Controller, Post, Req, Res, UnauthorizedException, UseGuards } from '@nestjs/common'
 import { GATEWAY_ROUTES, iAuthResponse } from '@sentinel-supreme/shared'
-import { LoginDto } from '@sentinel-supreme/shared/server'
+import { JwtAuthGuard, LoginDto } from '@sentinel-supreme/shared/server'
 import type { Request, Response } from 'express'
 import { REFRESH_TOKEN_COOKIE_HEADER } from '../consts'
 import { AuthService } from './auth.service'
-import { JwtAuthGuard } from './guards/jwt-auth.guard'
 
 @Controller(GATEWAY_ROUTES.AUTH)
 export class AuthController {

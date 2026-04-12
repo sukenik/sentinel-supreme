@@ -10,11 +10,14 @@ import {
 	UseGuards
 } from '@nestjs/common'
 import { eUserRole, GATEWAY_ROUTES, iUser } from '@sentinel-supreme/shared'
-import { RegisterDto, UpdateDto } from '@sentinel-supreme/shared/server'
+import {
+	JwtAuthGuard,
+	RegisterDto,
+	Roles,
+	RolesGuard,
+	UpdateDto
+} from '@sentinel-supreme/shared/server'
 import { GetUser } from '../auth/decorators/get-user.decorator'
-import { Roles } from '../auth/decorators/roles.decorator'
-import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard'
-import { RolesGuard } from '../auth/guards/roles.guard'
 import { UsersService } from './users.service'
 
 @Controller(GATEWAY_ROUTES.USERS)
