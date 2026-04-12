@@ -10,7 +10,8 @@ export enum eSeverity {
 	LOW = 'LOW',
 	MEDIUM = 'MEDIUM',
 	HIGH = 'HIGH',
-	CRITICAL = 'CRITICAL'
+	CRITICAL = 'CRITICAL',
+	ALL = 'ALL'
 }
 
 export enum eRuleType {

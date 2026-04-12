@@ -1,7 +1,9 @@
 import { eLogLevel, eUserRole, iUser } from '@sentinel-supreme/shared'
 import { LayoutDashboard, Search, Server, Settings, ShieldAlert } from 'lucide-react'
 import DashboardView from './components/DashboardView'
-import { eMenuOptions } from './consts'
+import NotificationManager from './components/NotificationsManager'
+import UserManager from './components/UserManager'
+import { eMenuOptions, eSettingsMenu } from './consts'
 import InvestigationPage from './pages/InvestigationPage'
 import MachinesPage from './pages/MachinesPage'
 import RulesPage from './pages/RulesPage'
@@ -111,5 +113,16 @@ export const getIconByMenuOption = (option: eMenuOptions) => {
 			return <Settings {...props} />
 		default:
 			return <LayoutDashboard {...props} />
+	}
+}
+
+export const getComponentBySettingsMenu = (menu: eSettingsMenu) => {
+	switch (menu) {
+		case eSettingsMenu.USER:
+			return UserManager
+		case eSettingsMenu.NOTIFICATION:
+			return NotificationManager
+		default:
+			return UserManager
 	}
 }

@@ -3,6 +3,7 @@ import { DL_CONFIG, NOTIFICATIONS_DLX, QUEUES } from '@sentinel-supreme/shared'
 import {
 	RedisModule,
 	SharedAlertsModule,
+	SharedNotificationsPreferencesModule,
 	SharedRmqModule,
 	SharedRulesModule
 } from '@sentinel-supreme/shared/server'
@@ -22,7 +23,8 @@ import { RulesEngineService } from './rules.service'
 		RedisModule,
 		ExternalApiModule,
 		SharedAlertsModule,
-		SharedRulesModule
+		SharedRulesModule,
+		SharedNotificationsPreferencesModule
 	],
 	providers: [RulesEngineService],
 	exports: [RulesEngineService]

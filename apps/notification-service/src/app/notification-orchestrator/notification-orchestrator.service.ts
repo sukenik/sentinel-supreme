@@ -16,20 +16,27 @@ export class NotificationOrchestrator {
 	) {}
 
 	async process(data: SendNotificationDto) {
-		const channels = data.channels || [eNotificationChannel.EMAIL]
+		const { recipients } = data
 
-		const promises = channels.map((channel) => {
-			switch (channel) {
-				case eNotificationChannel.EMAIL:
-					return this.emailProvider.send(data)
-				case eNotificationChannel.SLACK:
-					return this.slackProvider.send(data)
-				case eNotificationChannel.DISCORD:
-					return this.discordProvider.send(data)
-				default:
-					this.logger.warn(`Unknown channel: ${channel}`)
-					return Promise.resolve()
+		if (!recipients || recipients.length === 0) {
+			this.logger.warn('No recipients found for notification')
+			return
+		}
+
+		const providersMap = {
+			[eNotificationChannel.EMAIL]: this.emailProvider,
+			[eNotificationChannel.SLACK]: this.slackProvider,
+			[eNotificationChannel.DISCORD]: this.discordProvider
+		}
+
+		const promises = Object.entries(providersMap).map(([channel, provider]) => {
+			const channelRecipients = recipients.filter((r) => r.channel === channel)
+
+			if (channelRecipients.length > 0) {
+				return provider.send({ ...data, recipients: channelRecipients })
 			}
+
+			return Promise.resolve()
 		})
 
 		await Promise.all(promises)

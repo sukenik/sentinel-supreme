@@ -1,6 +1,6 @@
-import { eNotificationChannel, iNotificationPayload } from '../types'
+import { IsArray, IsEnum, IsNotEmpty, IsString } from 'class-validator'
 import { eSeverity } from '../rules.types'
-import { IsArray, IsEnum, IsNotEmpty, IsObject, IsOptional, IsString } from 'class-validator'
+import { iNotificationPayload, iNotificationRecipient } from '../types'
 
 export class SendNotificationDto implements iNotificationPayload {
 	@IsEnum(eSeverity)
@@ -16,15 +16,5 @@ export class SendNotificationDto implements iNotificationPayload {
 	message!: string
 
 	@IsArray()
-	@IsEnum(eNotificationChannel, { each: true })
-	@IsNotEmpty()
-	channels!: eNotificationChannel[]
-
-	@IsOptional()
-	@IsString()
-	userId?: string
-
-	@IsOptional()
-	@IsObject()
-	metadata?: any
+	recipients!: iNotificationRecipient[]
 }

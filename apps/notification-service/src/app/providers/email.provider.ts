@@ -42,11 +42,15 @@ export class EmailProvider implements OnModuleInit, iNotificationProvider {
 	}
 
 	async send(data: SendNotificationDto) {
-		const { title, message, severity } = data
+		const { title, message, severity, recipients } = data
+
+		const emails = recipients.map((r) => r.userEmail)
+
+		if (emails.length === 0) return
 
 		const mailOptions = {
 			from: '"Sentinel Supreme 🛡️" <alerts@sentinel-supreme.io>',
-			to: 'admin@sentinel-supreme.io',
+			to: emails.join(','),
 			subject: `[${severity.toUpperCase()}] ${title}`,
 			html: `
 				<div style="font-family: sans-serif; border: 1px solid #e11d48; padding: 20px; border-radius: 8px; max-width: 600px;">

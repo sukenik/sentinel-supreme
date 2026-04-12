@@ -6,6 +6,7 @@ import {
 	MongoModule,
 	PostgresModule,
 	RedisModule,
+	SharedNotificationsPreferencesModule,
 	SharedRulesModule
 } from '@sentinel-supreme/shared/server'
 import Joi from 'joi'
@@ -17,7 +18,6 @@ import { EventsModule } from './events/events.module'
 import { IngestionModule } from './ingestion/ingestion.module'
 import { LogSearchModule } from './log-search/log-search.module'
 import { MachinesModule } from './machines/machines.module'
-import { NotificationsModule } from './notifications/notifications.module'
 import { StreamingModule } from './streaming/streaming.module'
 import { UsersModule } from './users/users.module'
 
@@ -74,7 +74,7 @@ import { UsersModule } from './users/users.module'
 		AlertsModule,
 		SharedRulesModule,
 		LogSearchModule,
-		NotificationsModule
+		SharedNotificationsPreferencesModule
 	],
 	controllers: [AppController],
 	providers: [

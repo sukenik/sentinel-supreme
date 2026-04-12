@@ -11,4 +11,9 @@ export enum eMenuOptions {
 	SETTINGS = 'Settings'
 }
 
+export enum eSettingsMenu {
+	USER = 'User',
+	NOTIFICATION = 'Notification'
+}
+
 export const SIDEBAR_COLLAPSED_LOCAL_STORAGE = 'sidebar-collapsed'

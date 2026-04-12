@@ -118,14 +118,25 @@ export interface iLogSearchReturnType {
 export enum eNotificationChannel {
 	EMAIL = 'EMAIL',
 	SLACK = 'SLACK',
-	DISCORD = 'DISCORD'
+	DISCORD = 'DISCORD',
+	GLOBAL = 'GLOBAL'
+}
+
+export interface iNotificationRecipient {
+	userEmail: string
+	channel: eNotificationChannel
+}
+
+export interface iNotificationPreference {
+	userEmail: string
+	severity: eSeverity
+	channel: eNotificationChannel
+	isEnabled: boolean
 }
 
 export interface iNotificationPayload {
 	severity: eSeverity
 	title: string
 	message: string
-	channels: eNotificationChannel[]
-	userId?: string
-	metadata?: any
+	recipients: iNotificationRecipient[]
 }
