@@ -1,6 +1,6 @@
 import { GATEWAY_ROUTES, iMachine } from '@sentinel-supreme/shared'
 import { Check, Copy, Edit2, Trash2 } from 'lucide-react'
-import { FC, MouseEvent, useEffect, useState } from 'react'
+import { ChangeEvent, FC, MouseEvent, useEffect, useState } from 'react'
 import api from '../api/axiosInstance'
 import ConfirmModal from '../components/ConfirmModal'
 import Tooltip from '../components/Tooltip'
@@ -34,6 +34,11 @@ const MachinesPage: FC = () => {
 		navigator.clipboard.writeText(key)
 		setCopiedId(id)
 		setTimeout(() => setCopiedId(null), 2000)
+	}
+
+	const handleCopyClick = (e: MouseEvent) => {
+		const [apiKey, id] = e.currentTarget.id.split(',')
+		handleCopyKey(apiKey, id)
 	}
 
 	const handleOpenRegister = () => {
@@ -100,6 +105,18 @@ const MachinesPage: FC = () => {
 		}
 	}
 
+	const handleMachineEdit = (e: ChangeEvent<HTMLInputElement>) => {
+		setNewMachineName(e.target.value)
+	}
+
+	const handleCloseRegisterModal = () => {
+		setShowRegisterModal(false)
+	}
+
+	const handleCloseConfirm = () => {
+		setDeleteMachineId(undefined)
+	}
+
 	return (
 		<div className='p-6 bg-slate-900 h-full text-blue-100 flex flex-col border border-slate-800 rounded-xl'>
 			<div className='flex justify-between items-center mb-6 h-10'>
@@ -136,7 +153,8 @@ const MachinesPage: FC = () => {
 											{copiedId === m.id ? m.apiKey : '••••••••••••••••'}
 										</code>
 										<button
-											onClick={() => handleCopyKey(m.apiKey, m.id)}
+											id={`${m.apiKey},${m.id}`}
+											onClick={handleCopyClick}
 											className='text-slate-500 hover:text-cyan-400 transition-colors cursor-pointer'
 										>
 											{copiedId === m.id ? (
@@ -200,12 +218,12 @@ const MachinesPage: FC = () => {
 							type='text'
 							className='w-full bg-slate-800 border border-slate-700 rounded-lg px-4 py-2 mb-6 focus:ring-2 focus:ring-cyan-500 text-white outline-none transition-all'
 							value={newMachineName}
-							onChange={(e) => setNewMachineName(e.target.value)}
+							onChange={handleMachineEdit}
 							placeholder='Machine Name (e.g. AWS-Lambda-01)'
 						/>
 						<div className='flex gap-4'>
 							<button
-								onClick={() => setShowRegisterModal(false)}
+								onClick={handleCloseRegisterModal}
 								className='flex-1 px-4 py-2 text-slate-400 hover:text-white transition-colors cursor-pointer'
 							>
 								{'Cancel'}
@@ -222,7 +240,7 @@ const MachinesPage: FC = () => {
 			)}
 			{deleteMachineId && (
 				<ConfirmModal
-					onClose={() => setDeleteMachineId(undefined)}
+					onClose={handleCloseConfirm}
 					onConfirm={confirmDelete}
 					title={'Confirm Machine Deletion'}
 					message={
