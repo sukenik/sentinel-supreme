@@ -1,5 +1,5 @@
 import { iUser } from '@sentinel-supreme/shared'
-import { Check, Edit2, Trash2, X } from 'lucide-react' // ייבוא האייקונים
+import { Check, Edit2, Trash2, X } from 'lucide-react'
 import { ChangeEvent, FC, MouseEvent } from 'react'
 import { getStyleByRole } from '../utils'
 import Tooltip from './Tooltip'

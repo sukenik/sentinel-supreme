@@ -21,13 +21,13 @@ const Tooltip: FC<iProps> = ({ text, children, position = 'top', show = true }) 
 	}
 
 	return (
-		<div className='group relative inline-flex items-center justify-center'>
+		<div className='group/tooltip relative inline-flex items-center justify-center'>
 			{children}
 			<div
 				className={`
                 absolute ${positionClasses[position]} 
                 px-2.5 py-1.5 bg-slate-800 text-white text-xs font-medium rounded-md 
-                whitespace-nowrap opacity-0 group-hover:opacity-100 
+                whitespace-nowrap opacity-0 group-hover/tooltip:opacity-100 
                 transition-all duration-200 pointer-events-none
                 border border-slate-700 shadow-2xl z-9999
             `}
