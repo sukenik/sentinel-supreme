@@ -23,6 +23,7 @@ export class EmailProvider implements OnModuleInit, iNotificationProvider {
 			return
 		}
 
+		// TODO: Change for prod!
 		this.transporter = nodemailer.createTransport({
 			host: host,
 			port: port,

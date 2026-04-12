@@ -38,6 +38,7 @@ const HomePage: FC = () => {
 		} catch (err) {
 			console.error('Server logout failed', err)
 		} finally {
+			setOpenOption(eMenuOptions.DASHBOARD)
 			logout()
 		}
 	}
@@ -152,7 +153,7 @@ const HomePage: FC = () => {
 					</div>
 				</header>
 				<section className='flex-1 p-8 overflow-hidden flex flex-col'>
-					{<OpenComponent />}
+					<OpenComponent />
 				</section>
 			</main>
 		</div>
