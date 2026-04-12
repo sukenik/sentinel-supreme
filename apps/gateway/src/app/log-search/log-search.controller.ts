@@ -12,4 +12,9 @@ export class LogsSearchController {
 	async searchLogs(@Query() query: LogSearchDto) {
 		return this.logsSearchService.search(query)
 	}
+
+	@Get(GATEWAY_ROUTES.LOG_COUNT)
+	async getLogCount() {
+		return this.logsSearchService.getLogsCountLast24Hours()
+	}
 }

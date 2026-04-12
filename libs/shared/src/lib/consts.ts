@@ -96,7 +96,8 @@ export const GATEWAY_ROUTES = {
 	LOG_SEARCH: '/log-search',
 	SEARCH: '/search',
 	NOTIFICATIONS: '/notifications',
-	GLOBAL_MUTE: '/global-mute'
+	GLOBAL_MUTE: '/global-mute',
+	LOG_COUNT: '/log-count'
 }
 
 export const REDIS_CHANNELS = {
