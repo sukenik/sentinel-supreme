@@ -27,11 +27,13 @@ const RuleLogicFields = () => {
 					{...register('severity')}
 					className='w-full bg-slate-800 border border-slate-700 rounded-lg p-2 text-white outline-none focus:border-indigo-500 cursor-pointer'
 				>
-					{Object.values(eSeverity).map((s) => (
-						<option key={s} value={s}>
-							{s.toUpperCase()}
-						</option>
-					))}
+					{[eSeverity.LOW, eSeverity.MEDIUM, eSeverity.HIGH, eSeverity.CRITICAL].map(
+						(s) => (
+							<option key={s} value={s}>
+								{s.toUpperCase()}
+							</option>
+						)
+					)}
 				</select>
 			</div>
 			<div className='col-span-2 p-4 bg-slate-950/50 rounded-xl border border-slate-800 space-y-4'>

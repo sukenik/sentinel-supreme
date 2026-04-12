@@ -2,13 +2,14 @@ import { InjectRedis } from '@nestjs-modules/ioredis'
 import { Inject, Injectable, Logger } from '@nestjs/common'
 import { ClientProxy } from '@nestjs/microservices'
 import {
-	eLogLevel,
-	eNotificationChannel,
 	eRuleOperator,
 	eRuleType,
 	eSeverity,
 	iAlert,
 	iLog,
+	iNotificationPayload,
+	iNotificationPreference,
+	iNotificationRecipient,
 	iRateLimitRule,
 	iReputationData,
 	LOG_PATTERNS,
@@ -17,7 +18,11 @@ import {
 	REDIS_SUBSCRIBER,
 	tRule
 } from '@sentinel-supreme/shared'
-import { AlertsService, RulesManagerService } from '@sentinel-supreme/shared/server'
+import {
+	AlertsService,
+	NotificationsPreferencesService,
+	RulesManagerService
+} from '@sentinel-supreme/shared/server'
 import Redis from 'ioredis'
 import { firstValueFrom } from 'rxjs'
 import { v4 as uuidv4 } from 'uuid'
@@ -28,6 +33,8 @@ import { ExternalApiService } from '../external-api/external-api.service'
 export class RulesEngineService {
 	private readonly logger = new Logger(RulesEngineService.name)
 	private rules: tRule[] = []
+	private notificationsPreferences: iNotificationPreference[] = []
+	private mutedUsers: Set<string> = new Set()
 
 	constructor(
 		@Inject(ALERTS_CLIENT) private readonly alertsClient: ClientProxy,
@@ -36,28 +43,31 @@ export class RulesEngineService {
 		@Inject(REDIS_SUBSCRIBER) private readonly redisSub: Redis,
 		private readonly externalApi: ExternalApiService,
 		private readonly alertsService: AlertsService,
-		private readonly rulesManager: RulesManagerService
+		private readonly rulesManager: RulesManagerService,
+		private readonly notificationsPreferencesService: NotificationsPreferencesService
 	) {}
 
 	async onModuleInit() {
-		await this.refreshRules()
+		await Promise.all([
+			this.refreshRules(),
+			this.refreshNotificationsPreferences(),
+			this.loadInitialMutedUsers()
+		])
 		this.initSubscriber()
 	}
 
-	async evaluateLog(log: iLog): Promise<iAlert[]> {
-		if (log.level === eLogLevel.ERROR) {
-			this.notificationsClient.emit(NOTIFICATION_PATTERNS.SEND, {
-				severity: eSeverity.CRITICAL,
-				title: `Critical Error in ${log.service}`,
-				message: log.message,
-				channels: [
-					eNotificationChannel.EMAIL,
-					eNotificationChannel.SLACK,
-					eNotificationChannel.DISCORD
-				]
-			})
+	private async loadInitialMutedUsers() {
+		try {
+			this.logger.log('🔄 Loading initial global mute states...')
+			const mutedConfigs = await this.notificationsPreferencesService.getAllMutedUsers()
+			this.mutedUsers = new Set(mutedConfigs.map((c) => c.userEmail))
+			this.logger.log(`✅ Loaded ${this.mutedUsers.size} muted users.`)
+		} catch (error) {
+			this.logger.error('❌ Failed to load muted users:', error)
 		}
+	}
 
+	async evaluateLog(log: iLog): Promise<iAlert[]> {
 		const alerts: iAlert[] = []
 
 		for (const rule of this.rules.filter((r) => r.isActive)) {
@@ -80,6 +90,45 @@ export class RulesEngineService {
 		return alerts
 	}
 
+	private dispatchNotification(severity: eSeverity, title: string, message: string) {
+		const relevantPrefs = this.notificationsPreferences.filter(
+			(p) => p.severity === severity && p.isEnabled
+		)
+
+		const activeRecipients = relevantPrefs
+			.filter((p) => !this.mutedUsers.has(p.userEmail))
+			.map((p) => ({
+				userEmail: p.userEmail,
+				channel: p.channel
+			})) as iNotificationRecipient[]
+
+		if (activeRecipients.length > 0) {
+			this.notificationsClient.emit(NOTIFICATION_PATTERNS.SEND, {
+				severity,
+				title,
+				message,
+				recipients: activeRecipients
+			} as iNotificationPayload)
+		}
+	}
+
+	private async refreshNotificationsPreferences() {
+		try {
+			this.logger.log('🔄 Fetching notification preferences from Postgres...')
+			const notificationPreferences =
+				await this.notificationsPreferencesService.getAllEnabledNotificationPreferences()
+
+			if (notificationPreferences) {
+				this.notificationsPreferences = notificationPreferences
+				this.logger.log(
+					`✅ Loaded ${this.notificationsPreferences.length} notification preferences.`
+				)
+			}
+		} catch (error) {
+			this.logger.error('❌ Failed to refresh notification preferences:', error)
+		}
+	}
+
 	private async refreshRules() {
 		try {
 			this.logger.log('🔄 Fetching rules from Postgres...')
@@ -98,34 +147,53 @@ export class RulesEngineService {
 	}
 
 	private initSubscriber() {
-		this.redisSub.subscribe(REDIS_CHANNELS.RULES_UPDATED, (err) => {
-			if (err) {
-				this.logger.error('❌ Failed to subscribe to rules channel:', err)
-				return
-			}
-			this.logger.log(`📡 Subscribed to [${REDIS_CHANNELS.RULES_UPDATED}] channel.`)
+		const { RULES_UPDATED, NOTIFICATIONS_PREFERENCES_UPDATED, GLOBAL_MUTE_UPDATED } =
+			REDIS_CHANNELS
+		const channels = [RULES_UPDATED, NOTIFICATIONS_PREFERENCES_UPDATED, GLOBAL_MUTE_UPDATED]
+
+		channels.forEach((ch) => {
+			this.redisSub.subscribe(ch, (err) => {
+				if (err) this.logger.error(`❌ Failed to subscribe to ${ch}`, err)
+				else this.logger.log(`📡 Subscribed to [${ch}]`)
+			})
 		})
 
 		this.redisSub.removeAllListeners('message')
 
 		this.redisSub.on('message', async (channel, message) => {
-			if (channel === REDIS_CHANNELS.RULES_UPDATED) {
-				try {
-					this.logger.log('🔔 Rules update received via Redis Pub/Sub.')
+			try {
+				const data = JSON.parse(message)
 
-					const newRules = JSON.parse(message) as tRule[]
-
-					if (Array.isArray(newRules)) {
-						this.rules = newRules
-						this.logger.log(`✅ Cache updated locally with ${this.rules.length} rules.`)
-					}
-				} catch (error) {
-					this.logger.error(
-						'❌ Failed to parse rules from Redis, falling back to DB...',
-						error
-					)
-					await this.refreshRules()
+				if (channel === RULES_UPDATED) {
+					this.rules = data
+					this.logger.log(`✅ Rules Cache updated (${this.rules.length})`)
 				}
+
+				if (channel === NOTIFICATIONS_PREFERENCES_UPDATED) {
+					this.notificationsPreferences = data
+					this.logger.log(
+						`✅ Preferences Cache updated (${this.notificationsPreferences.length})`
+					)
+				}
+
+				if (channel === GLOBAL_MUTE_UPDATED) {
+					const { userEmail, isMuted } = JSON.parse(message)
+
+					if (isMuted) {
+						this.mutedUsers.add(userEmail)
+					} else {
+						this.mutedUsers.delete(userEmail)
+					}
+
+					this.logger.log(`👤 User ${userEmail} mute status changed to: ${isMuted}`)
+				}
+			} catch (error) {
+				this.logger.error(`❌ Failed to parse Redis message from ${channel}`, error)
+				await Promise.all([
+					this.refreshRules(),
+					this.refreshNotificationsPreferences(),
+					this.loadInitialMutedUsers()
+				])
 			}
 		})
 	}
@@ -193,20 +261,14 @@ export class RulesEngineService {
 			logSourceIp: log.sourceIp
 		}
 
-		try {
-			this.logger.log(`🚀 Processing Alert & Broadcast for: ${rule.name}`)
+		await Promise.all([
+			this.alertsService.create(alert),
+			firstValueFrom(this.alertsClient.emit(LOG_PATTERNS.NEW_ALERT, alert))
+		])
 
-			await Promise.all([
-				this.alertsService.create(alert),
-				firstValueFrom(this.alertsClient.emit(LOG_PATTERNS.NEW_ALERT, alert))
-			])
+		this.dispatchNotification(rule.severity, `Alert: ${rule.name}`, alert.message)
 
-			this.logger.log(`✅ Alert ${alert.id} is now Persisted and Broadcasted.`)
-			return alert
-		} catch (error) {
-			this.logger.error(`❌ Critical error in alert pipeline for ${alert.id}`, error)
-			throw error
-		}
+		return alert
 	}
 
 	private checkRule(log: iLog, rule: tRule): boolean {
