@@ -1,4 +1,14 @@
-import { Body, Controller, Get, Logger, Post, UseGuards } from '@nestjs/common'
+import {
+	Body,
+	Controller,
+	Delete,
+	Get,
+	Logger,
+	Param,
+	Patch,
+	Post,
+	UseGuards
+} from '@nestjs/common'
 import { eUserRole, GATEWAY_ROUTES } from '@sentinel-supreme/shared'
 import { JwtAuthGuard, Roles, RolesGuard } from '@sentinel-supreme/shared/server'
 import { GetUser } from '../auth/decorators/get-user.decorator'
@@ -22,5 +32,15 @@ export class MachinesController {
 	@Get()
 	async getAll() {
 		return this.machinesService.getAll()
+	}
+
+	@Delete(':id')
+	async delete(@Param('id') id: string) {
+		return this.machinesService.deleteById(id)
+	}
+
+	@Patch(':id')
+	update(@Param('id') id: string, @Body() body: { name: string }) {
+		return this.machinesService.update(id, body.name)
 	}
 }

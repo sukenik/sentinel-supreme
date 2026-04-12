@@ -1,7 +1,9 @@
 import { eSeverity, tRule } from '@sentinel-supreme/shared'
+import { Edit2, Trash2 } from 'lucide-react'
 import { FC, MouseEvent, useEffect, useState } from 'react'
 import ConfirmModal from '../components/ConfirmModal'
 import RuleModal from '../components/RuleModal/RuleModal'
+import Tooltip from '../components/Tooltip'
 import { useRuleStore } from '../store/useRuleStore'
 import { useStatStore } from '../store/useStatStore'
 import { eToastType, iToastMessage } from '../types'
@@ -24,8 +26,10 @@ const RulesPage: FC = () => {
 			[eSeverity.LOW]: 'bg-blue-500/10 text-blue-400 border border-blue-500/20',
 			[eSeverity.MEDIUM]: 'bg-yellow-500/10 text-yellow-400 border border-yellow-500/20',
 			[eSeverity.HIGH]: 'bg-orange-500/10 text-orange-400 border border-orange-500/20',
-			[eSeverity.CRITICAL]: 'bg-red-500/10 text-red-400 border border-red-500/20'
+			[eSeverity.CRITICAL]: 'bg-red-500/10 text-red-400 border border-red-500/20',
+			[eSeverity.ALL]: ''
 		}
+
 		return colors[sev]
 	}
 
@@ -110,7 +114,7 @@ const RulesPage: FC = () => {
 								{rules.map((rule) => (
 									<tr
 										key={rule.id}
-										className='hover:bg-blue-900/10 transition-colors group'
+										className='group/row hover:bg-blue-900/10 transition-colors group'
 									>
 										<td className='px-6 py-4'>
 											<div className='text-white transition-colors'>
@@ -140,21 +144,29 @@ const RulesPage: FC = () => {
 												/>
 											</button>
 										</td>
-										<td className='px-6 py-4 text-right space-x-2'>
-											<button
-												id={rule.id}
-												onClick={handleEditRule}
-												className='text-slate-400 hover:text-cyan-400 transition-colors text-sm cursor-pointer'
-											>
-												{'Edit'}
-											</button>
-											<button
-												id={rule.id}
-												onClick={handleDeleteRule}
-												className='text-slate-400 hover:text-red-400 transition-colors text-sm cursor-pointer'
-											>
-												{'Delete'}
-											</button>
+										<td className='px-6 py-4 text-right'>
+											<div className='flex justify-end space-x-2'>
+												<div className='opacity-0 group-hover:opacity-100 transition-opacity flex space-x-1'>
+													<Tooltip text='Edit' position='top'>
+														<button
+															id={rule.id}
+															onClick={handleEditRule}
+															className='p-2 text-slate-400 hover:text-cyan-400 hover:bg-cyan-400/10 rounded-full transition-all cursor-pointer'
+														>
+															<Edit2 size={18} />
+														</button>
+													</Tooltip>
+													<Tooltip text='Delete' position='top'>
+														<button
+															id={rule.id}
+															onClick={handleDeleteRule}
+															className='p-2 text-slate-400 hover:text-red-400 hover:bg-red-400/10 rounded-full transition-all cursor-pointer'
+														>
+															<Trash2 size={18} />
+														</button>
+													</Tooltip>
+												</div>
+											</div>
 										</td>
 									</tr>
 								))}
