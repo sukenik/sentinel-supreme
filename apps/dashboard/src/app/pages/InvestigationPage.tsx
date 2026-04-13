@@ -39,8 +39,8 @@ const InvestigationPage: FC = () => {
 	}
 
 	return (
-		<div className='p-6 bg-slate-900 h-full text-blue-100 flex flex-col border border-slate-800 rounded-xl'>
-			<div className='flex flex-col mb-6'>
+		<div className='p-6 bg-slate-900 h-full text-blue-100 flex flex-col border border-slate-800 rounded-xl overflow-y-auto custom-scrollbar'>
+			<div className='flex flex-col mb-6 shrink-0'>
 				<h1 className='text-3xl font-bold tracking-tight'>{'Forensic Investigation'}</h1>
 				<div className='flex gap-3 mt-5'>
 					<input
@@ -121,7 +121,7 @@ const InvestigationPage: FC = () => {
 					</div>
 				</div>
 			</div>
-			<div className='flex-1 overflow-hidden border border-blue-900 rounded-lg bg-slate-800/50 backdrop-blur-sm flex flex-col'>
+			<div className='flex-1 min-h-75 overflow-hidden border border-blue-900 rounded-lg bg-slate-800/50 backdrop-blur-sm flex flex-col shrink-0'>
 				<div className='overflow-y-auto flex-1 custom-scrollbar'>
 					<table className='w-full text-left border-collapse'>
 						<thead className='sticky top-0 z-10 bg-slate-800 shadow-md'>
