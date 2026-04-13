@@ -73,13 +73,9 @@ const NotificationManager: FC = () => {
 
 	return (
 		<div className='h-full flex flex-col animate-in fade-in slide-in-from-top-4 duration-300'>
-			<div className='flex justify-between items-center mb-6 shrink-0 bg-slate-800/50 p-4 rounded-xl border border-slate-700'>
-				<div>
-					<h3 className='text-xl font-bold text-cyan-400'>
-						{'Notification Control Center'}
-					</h3>
-				</div>
-				<div className='flex items-center gap-4 border-l border-slate-700 pl-6'>
+			<div className='flex justify-between items-center mb-4 shrink-0'>
+				<h3 className='text-xl font-bold text-cyan-400'>{'Notification Control Center'}</h3>
+				<div className='flex flex-row gap-2'>
 					<div className='text-right'>
 						<p className='text-xs font-bold text-slate-300 uppercase'>
 							{'Global Mute'}
@@ -96,28 +92,33 @@ const NotificationManager: FC = () => {
 					</button>
 				</div>
 			</div>
-			<div className='flex-1 border border-slate-700 rounded-xl bg-slate-800/30 backdrop-blur-sm overflow-hidden'>
-				<table className='w-full text-left border-collapse'>
-					<thead className='bg-slate-800 shadow-md'>
-						<tr className='text-slate-400 uppercase text-xs tracking-widest'>
-							<th className='px-6 py-4'>{'Severity'}</th>
-							{channels.map((c) => (
-								<th key={c} className='px-6 py-4 text-center'>
-									{c}
-								</th>
-							))}
-						</tr>
-					</thead>
-					<tbody className='divide-y divide-slate-800'>
-						{[eSeverity.LOW, eSeverity.MEDIUM, eSeverity.HIGH, eSeverity.CRITICAL].map(
-							(sev) => (
+			<div className='flex-1 min-h-0 border border-slate-700 rounded-xl bg-slate-800/30 backdrop-blur-sm flex flex-col overflow-hidden'>
+				<div className='overflow-y-auto custom-scrollbar flex-1'>
+					<table className='w-full text-left border-collapse'>
+						<thead className='sticky top-0 z-10 bg-slate-800 shadow-md'>
+							<tr className='text-slate-400 uppercase text-xs tracking-widest'>
+								<th className='px-6 py-4'>{'Severity'}</th>
+								{channels.map((c) => (
+									<th key={c} className='px-6 py-4 text-center'>
+										{c}
+									</th>
+								))}
+							</tr>
+						</thead>
+						<tbody className='divide-y divide-slate-800'>
+							{[
+								eSeverity.LOW,
+								eSeverity.MEDIUM,
+								eSeverity.HIGH,
+								eSeverity.CRITICAL
+							].map((sev) => (
 								<tr key={sev} className='hover:bg-slate-700/20 transition-colors'>
 									<td className='px-6 py-4 font-medium text-slate-200 capitalize'>
 										{sev}
 									</td>
 									{isLoading ? (
 										<td
-											colSpan={4}
+											colSpan={channels.length}
 											className='p-4 text-center animate-pulse text-slate-500'
 										>
 											{'Loading...'}
@@ -144,10 +145,10 @@ const NotificationManager: FC = () => {
 										})
 									)}
 								</tr>
-							)
-						)}
-					</tbody>
-				</table>
+							))}
+						</tbody>
+					</table>
+				</div>
 			</div>
 		</div>
 	)
