@@ -59,8 +59,10 @@ export class RulesEngineService {
 	private async loadInitialMutedUsers() {
 		try {
 			this.logger.log('🔄 Loading initial global mute states...')
+
 			const mutedConfigs = await this.notificationsPreferencesService.getAllMutedUsers()
 			this.mutedUsers = new Set(mutedConfigs.map((c) => c.userEmail))
+
 			this.logger.log(`✅ Loaded ${this.mutedUsers.size} muted users.`)
 		} catch (error) {
 			this.logger.error('❌ Failed to load muted users:', error)

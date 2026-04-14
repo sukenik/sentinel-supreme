@@ -29,7 +29,7 @@ const NotificationManager: FC = () => {
 					api.get(`${GATEWAY_ROUTES.NOTIFICATIONS}/global-mute?userEmail=${user?.email}`)
 				])
 				setPrefs(prefsRes.data.data)
-				setIsGlobalMute(muteRes.data.isMuted)
+				setIsGlobalMute(muteRes.data.data.isMuted)
 			} finally {
 				setIsLoading(false)
 			}
