@@ -2,6 +2,7 @@ import { InjectRedis } from '@nestjs-modules/ioredis'
 import { Inject, Injectable, Logger } from '@nestjs/common'
 import { ClientProxy } from '@nestjs/microservices'
 import {
+	AI_ANALYSIS_PATTERNS,
 	eRuleOperator,
 	eRuleType,
 	eSeverity,
@@ -26,7 +27,7 @@ import {
 import Redis from 'ioredis'
 import { firstValueFrom } from 'rxjs'
 import { v4 as uuidv4 } from 'uuid'
-import { ALERTS_CLIENT, NOTIFICATIONS_CLIENT } from '../consts'
+import { AI_ANALYSIS_CLIENT, ALERTS_CLIENT, NOTIFICATIONS_CLIENT } from '../consts'
 import { ExternalApiService } from '../external-api/external-api.service'
 
 @Injectable()
@@ -39,6 +40,7 @@ export class RulesEngineService {
 	constructor(
 		@Inject(ALERTS_CLIENT) private readonly alertsClient: ClientProxy,
 		@Inject(NOTIFICATIONS_CLIENT) private readonly notificationsClient: ClientProxy,
+		@Inject(AI_ANALYSIS_CLIENT) private readonly aiAnalysisClient: ClientProxy,
 		@InjectRedis() private readonly redis: Redis,
 		@Inject(REDIS_SUBSCRIBER) private readonly redisSub: Redis,
 		private readonly externalApi: ExternalApiService,
@@ -223,6 +225,15 @@ export class RulesEngineService {
 					this.logger.error(`🔥 Brute Force Detected! IP: ${identifier}, Count: ${count}`)
 
 					const reputation = await this.externalApi.getIpReputation(String(identifier))
+
+					// TODO: Change
+					this.aiAnalysisClient.emit(AI_ANALYSIS_PATTERNS.ANALYZE_LOGS, [log]).subscribe({
+						next: (summary) =>
+							this.logger.log(
+								`🤖 AI Insight generated for ${identifier}, summary: ${summary}`
+							),
+						error: (err) => this.logger.error(`❌ AI Analysis emission failed`, err)
+					})
 
 					const reputationMsg =
 						reputation.maliciousCount > 0

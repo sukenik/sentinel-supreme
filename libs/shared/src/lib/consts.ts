@@ -7,7 +7,8 @@ export const appConfig = {
 export const QUEUES = {
 	LOGS: 'log_queue',
 	UI_UPDATES: 'ui_updates_queue',
-	NOTIFICATIONS: 'notifications_queue'
+	NOTIFICATIONS: 'notifications_queue',
+	AI_ANALYSIS: 'ai_analysis_queue'
 }
 
 export const LOG_PATTERNS = {
@@ -18,6 +19,10 @@ export const LOG_PATTERNS = {
 
 export const NOTIFICATION_PATTERNS = {
 	SEND: 'notification.send'
+}
+
+export const AI_ANALYSIS_PATTERNS = {
+	ANALYZE_LOGS: 'analyze_logs'
 }
 
 export const ENV_VARS = {
@@ -50,7 +55,8 @@ export const ENV_VARS = {
 	SMTP_USER: 'SMTP_USER',
 	SMTP_PASS: 'SMTP_PASS',
 	SLACK_WEBHOOK_URL: 'SLACK_WEBHOOK_URL',
-	DISCORD_WEBHOOK_URL: 'DISCORD_WEBHOOK_URL'
+	DISCORD_WEBHOOK_URL: 'DISCORD_WEBHOOK_URL',
+	GEMINI_API_KEY: 'GEMINI_API_KEY'
 }
 
 export const DL_CONFIG = {
@@ -68,6 +74,12 @@ export const NOTIFICATIONS_DLX = {
 	DLX_NAME: 'notifications_dlx',
 	DLQ_NAME: 'notifications_queue_dead_letters',
 	DL_ROUTING_KEY: 'notifications_dead_letter_key'
+}
+
+export const AI_ANALYSIS_DLX = {
+	DLX_NAME: 'ai_analysis_dlx',
+	DLQ_NAME: 'ai_analysis_queue_dead_letters',
+	DL_ROUTING_KEY: 'ai_analysis_dead_letter_key'
 }
 
 export const WS_EVENTS = {
