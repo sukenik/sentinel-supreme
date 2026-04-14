@@ -17,6 +17,9 @@
 		},
 		{
 			"path": "./apps/notification-service"
+		},
+		{
+			"path": "./apps/ai-analysis-service"
 		}
 	]
 }

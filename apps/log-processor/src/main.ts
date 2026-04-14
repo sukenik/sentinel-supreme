@@ -22,7 +22,7 @@ async function bootstrap() {
 	app.useGlobalPipes(new ValidationPipe({ whitelist: true, transform: true }))
 
 	await app.listen()
-	Logger.log('🚀 Log Processor is running')
+	Logger.log('🚀 Log-Processor is listening...')
 }
 
 bootstrap()

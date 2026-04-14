@@ -19,7 +19,7 @@ async function bootstrap() {
 	app.useGlobalPipes(new ValidationPipe({ transform: true, whitelist: true }))
 
 	await app.listen()
-	Logger.log(`🚀 Notification-Service is running`)
+	Logger.log('🚀 Notification-Service is listening...')
 }
 
 bootstrap()
