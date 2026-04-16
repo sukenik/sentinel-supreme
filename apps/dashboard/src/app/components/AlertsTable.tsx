@@ -38,7 +38,9 @@ const AlertsTable: FC<iProps> = ({ alerts }) => {
 						className='bg-slate-800 border border-slate-700 text-sm rounded px-3 py-1 outline-none focus:border-cyan-500 text-slate-200 cursor-pointer'
 					>
 						{Object.values(eSeverity).map((severity) => (
-							<option value={severity}>{severity}</option>
+							<option key={severity} value={severity}>
+								{severity}
+							</option>
 						))}
 					</select>
 				</div>
