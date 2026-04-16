@@ -36,4 +36,7 @@ export class AlertEntity implements iAlert {
 
 	@Column({ nullable: true })
 	logSourceIp?: string
+
+	@Column({ type: 'text', nullable: true })
+	aiInsight?: string
 }

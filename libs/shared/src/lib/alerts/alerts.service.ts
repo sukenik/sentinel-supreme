@@ -24,7 +24,12 @@ export class AlertsService {
 		})
 	}
 
+	// TODO: Decide
 	async markAsRead(id: string): Promise<void> {
 		await this.repo.update(id, { isRead: true })
+	}
+
+	async updateAiInsight(id: string, insight: string): Promise<void> {
+		await this.repo.update(id, { aiInsight: insight })
 	}
 }

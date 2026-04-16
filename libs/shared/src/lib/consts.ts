@@ -8,13 +8,15 @@ export const QUEUES = {
 	LOGS: 'log_queue',
 	UI_UPDATES: 'ui_updates_queue',
 	NOTIFICATIONS: 'notifications_queue',
-	AI_ANALYSIS: 'ai_analysis_queue'
+	AI_ANALYSIS: 'ai_analysis_queue',
+	AI_ANALYSIS_RESULTS: 'ai_analysis_results_queue'
 }
 
 export const LOG_PATTERNS = {
 	NEW_LOG: 'log_message',
 	PROCESSED_LOG: 'processed_log',
-	NEW_ALERT: 'new_alert'
+	NEW_ALERT: 'new_alert',
+	ALERT_UPDATED: 'alert_updated'
 }
 
 export const NOTIFICATION_PATTERNS = {
@@ -22,7 +24,8 @@ export const NOTIFICATION_PATTERNS = {
 }
 
 export const AI_ANALYSIS_PATTERNS = {
-	ANALYZE_LOGS: 'analyze_logs'
+	ANALYZE_LOGS: 'analyze_logs',
+	ANALYSIS_COMPLETED: 'analysis_completed'
 }
 
 export const ENV_VARS = {
@@ -82,9 +85,16 @@ export const AI_ANALYSIS_DLX = {
 	DL_ROUTING_KEY: 'ai_analysis_dead_letter_key'
 }
 
+export const AI_ANALYSIS_RESULTS_DLX = {
+	DLX_NAME: 'ai_analysis_results_dlx',
+	DLQ_NAME: 'ai_analysis_result_queue_dead_letters',
+	DL_ROUTING_KEY: 'ai_analysis_results_dead_letter_key'
+}
+
 export const WS_EVENTS = {
 	LOG_RECEIVED: 'log_received',
-	ALERT_RECEIVED: 'alert_received'
+	ALERT_RECEIVED: 'alert_received',
+	AI_ANALYSIS_RECEIVED: 'ai_analysis_received'
 }
 
 export const WS_ERRORS = {

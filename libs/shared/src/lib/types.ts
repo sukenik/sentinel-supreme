@@ -86,6 +86,7 @@ export interface iAlert {
 	isRead: boolean
 	reputationData?: iReputationData
 	logSourceIp?: string
+	aiInsight?: string
 }
 
 export interface iReputationData {
