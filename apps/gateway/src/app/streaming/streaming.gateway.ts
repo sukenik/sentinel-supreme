@@ -65,4 +65,8 @@ export class DashboardStreamGateway implements OnGatewayConnection, OnGatewayDis
 	emitNewAlert(alert: iAlert) {
 		this.server.emit(WS_EVENTS.ALERT_RECEIVED, alert)
 	}
+
+	emitAlertUpdate(update: { id: string; aiInsight: string }) {
+		this.server.emit(WS_EVENTS.AI_ANALYSIS_RECEIVED, update)
+	}
 }

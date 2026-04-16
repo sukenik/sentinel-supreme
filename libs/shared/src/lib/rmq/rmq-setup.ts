@@ -1,5 +1,12 @@
 import * as amqp from 'amqplib'
-import { AI_ANALYSIS_DLX, DL_CONFIG, LOG_DLX, NOTIFICATIONS_DLX, QUEUES } from '../consts'
+import {
+	AI_ANALYSIS_DLX,
+	AI_ANALYSIS_RESULTS_DLX,
+	DL_CONFIG,
+	LOG_DLX,
+	NOTIFICATIONS_DLX,
+	QUEUES
+} from '../consts'
 
 export async function validateRmqTopology(url: string) {
 	const { DLX_HEADER, DL_ROUTING_KEY_HEADER } = DL_CONFIG
@@ -27,6 +34,14 @@ export async function validateRmqTopology(url: string) {
 		AI_ANALYSIS_DLX.DL_ROUTING_KEY
 	)
 
+	await channel.assertExchange(AI_ANALYSIS_RESULTS_DLX.DLX_NAME, 'fanout', { durable: true })
+	await channel.assertQueue(AI_ANALYSIS_RESULTS_DLX.DLQ_NAME, { durable: true })
+	await channel.bindQueue(
+		AI_ANALYSIS_RESULTS_DLX.DLQ_NAME,
+		AI_ANALYSIS_RESULTS_DLX.DLX_NAME,
+		AI_ANALYSIS_RESULTS_DLX.DL_ROUTING_KEY
+	)
+
 	await channel.assertQueue(QUEUES.LOGS, {
 		durable: true,
 		arguments: {
@@ -48,6 +63,14 @@ export async function validateRmqTopology(url: string) {
 		arguments: {
 			[DLX_HEADER]: AI_ANALYSIS_DLX.DLX_NAME,
 			[DL_ROUTING_KEY_HEADER]: AI_ANALYSIS_DLX.DL_ROUTING_KEY
+		}
+	})
+
+	await channel.assertQueue(QUEUES.AI_ANALYSIS_RESULTS, {
+		durable: true,
+		arguments: {
+			[DLX_HEADER]: AI_ANALYSIS_RESULTS_DLX.DLX_NAME,
+			[DL_ROUTING_KEY_HEADER]: AI_ANALYSIS_RESULTS_DLX.DL_ROUTING_KEY
 		}
 	})
 

@@ -3,6 +3,7 @@ import { ConfigModule } from '@nestjs/config'
 import { ScheduleModule } from '@nestjs/schedule'
 import { MongoModule, PostgresModule, RedisModule } from '@sentinel-supreme/shared/server'
 import * as Joi from 'joi'
+import { AiAnalysisModule } from './aiAnalysis/ai-analysis.module'
 import { AppController } from './app.controller'
 import { AppService } from './app.service'
 import { LogsModule } from './logs/logs.module'
@@ -39,7 +40,8 @@ import { RetentionModule } from './retention/retention.module'
 		RedisModule,
 		PostgresModule,
 		LogsModule,
-		RetentionModule
+		RetentionModule,
+		AiAnalysisModule
 	],
 	controllers: [AppController],
 	providers: [AppService]

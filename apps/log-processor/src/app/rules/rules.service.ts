@@ -78,14 +78,22 @@ export class RulesEngineService {
 			const isMatch = this.checkRule(log, rule)
 
 			if (isMatch) {
-				if (rule.type === eRuleType.RATE_LIMIT) {
-					const rateLimitAlert = await this.handleRateLimit(log, rule)
+				let alert: iAlert | null = null
 
-					if (rateLimitAlert) {
-						alerts.push(rateLimitAlert)
-					}
+				if (rule.type === eRuleType.RATE_LIMIT) {
+					alert = await this.handleRateLimit(log, rule)
 				} else {
-					const alert = await this.saveAlert(log, rule)
+					alert = await this.saveAlert(log, rule)
+				}
+
+				if (alert) {
+					this.logger.log(`🤖 Triggering AI Analysis for alert: ${alert.id}`)
+
+					this.aiAnalysisClient.emit(AI_ANALYSIS_PATTERNS.ANALYZE_LOGS, {
+						logs: [log],
+						alertId: alert.id
+					})
+
 					alerts.push(alert)
 				}
 			}
@@ -225,15 +233,6 @@ export class RulesEngineService {
 					this.logger.error(`🔥 Brute Force Detected! IP: ${identifier}, Count: ${count}`)
 
 					const reputation = await this.externalApi.getIpReputation(String(identifier))
-
-					// TODO: Change
-					this.aiAnalysisClient.emit(AI_ANALYSIS_PATTERNS.ANALYZE_LOGS, [log]).subscribe({
-						next: (summary) =>
-							this.logger.log(
-								`🤖 AI Insight generated for ${identifier}, summary: ${summary}`
-							),
-						error: (err) => this.logger.error(`❌ AI Analysis emission failed`, err)
-					})
 
 					const reputationMsg =
 						reputation.maliciousCount > 0

@@ -17,4 +17,9 @@ export class RmqStreamBridge {
 	async handleNewAlert(@Payload() data: iAlert) {
 		this.logsGateway.emitNewAlert(data)
 	}
+
+	@EventPattern(LOG_PATTERNS.ALERT_UPDATED)
+	async handleAlertUpdate(@Payload() data: { id: string; aiInsight: string }) {
+		this.logsGateway.emitAlertUpdate(data)
+	}
 }
