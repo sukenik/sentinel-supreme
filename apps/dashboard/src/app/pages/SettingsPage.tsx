@@ -39,7 +39,7 @@ const SettingsPage: FC = () => {
 				))}
 			</div>
 			{MenuComponent && (
-				<div className='flex-1 mt-8 '>
+				<div className='flex-1 mt-8'>
 					<MenuComponent />
 				</div>
 			)}
