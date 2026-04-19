@@ -1,6 +1,7 @@
 import { eSeverity, iAlert } from '@sentinel-supreme/shared'
 import { BrainCircuit, ChevronRight, Clock, Network } from 'lucide-react'
 import { FC, MouseEvent } from 'react'
+import ReactMarkdown from 'react-markdown'
 import { eMenuOptions } from '../consts'
 import { useMenuStore } from '../store/useMenuStore'
 
@@ -78,8 +79,37 @@ const AlertRow: FC<iProps> = ({ alert, isExpanded, handleToggleRow }) => {
 									<div className='bg-slate-950/50 border border-slate-800 rounded-lg p-4 min-h-32 max-h-64 overflow-y-auto custom-scrollbar'>
 										{alert.aiInsight ? (
 											<div className='space-y-4'>
-												<div className='text-slate-300 text-sm leading-relaxed whitespace-pre-wrap'>
-													{alert.aiInsight.content}
+												<div className='text-slate-300 text-sm leading-relaxed prose prose-invert prose-sm max-w-none'>
+													<ReactMarkdown
+														components={{
+															h3: ({ node, ...props }) => (
+																<h3
+																	className='text-cyan-400 font-bold mt-4 mb-2 uppercase tracking-tight'
+																	{...props}
+																/>
+															),
+															strong: ({ node, ...props }) => (
+																<strong
+																	className='text-white font-semibold'
+																	{...props}
+																/>
+															),
+															ul: ({ node, ...props }) => (
+																<ul
+																	className='list-disc list-inside space-y-1 text-slate-400'
+																	{...props}
+																/>
+															),
+															hr: ({ node, ...props }) => (
+																<hr
+																	className='border-slate-800 my-4'
+																	{...props}
+																/>
+															)
+														}}
+													>
+														{alert.aiInsight.content}
+													</ReactMarkdown>
 												</div>
 												<div className='flex items-center gap-4 pt-3 border-t border-slate-800/50 text-sm text-slate-500 font-mono'>
 													<span className='bg-blue-500/10 px-2 py-0.5 rounded border border-blue-500/20'>

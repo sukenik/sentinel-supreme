@@ -1,5 +1,6 @@
 import { eLogLevel, eUserRole, iUser } from '@sentinel-supreme/shared'
 import { LayoutDashboard, Search, Server, Settings, ShieldAlert } from 'lucide-react'
+import AiManager from './components/AiManager'
 import DashboardView from './components/DashboardView'
 import NotificationManager from './components/NotificationsManager'
 import UserManager from './components/UserManager'
@@ -122,6 +123,8 @@ export const getComponentBySettingsMenu = (menu: eSettingsMenu) => {
 			return UserManager
 		case eSettingsMenu.NOTIFICATION:
 			return NotificationManager
+		case eSettingsMenu.AI:
+			return AiManager
 		default:
 			return UserManager
 	}
