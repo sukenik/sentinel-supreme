@@ -77,8 +77,18 @@ const AlertRow: FC<iProps> = ({ alert, isExpanded, handleToggleRow }) => {
 									</div>
 									<div className='bg-slate-950/50 border border-slate-800 rounded-lg p-4 min-h-32 max-h-64 overflow-y-auto custom-scrollbar'>
 										{alert.aiInsight ? (
-											<div className='text-slate-300 text-sm leading-relaxed whitespace-pre-wrap'>
-												{alert.aiInsight}
+											<div className='space-y-4'>
+												<div className='text-slate-300 text-sm leading-relaxed whitespace-pre-wrap'>
+													{alert.aiInsight.content}
+												</div>
+												<div className='flex items-center gap-4 pt-3 border-t border-slate-800/50 text-sm text-slate-500 font-mono'>
+													<span className='bg-blue-500/10 px-2 py-0.5 rounded border border-blue-500/20'>
+														{`Tokens: ${alert.aiInsight.tokensUsed}`}
+													</span>
+													<span>
+														{`Generated: ${new Date(alert.aiInsight.generatedAt).toLocaleTimeString()}`}
+													</span>
+												</div>
 											</div>
 										) : (
 											<div className='flex flex-col items-center justify-center h-32 gap-3 text-slate-500 italic text-sm'>

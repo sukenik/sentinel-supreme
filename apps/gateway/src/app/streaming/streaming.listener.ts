@@ -1,6 +1,6 @@
 import { Controller } from '@nestjs/common'
 import { EventPattern, Payload } from '@nestjs/microservices'
-import type { iAlert, iLog } from '@sentinel-supreme/shared'
+import type { iAlert, iAlertUpdate, iLog } from '@sentinel-supreme/shared'
 import { LOG_PATTERNS } from '@sentinel-supreme/shared'
 import { DashboardStreamGateway } from './streaming.gateway'
 
@@ -19,7 +19,7 @@ export class RmqStreamBridge {
 	}
 
 	@EventPattern(LOG_PATTERNS.ALERT_UPDATED)
-	async handleAlertUpdate(@Payload() data: { id: string; aiInsight: string }) {
+	async handleAlertUpdate(@Payload() data: iAlertUpdate) {
 		this.logsGateway.emitAlertUpdate(data)
 	}
 }

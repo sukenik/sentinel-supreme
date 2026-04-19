@@ -1,6 +1,6 @@
 import { Controller, Inject, Logger } from '@nestjs/common'
 import { ClientProxy, Ctx, MessagePattern, Payload, RmqContext } from '@nestjs/microservices'
-import { AI_ANALYSIS_PATTERNS, iLog } from '@sentinel-supreme/shared'
+import { AI_ANALYSIS_PATTERNS, iAlertUpdate, iLog } from '@sentinel-supreme/shared'
 import { AiAnalysisService } from './ai-analysis/ai-analysis.service'
 import { AI_ANALYSIS_CLIENT } from './consts'
 
@@ -24,7 +24,7 @@ export class AppController {
 		try {
 			this.logger.log(`AI Analysis starting for alert: ${data.alertId}`)
 
-			const summary = await this.aiService.analyzeLogs(data.logs)
+			const aiInsight = await this.aiService.analyzeLogs(data.logs)
 
 			channel.ack(originalMsg)
 
@@ -32,8 +32,8 @@ export class AppController {
 
 			this.client.emit(AI_ANALYSIS_PATTERNS.ANALYSIS_COMPLETED, {
 				alertId: data.alertId,
-				summary
-			})
+				aiInsight
+			} as iAlertUpdate)
 		} catch (error) {
 			this.logger.error('AI Analysis failed', error)
 			channel.nack(originalMsg, false, false)

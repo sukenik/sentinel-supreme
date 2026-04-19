@@ -75,6 +75,13 @@ export interface iRegisterUser extends iLoginUser {
 
 export type UpdateUser = Pick<iUser, 'email' | 'password' | 'role'>
 
+export interface iAiInsight {
+	tokensUsed: number
+	generatedAt: string
+	content: string
+	model: string
+}
+
 export interface iAlert {
 	id: string
 	ruleId: string
@@ -86,7 +93,7 @@ export interface iAlert {
 	isRead: boolean
 	reputationData?: iReputationData
 	logSourceIp?: string
-	aiInsight?: string
+	aiInsight?: iAiInsight
 }
 
 export interface iReputationData {
@@ -140,4 +147,9 @@ export interface iNotificationPayload {
 	title: string
 	message: string
 	recipients: iNotificationRecipient[]
+}
+
+export interface iAlertUpdate {
+	alertId: string
+	aiInsight: iAiInsight
 }

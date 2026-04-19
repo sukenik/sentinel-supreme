@@ -10,6 +10,7 @@ import {
 	appConfig,
 	GATEWAY_ROUTES,
 	iAlert,
+	iAlertUpdate,
 	iJwtPayload,
 	iLog,
 	WS_ERRORS,
@@ -66,7 +67,7 @@ export class DashboardStreamGateway implements OnGatewayConnection, OnGatewayDis
 		this.server.emit(WS_EVENTS.ALERT_RECEIVED, alert)
 	}
 
-	emitAlertUpdate(update: { id: string; aiInsight: string }) {
+	emitAlertUpdate(update: iAlertUpdate) {
 		this.server.emit(WS_EVENTS.AI_ANALYSIS_RECEIVED, update)
 	}
 }
