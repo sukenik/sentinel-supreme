@@ -195,7 +195,7 @@ const UserManager: FC = () => {
 						{'+ Add User'}
 					</button>
 				</div>
-				<div className='flex-1 min-h-0 border border-slate-700 rounded-xl bg-slate-800/30 backdrop-blur-sm flex flex-col overflow-hidden'>
+				<div className='flex-1 min-h-75 overflow-hidden border border-slate-700 rounded-xl bg-slate-800/30 backdrop-blur-sm flex flex-col shrink-0'>
 					<div className='overflow-y-auto custom-scrollbar flex-1'>
 						<table className='w-full text-left border-collapse'>
 							<thead className='sticky top-0 z-10 bg-slate-800 shadow-md'>
