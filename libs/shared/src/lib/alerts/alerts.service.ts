@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common'
 import { InjectRepository } from '@nestjs/typeorm'
 import { Repository } from 'typeorm'
-import { iAlert } from '../types'
+import { iAiInsight, iAlert } from '../types'
 import { AlertEntity } from './entities/alert.entity'
 
 @Injectable()
@@ -29,7 +29,7 @@ export class AlertsService {
 		await this.repo.update(id, { isRead: true })
 	}
 
-	async updateAiInsight(id: string, insight: string): Promise<void> {
-		await this.repo.update(id, { aiInsight: insight })
+	async updateAiInsight(id: string, aiInsight: iAiInsight): Promise<void> {
+		await this.repo.update(id, { aiInsight })
 	}
 }

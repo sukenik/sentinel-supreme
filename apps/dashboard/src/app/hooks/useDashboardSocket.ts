@@ -3,6 +3,7 @@ import {
 	eSeverity,
 	GATEWAY_ROUTES,
 	iAlert,
+	iAlertUpdate,
 	iLog,
 	twentyFourHoursAgo,
 	WS_EVENTS
@@ -104,6 +105,10 @@ export const useDashboardSocket = () => {
 		socket.on(WS_EVENTS.ALERT_RECEIVED, (newAlert: iAlert) => {
 			addAlert(newAlert)
 			newAlert.severity === eSeverity.CRITICAL && incrementCritical()
+		})
+
+		socket.on(WS_EVENTS.AI_ANALYSIS_RECEIVED, (update: iAlertUpdate) => {
+			useAlertStore.getState().updateAlert(update.alertId, { aiInsight: update.aiInsight })
 		})
 
 		return () => {

@@ -1,6 +1,6 @@
 import { Column, Entity, PrimaryColumn } from 'typeorm'
 import { eSeverity } from '../../rules.types'
-import type { iAlert, iReputationData } from '../../types'
+import type { iAiInsight, iAlert, iReputationData } from '../../types'
 
 @Entity('alerts')
 export class AlertEntity implements iAlert {
@@ -37,6 +37,6 @@ export class AlertEntity implements iAlert {
 	@Column({ nullable: true })
 	logSourceIp?: string
 
-	@Column({ type: 'text', nullable: true })
-	aiInsight?: string
+	@Column({ type: 'jsonb', nullable: true })
+	aiInsight?: iAiInsight
 }

@@ -13,6 +13,7 @@ import {
 	iNotificationRecipient,
 	iRateLimitRule,
 	iReputationData,
+	iStaticRule,
 	LOG_PATTERNS,
 	NOTIFICATION_PATTERNS,
 	REDIS_CHANNELS,
@@ -71,35 +72,17 @@ export class RulesEngineService {
 		}
 	}
 
-	async evaluateLog(log: iLog): Promise<iAlert[]> {
-		const alerts: iAlert[] = []
-
+	async evaluateLog(log: iLog): Promise<void> {
 		for (const rule of this.rules.filter((r) => r.isActive)) {
 			const isMatch = this.checkRule(log, rule)
+			if (!isMatch) continue
 
-			if (isMatch) {
-				let alert: iAlert | null = null
-
-				if (rule.type === eRuleType.RATE_LIMIT) {
-					alert = await this.handleRateLimit(log, rule)
-				} else {
-					alert = await this.saveAlert(log, rule)
-				}
-
-				if (alert) {
-					this.logger.log(`🤖 Triggering AI Analysis for alert: ${alert.id}`)
-
-					this.aiAnalysisClient.emit(AI_ANALYSIS_PATTERNS.ANALYZE_LOGS, {
-						logs: [log],
-						alertId: alert.id
-					})
-
-					alerts.push(alert)
-				}
+			if (rule.type === eRuleType.RATE_LIMIT) {
+				await this.handleRateLimit(log, rule)
+			} else {
+				await this.handleStaticRule(log, rule)
 			}
 		}
-
-		return alerts
 	}
 
 	private dispatchNotification(severity: eSeverity, title: string, message: string) {
@@ -210,48 +193,63 @@ export class RulesEngineService {
 		})
 	}
 
-	private async handleRateLimit(log: iLog, rule: iRateLimitRule): Promise<iAlert | null> {
+	private async handleStaticRule(log: iLog, rule: iStaticRule) {
+		const alert = await this.saveAlert(log, rule)
+
+		this.aiAnalysisClient.emit(AI_ANALYSIS_PATTERNS.ANALYZE_LOGS, {
+			alertId: alert.id,
+			logs: [log],
+			reason: alert.message
+		})
+	}
+
+	private async handleRateLimit(log: iLog, rule: iRateLimitRule): Promise<void> {
 		const identifier = this.getValueByPath(log, rule.groupBy)
 
 		if (!identifier) {
 			this.logger.warn(`⚠️ Skipping RateLimit Rule [${rule.name}]: Missing ${rule.groupBy}`)
-			return null
+			return
 		}
 
 		const cleanIdentifier = this.sanitizeIdentifier(String(identifier))
-		const redisKey = `rule:${rule.id}:${cleanIdentifier}`
+		const countKey = `rule:${rule.id}:${cleanIdentifier}`
+		const contextKey = `context:${cleanIdentifier}`
 
-		try {
-			const count = await this.redis.incr(redisKey)
+		await this.pushLogToContext(contextKey, log)
+		const count = await this.redis.incr(countKey)
 
-			if (count === 1) {
-				await this.redis.expire(redisKey, rule.windowSeconds)
-			}
-
-			if (count >= rule.limit) {
-				if (count === rule.limit) {
-					this.logger.error(`🔥 Brute Force Detected! IP: ${identifier}, Count: ${count}`)
-
-					const reputation = await this.externalApi.getIpReputation(String(identifier))
-
-					const reputationMsg =
-						reputation.maliciousCount > 0
-							? ` | ⚠️ HIGH RISK: Flagged by ${reputation.maliciousCount} security engines!`
-							: ` | Info: IP appears clean`
-
-					return await this.saveAlert(
-						log,
-						rule,
-						`Brute Force detected from ${identifier}${reputationMsg}`,
-						reputation
-					)
-				}
-			}
-		} catch (error) {
-			this.logger.error(`❌ Error:`, error)
+		if (count === 1) {
+			await this.redis.expire(countKey, rule.windowSeconds)
 		}
 
-		return null
+		if (count === rule.limit) {
+			const reputation = await this.externalApi.getIpReputation(String(identifier))
+			const logBatch = await this.getLogContext(contextKey)
+
+			const alert = await this.saveAlert(
+				log,
+				rule,
+				`Brute Force detected from ${identifier}`,
+				reputation
+			)
+
+			this.aiAnalysisClient.emit(AI_ANALYSIS_PATTERNS.ANALYZE_LOGS, {
+				alertId: alert.id,
+				logs: logBatch,
+				reason: alert.message
+			})
+		}
+	}
+
+	private async pushLogToContext(key: string, log: iLog) {
+		await this.redis.lpush(key, JSON.stringify(log))
+		await this.redis.ltrim(key, 0, 9)
+		await this.redis.expire(key, 600)
+	}
+
+	private async getLogContext(key: string): Promise<iLog[]> {
+		const rawLogs = await this.redis.lrange(key, 0, -1)
+		return rawLogs.map((l) => JSON.parse(l))
 	}
 
 	private async saveAlert(
