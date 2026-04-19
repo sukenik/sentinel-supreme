@@ -106,6 +106,10 @@ export const useDashboardSocket = () => {
 			newAlert.severity === eSeverity.CRITICAL && incrementCritical()
 		})
 
+		socket.on(WS_EVENTS.AI_ANALYSIS_RECEIVED, (update: { id: string; aiInsight: string }) => {
+			useAlertStore.getState().updateAlert(update.id, { aiInsight: update.aiInsight })
+		})
+
 		return () => {
 			socket.disconnect()
 		}
