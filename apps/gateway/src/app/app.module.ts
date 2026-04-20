@@ -3,6 +3,7 @@ import { ConfigModule } from '@nestjs/config'
 import { APP_GUARD } from '@nestjs/core'
 import { ThrottlerGuard, ThrottlerModule } from '@nestjs/throttler'
 import {
+	AiConfigModule,
 	MongoModule,
 	PostgresModule,
 	RedisModule,
@@ -59,7 +60,8 @@ import { UsersModule } from './users/users.module'
 				MONGO_PASSWORD: Joi.string().required(),
 				MONGO_PORT: Joi.number().required(),
 				MONGO_DB: Joi.string().required(),
-				MONGO_HOST: Joi.string().required()
+				MONGO_HOST: Joi.string().required(),
+				GEMINI_API_KEY: Joi.string().required()
 			})
 		}),
 		PostgresModule,
@@ -74,7 +76,8 @@ import { UsersModule } from './users/users.module'
 		AlertsModule,
 		SharedRulesModule,
 		LogSearchModule,
-		SharedNotificationsPreferencesModule
+		SharedNotificationsPreferencesModule,
+		AiConfigModule
 	],
 	controllers: [AppController],
 	providers: [

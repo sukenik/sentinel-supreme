@@ -3,22 +3,25 @@ import { ChatGoogleGenerativeAI } from '@langchain/google-genai'
 import { Injectable } from '@nestjs/common'
 import { ConfigService } from '@nestjs/config'
 import { ENV_VARS, iAiInsight, iLog } from '@sentinel-supreme/shared'
+import { AiConfigService } from '@sentinel-supreme/shared/server'
 
 @Injectable()
 export class AiAnalysisService {
-	private MODEL_NAME = 'gemini-2.5-flash'
-	private model: ChatGoogleGenerativeAI
-
-	constructor(private readonly config: ConfigService) {
-		const geminiApiKey = this.config.getOrThrow<string>(ENV_VARS.GEMINI_API_KEY)
-		this.model = new ChatGoogleGenerativeAI({
-			apiKey: geminiApiKey,
-			model: this.MODEL_NAME,
-			temperature: 0.1
-		})
-	}
+	constructor(
+		private readonly config: ConfigService,
+		private readonly aiConfigService: AiConfigService
+	) {}
 
 	async analyzeLogs(logs: iLog[]): Promise<iAiInsight> {
+		const { id, modelName, temperature, systemMessage } = await this.aiConfigService.get()
+
+		const geminiApiKey = this.config.getOrThrow<string>(ENV_VARS.GEMINI_API_KEY)
+		const dynamicModel = new ChatGoogleGenerativeAI({
+			apiKey: geminiApiKey,
+			model: modelName,
+			temperature
+		})
+
 		const logContext = logs.map((l) => ({
 			timestamp: l.createdAt,
 			level: l.level,
@@ -30,36 +33,8 @@ export class AiAnalysisService {
 
 		const isBatch = logs.length > 1
 
-		const response = await this.model.invoke([
-			new SystemMessage(`
-				You are a Senior SOC (Security Operations Center) Analyst at Sentinel Supreme.
-				Your task is to analyze security logs and provide actionable insights.
-
-				### OUTPUT GUIDELINES:
-				1. **Format**: Use strict Markdown formatting.
-				2. **Tone**: Professional, concise, and technical yet accessible.
-				3. **Sections**: You must include the following three sections:
-
-				---
-				### 📝 SUMMARY
-				[1-2 sentences explaining the detected pattern or event. Use **bold** for key entities like IPs, Usernames, or File Paths.]
-
-				### ⚠️ RISK LEVEL
-				[Specify: **Low**, **Medium**, **High**, or **Critical**]
-				[Briefly explain *why* this risk level was chosen.]
-
-				### 💡 RECOMMENDATION
-				- [Immediate Action 1]
-				- [Immediate Action 2 (if applicable)]
-				
-				---
-				### VISUAL CUES:
-				- Use 🛡️ for system protection notes.
-				- Use 🚩 for red flags.
-				- Use ⚡ for immediate actions.
-
-				**Important**: Output ONLY the Markdown content. Do not include introductory or concluding remarks.
-			`),
+		const response = await dynamicModel.invoke([
+			new SystemMessage(systemMessage),
 			new HumanMessage(`
                 Analyze the following ${isBatch ? 'batch of ' + logs.length : 'single'} logs:
                 ${JSON.stringify(logContext)}
@@ -69,11 +44,13 @@ export class AiAnalysisService {
 		const tokensUsed = response.usage_metadata?.total_tokens || 0
 		const summary = this.extractContent(response.content)
 
+		this.aiConfigService.incrementTokens(id, tokensUsed)
+
 		return {
 			tokensUsed,
 			generatedAt: new Date().toISOString(),
 			content: summary,
-			model: this.MODEL_NAME
+			model: modelName
 		}
 	}
 
