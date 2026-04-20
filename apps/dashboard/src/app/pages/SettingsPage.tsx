@@ -23,7 +23,10 @@ const SettingsPage: FC = () => {
 			</div>
 			<div className='grid grid-cols-1 md:grid-cols-2 gap-6 mt-4'>
 				{Object.values(eSettingsMenu).map((menu) => (
-					<div className='p-6 bg-slate-800/50 border border-slate-700 rounded-xl hover:border-cyan-500/50 transition-colors'>
+					<div
+						key={menu}
+						className='p-6 bg-slate-800/50 border border-slate-700 rounded-xl hover:border-cyan-500/50 transition-colors'
+					>
 						<h3 className='text-lg font-bold mb-2 text-cyan-400'>{`${menu} Management`}</h3>
 						<p className='text-sm text-slate-400 mb-4'>
 							{SETTINGS_MENU_DICT[menu].info}
