@@ -44,7 +44,7 @@ const AiManager: FC = () => {
 		return
 	}, [toastMessage])
 
-	const updateField = async (fields: Partial<iAiConfig>, field?: keyof iAiConfig) => {
+	const updateField = async (fields: Partial<iAiConfig>, field?: string) => {
 		if (!config) return
 		setIsSaving(true)
 		try {
@@ -65,13 +65,13 @@ const AiManager: FC = () => {
 	}
 
 	const handleSaveSystemMessage = () => {
-		updateField({ systemMessage: config!.systemMessage }, 'systemMessage')
+		updateField({ systemMessage: config!.systemMessage }, 'system message')
 	}
 
 	const handleModelChange = async (e: ChangeEvent<HTMLSelectElement>) => {
 		const modelName = e.target.value
 		setConfig({ ...config!, modelName })
-		updateField({ modelName }, 'modelName')
+		updateField({ modelName }, 'model')
 	}
 
 	const handleSystemMessageChange = async (e: ChangeEvent<HTMLTextAreaElement>) => {
@@ -154,7 +154,7 @@ const AiManager: FC = () => {
 						<select
 							value={config.modelName}
 							onChange={handleModelChange}
-							className='w-full bg-slate-900 border border-slate-700 text-cyan-400 text-sm rounded-lg p-2.5 outline-none font-mono cursor-pointer'
+							className='w-full bg-slate-900 border text-sm rounded-lg p-2.5 border-r-10 border-transparent text-cyan-400 outline font-mono cursor-pointer'
 						>
 							{availableModels.length > 0 ? (
 								availableModels.map((m) => (
