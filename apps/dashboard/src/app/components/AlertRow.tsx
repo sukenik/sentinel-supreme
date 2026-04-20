@@ -115,8 +115,11 @@ const AlertRow: FC<iProps> = ({ alert, isExpanded, handleToggleRow }) => {
 													<span className='bg-blue-500/10 px-2 py-0.5 rounded border border-blue-500/20'>
 														{`Tokens: ${alert.aiInsight.tokensUsed}`}
 													</span>
-													<span>
+													<span className='bg-blue-500/10 px-2 py-0.5 rounded border border-blue-500/20'>
 														{`Generated: ${new Date(alert.aiInsight.generatedAt).toLocaleTimeString()}`}
+													</span>
+													<span className='bg-blue-500/10 px-2 py-0.5 rounded border border-blue-500/20'>
+														{`Model: ${alert.aiInsight.model}`}
 													</span>
 												</div>
 											</div>
