@@ -1,3 +1,5 @@
+export * from './lib/ai-config/ai-config.module'
+export * from './lib/ai-config/ai-config.service'
 export * from './lib/alerts/alerts.module'
 export * from './lib/alerts/alerts.service'
 export * from './lib/decorators/roles.decorator'

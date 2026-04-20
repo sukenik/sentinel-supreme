@@ -153,3 +153,12 @@ export interface iAlertUpdate {
 	alertId: string
 	aiInsight: iAiInsight
 }
+
+export interface iAiConfig {
+	id: string
+	modelName: string
+	systemMessage: string
+	temperature: number
+	totalTokensUsed: number
+	updatedAt: Date
+}

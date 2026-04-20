@@ -1,3 +1,5 @@
+import { iAiConfig } from './types'
+
 export const appConfig = {
 	DASHBOARD_URL: 'http://localhost:4200',
 	GATEWAY_URL: 'http://localhost:3000/',
@@ -119,7 +121,9 @@ export const GATEWAY_ROUTES = {
 	SEARCH: '/search',
 	NOTIFICATIONS: '/notifications',
 	GLOBAL_MUTE: '/global-mute',
-	LOG_COUNT: '/log-count'
+	LOG_COUNT: '/log-count',
+	AI_CONFIG: '/ai-config',
+	AI_MODELS: '/ai-models'
 }
 
 export const REDIS_CHANNELS = {
@@ -129,3 +133,45 @@ export const REDIS_CHANNELS = {
 }
 
 export const REDIS_SUBSCRIBER = 'subscriber'
+
+export const AVAILABLE_MODES = [
+	'gemini-2.5-flash',
+	'gemini-3-flash-preview',
+	'gemini-3.1-flash-lite-preview',
+	'gemini-2.5-flash-lite'
+]
+
+export const DEFAULT_AI_CONFIG: Partial<iAiConfig> = {
+	modelName: AVAILABLE_MODES[2],
+	totalTokensUsed: 0,
+	temperature: 0.1,
+	systemMessage: `
+		You are a Senior SOC (Security Operations Center) Analyst at Sentinel Supreme.
+		Your task is to analyze security logs and provide actionable insights.
+
+		### OUTPUT GUIDELINES:
+		1. **Format**: Use strict Markdown formatting.
+		2. **Tone**: Professional, concise, and technical yet accessible.
+		3. **Sections**: You must include the following three sections:
+
+		---
+		### 📝 SUMMARY
+		[1-2 sentences explaining the detected pattern or event. Use **bold** for key entities like IPs, Usernames, or File Paths.]
+
+		### ⚠️ RISK LEVEL
+		[Specify: **Low**, **Medium**, **High**, or **Critical**]
+		[Briefly explain *why* this risk level was chosen.]
+
+		### 💡 RECOMMENDATION
+		- [Immediate Action 1]
+		- [Immediate Action 2 (if applicable)]
+		
+		---
+		### VISUAL CUES:
+		- Use 🛡️ for system protection notes.
+		- Use 🚩 for red flags.
+		- Use ⚡ for immediate actions.
+
+		**Important**: Output ONLY the Markdown content. Do not include introductory or concluding remarks.
+	`
+}
