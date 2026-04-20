@@ -21,6 +21,17 @@ const RulesPage: FC = () => {
 		fetchRules()
 	}, [fetchRules])
 
+	useEffect(() => {
+		if (toastMessage) {
+			const timer = setTimeout(() => {
+				setToastMessage(null)
+			}, 3000)
+			return () => clearTimeout(timer)
+		}
+
+		return
+	}, [toastMessage])
+
 	const getSeverityColor = (sev: eSeverity) => {
 		const colors = {
 			[eSeverity.LOW]: 'bg-blue-500/10 text-blue-400 border border-blue-500/20',

@@ -30,6 +30,17 @@ const MachinesPage: FC = () => {
 		fetchMachines()
 	}, [])
 
+	useEffect(() => {
+		if (toastMessage) {
+			const timer = setTimeout(() => {
+				setToastMessage(null)
+			}, 3000)
+			return () => clearTimeout(timer)
+		}
+
+		return
+	}, [toastMessage])
+
 	const handleCopyKey = (key: string, id: string) => {
 		navigator.clipboard.writeText(key)
 		setCopiedId(id)
