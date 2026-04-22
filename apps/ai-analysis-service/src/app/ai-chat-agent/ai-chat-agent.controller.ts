@@ -1,13 +1,14 @@
 import { Controller } from '@nestjs/common'
-import { MessagePattern, Payload } from '@nestjs/microservices'
+import { EventPattern, Payload } from '@nestjs/microservices'
+import { AI_CHAT_PATTERNS } from '@sentinel-supreme/shared'
 import { AiChatAgentService } from './ai-chat-agent.service'
 
 @Controller()
 export class AiChatAgentController {
 	constructor(private readonly aiChatService: AiChatAgentService) {}
 
-	@MessagePattern({ cmd: 'chat_command' })
-	async handleChat(@Payload() data: { prompt: string }) {
-		return this.aiChatService.chat(data.prompt)
+	@EventPattern(AI_CHAT_PATTERNS.REQUEST)
+	async handleChat(@Payload() data: { prompt: string; userId: string }) {
+		return this.aiChatService.chatStream(data.prompt, data.userId)
 	}
 }

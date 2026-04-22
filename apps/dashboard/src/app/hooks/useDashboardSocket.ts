@@ -111,6 +111,13 @@ export const useDashboardSocket = () => {
 			useAlertStore.getState().updateAlert(update.alertId, { aiInsight: update.aiInsight })
 		})
 
+		socket.on(
+			WS_EVENTS.AI_CHAT_CHUNK_RECEIVED,
+			(data: { isFinal: boolean; content?: string }) => {
+				console.log(data)
+			}
+		)
+
 		return () => {
 			socket.disconnect()
 		}

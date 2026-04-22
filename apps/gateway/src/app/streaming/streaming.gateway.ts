@@ -9,6 +9,7 @@ import {
 import {
 	appConfig,
 	GATEWAY_ROUTES,
+	iAiChatChunk,
 	iAlert,
 	iAlertUpdate,
 	iJwtPayload,
@@ -52,7 +53,11 @@ export class DashboardStreamGateway implements OnGatewayConnection, OnGatewayDis
 	async handleConnection(client: Socket) {
 		const user = client.data.user as iJwtPayload
 
-		this.logger.log(`Client authenticated: ${user.email} (${client.id})`)
+		await client.join(user.sub)
+
+		this.logger.log(
+			`Client authenticated: ${user.email} (${client.id}) and joined room: ${user.sub}`
+		)
 	}
 
 	handleDisconnect(client: Socket) {
@@ -69,5 +74,12 @@ export class DashboardStreamGateway implements OnGatewayConnection, OnGatewayDis
 
 	emitAlertUpdate(update: iAlertUpdate) {
 		this.server.emit(WS_EVENTS.AI_ANALYSIS_RECEIVED, update)
+	}
+
+	emitAiChunk(data: iAiChatChunk) {
+		this.server.to(data.userId).emit(WS_EVENTS.AI_CHAT_CHUNK_RECEIVED, {
+			content: data.content,
+			isFinal: data.isFinal
+		})
 	}
 }

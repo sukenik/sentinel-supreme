@@ -16,7 +16,7 @@ async function bootstrap() {
 		})
 	)
 
-	app.connectMicroservice(SharedRmqModule.getOptionsRaw(QUEUES.AI_CHAT))
+	app.connectMicroservice(SharedRmqModule.getOptionsRaw(QUEUES.AI_CHAT_REQUEST))
 
 	await app.startAllMicroservices()
 

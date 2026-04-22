@@ -12,7 +12,8 @@ export const QUEUES = {
 	NOTIFICATIONS: 'notifications_queue',
 	AI_ANALYSIS: 'ai_analysis_queue',
 	AI_ANALYSIS_RESULTS: 'ai_analysis_results_queue',
-	AI_CHAT: 'ai_chat_queue'
+	AI_CHAT_REQUEST: 'ai_chat_request_queue',
+	AI_CHAT_RESPONSE: 'ai_chat_response_queue'
 }
 
 export const LOG_PATTERNS = {
@@ -29,6 +30,12 @@ export const NOTIFICATION_PATTERNS = {
 export const AI_ANALYSIS_PATTERNS = {
 	ANALYZE_LOGS: 'analyze_logs',
 	ANALYSIS_COMPLETED: 'analysis_completed'
+}
+
+export const AI_CHAT_PATTERNS = {
+	REQUEST: 'chat_request',
+	CHUNK: 'chat_chunk',
+	ERROR: 'chat_error'
 }
 
 export const ENV_VARS = {
@@ -97,7 +104,8 @@ export const AI_ANALYSIS_RESULTS_DLX = {
 export const WS_EVENTS = {
 	LOG_RECEIVED: 'log_received',
 	ALERT_RECEIVED: 'alert_received',
-	AI_ANALYSIS_RECEIVED: 'ai_analysis_received'
+	AI_ANALYSIS_RECEIVED: 'ai_analysis_received',
+	AI_CHAT_CHUNK_RECEIVED: 'ai_chat_chunk_received'
 }
 
 export const WS_ERRORS = {

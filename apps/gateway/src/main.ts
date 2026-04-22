@@ -25,6 +25,7 @@ async function bootstrap() {
 	const port = config.getOrThrow(ENV_VARS.GATEWAY_PORT)
 
 	app.connectMicroservice(SharedRmqModule.getOptions(config, QUEUES.UI_UPDATES))
+	app.connectMicroservice(SharedRmqModule.getOptions(config, QUEUES.AI_CHAT_RESPONSE))
 
 	app.useGlobalPipes(
 		new ValidationPipe({ transform: true, whitelist: true, forbidNonWhitelisted: true })

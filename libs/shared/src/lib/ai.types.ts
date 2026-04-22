@@ -30,3 +30,9 @@ export interface iAvailableModel {
 	name: eAvailableModles
 	displayName: string
 }
+
+export interface iAiChatChunk {
+	userId: string
+	isFinal: boolean
+	content?: string
+}
