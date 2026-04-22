@@ -17,6 +17,12 @@ export enum eSettingsMenu {
 	AI = 'AI'
 }
 
+export enum eAiSettingsTabs {
+	MODELS = 'Models',
+	PROMPTS = 'Prompts',
+	USAGE = 'Usage'
+}
+
 export const SETTINGS_MENU_DICT = {
 	[eSettingsMenu.USER]: {
 		info: 'Assign roles and manage active users in the system.'

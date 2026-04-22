@@ -1,6 +1,6 @@
 import { eLogLevel, eUserRole, iUser } from '@sentinel-supreme/shared'
 import { LayoutDashboard, Search, Server, Settings, ShieldAlert } from 'lucide-react'
-import AiManager from './components/AiManager'
+import AiManager from './components/AiManager/AiManager'
 import DashboardView from './components/DashboardView'
 import NotificationManager from './components/NotificationsManager'
 import UserManager from './components/UserManager'

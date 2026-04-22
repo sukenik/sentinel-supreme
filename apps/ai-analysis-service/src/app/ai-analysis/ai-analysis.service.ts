@@ -13,13 +13,13 @@ export class AiAnalysisService {
 	) {}
 
 	async analyzeLogs(logs: iLog[]): Promise<iAiInsight> {
-		const { id, modelName, temperature, systemMessage } = await this.aiConfigService.get()
+		const { id, analysisAi } = await this.aiConfigService.get()
 
-		const geminiApiKey = this.config.getOrThrow<string>(ENV_VARS.GEMINI_API_KEY)
+		const apiKey = this.config.getOrThrow<string>(ENV_VARS.GEMINI_API_KEY)
 		const dynamicModel = new ChatGoogleGenerativeAI({
-			apiKey: geminiApiKey,
-			model: modelName,
-			temperature
+			apiKey,
+			temperature: analysisAi.temperature,
+			model: analysisAi.modelName
 		})
 
 		const logContext = logs.map((l) => ({
@@ -34,7 +34,7 @@ export class AiAnalysisService {
 		const isBatch = logs.length > 1
 
 		const response = await dynamicModel.invoke([
-			new SystemMessage(systemMessage),
+			new SystemMessage(analysisAi.systemPrompt),
 			new HumanMessage(`
                 Analyze the following ${isBatch ? 'batch of ' + logs.length : 'single'} logs:
                 ${JSON.stringify(logContext)}
@@ -50,7 +50,7 @@ export class AiAnalysisService {
 			tokensUsed,
 			generatedAt: new Date().toISOString(),
 			content: summary,
-			model: modelName
+			model: analysisAi.modelName
 		}
 	}
 
