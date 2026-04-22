@@ -1,4 +1,4 @@
-import { iAiConfig } from './types'
+import { eAvailableModles, iAiConfig } from './ai.types'
 
 export const appConfig = {
 	DASHBOARD_URL: 'http://localhost:4200',
@@ -11,7 +11,8 @@ export const QUEUES = {
 	UI_UPDATES: 'ui_updates_queue',
 	NOTIFICATIONS: 'notifications_queue',
 	AI_ANALYSIS: 'ai_analysis_queue',
-	AI_ANALYSIS_RESULTS: 'ai_analysis_results_queue'
+	AI_ANALYSIS_RESULTS: 'ai_analysis_results_queue',
+	AI_CHAT: 'ai_chat_queue'
 }
 
 export const LOG_PATTERNS = {
@@ -123,7 +124,8 @@ export const GATEWAY_ROUTES = {
 	GLOBAL_MUTE: '/global-mute',
 	LOG_COUNT: '/log-count',
 	AI_CONFIG: '/ai-config',
-	AI_MODELS: '/ai-models'
+	AI_MODELS: '/ai-models',
+	AI_CHAT: '/ai-chat'
 }
 
 export const REDIS_CHANNELS = {
@@ -134,44 +136,48 @@ export const REDIS_CHANNELS = {
 
 export const REDIS_SUBSCRIBER = 'subscriber'
 
-export const AVAILABLE_MODES = [
-	'gemini-2.5-flash',
-	'gemini-3-flash-preview',
-	'gemini-3.1-flash-lite-preview',
-	'gemini-2.5-flash-lite'
-]
-
 export const DEFAULT_AI_CONFIG: Partial<iAiConfig> = {
-	modelName: AVAILABLE_MODES[2],
 	totalTokensUsed: 0,
-	temperature: 0.1,
-	systemMessage: `
-		You are a Senior SOC (Security Operations Center) Analyst at Sentinel Supreme.
-		Your task is to analyze security logs and provide actionable insights.
+	analysisAi: {
+		modelName: eAvailableModles.GEMINI_3_1_FLASH_LITE_PREVIEW,
+		temperature: 0.1,
+		systemPrompt: `
+			You are a Senior SOC (Security Operations Center) Analyst at Sentinel Supreme.
+			Your task is to analyze security logs and provide actionable insights.
 
-		### OUTPUT GUIDELINES:
-		1. **Format**: Use strict Markdown formatting.
-		2. **Tone**: Professional, concise, and technical yet accessible.
-		3. **Sections**: You must include the following three sections:
+			### OUTPUT GUIDELINES:
+			1. **Format**: Use strict Markdown formatting.
+			2. **Tone**: Professional, concise, and technical yet accessible.
+			3. **Sections**: You must include the following three sections:
 
-		---
-		### 📝 SUMMARY
-		[1-2 sentences explaining the detected pattern or event. Use **bold** for key entities like IPs, Usernames, or File Paths.]
+			---
+			### 📝 SUMMARY
+			[1-2 sentences explaining the detected pattern or event. Use **bold** for key entities like IPs, Usernames, or File Paths.]
 
-		### ⚠️ RISK LEVEL
-		[Specify: **Low**, **Medium**, **High**, or **Critical**]
-		[Briefly explain *why* this risk level was chosen.]
+			### ⚠️ RISK LEVEL
+			[Specify: **Low**, **Medium**, **High**, or **Critical**]
+			[Briefly explain *why* this risk level was chosen.]
 
-		### 💡 RECOMMENDATION
-		- [Immediate Action 1]
-		- [Immediate Action 2 (if applicable)]
-		
-		---
-		### VISUAL CUES:
-		- Use 🛡️ for system protection notes.
-		- Use 🚩 for red flags.
-		- Use ⚡ for immediate actions.
+			### 💡 RECOMMENDATION
+			- [Immediate Action 1]
+			- [Immediate Action 2 (if applicable)]
+			
+			---
+			### VISUAL CUES:
+			- Use 🛡️ for system protection notes.
+			- Use 🚩 for red flags.
+			- Use ⚡ for immediate actions.
 
-		**Important**: Output ONLY the Markdown content. Do not include introductory or concluding remarks.
-	`
+			**Important**: Output ONLY the Markdown content. Do not include introductory or concluding remarks.
+		`
+	},
+	chatAi: {
+		modelName: eAvailableModles.GEMINI_3_1_FLASH_LITE_PREVIEW,
+		temperature: 0.1,
+		systemPrompt: `
+			You are Sentinel Supreme Assistant.
+			Use the provided tools to answer questions about system health.
+			If there are many errors, be concise and alert the user.
+		`
+	}
 }

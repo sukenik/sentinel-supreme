@@ -11,6 +11,7 @@ import {
 	SharedRulesModule
 } from '@sentinel-supreme/shared/server'
 import Joi from 'joi'
+import { AiChatManagerModule } from './ai-chat/ai-chat-manager.module'
 import { AlertsModule } from './alerts/alerts.module'
 import { AppController } from './app.controller'
 import { AppService } from './app.service'
@@ -77,7 +78,8 @@ import { UsersModule } from './users/users.module'
 		SharedRulesModule,
 		LogSearchModule,
 		SharedNotificationsPreferencesModule,
-		AiConfigModule
+		AiConfigModule,
+		AiChatManagerModule
 	],
 	controllers: [AppController],
 	providers: [

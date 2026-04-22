@@ -3,7 +3,8 @@ import { Injectable, Logger } from '@nestjs/common'
 import { ConfigService } from '@nestjs/config'
 import { InjectRepository } from '@nestjs/typeorm'
 import { Repository } from 'typeorm'
-import { AVAILABLE_MODES, DEFAULT_AI_CONFIG, ENV_VARS } from '../consts'
+import { eAvailableModles, iAvailableModel } from '../ai.types'
+import { DEFAULT_AI_CONFIG, ENV_VARS } from '../consts'
 import { AiConfigEntity } from './entities/ai-config.entity'
 
 @Injectable()
@@ -49,7 +50,7 @@ export class AiConfigService {
 		return this.repo.increment({ id }, 'totalTokensUsed', amount)
 	}
 
-	async getAvailableModels() {
+	async getAvailableModels(): Promise<iAvailableModel[]> {
 		const apiKey = this.config.getOrThrow<string>(ENV_VARS.GEMINI_API_KEY)
 		const ai = new GoogleGenAI({ apiKey })
 
@@ -59,8 +60,11 @@ export class AiConfigService {
 		for await (const model of models) {
 			const modelName = model.name?.split('models/')[1] || ''
 
-			if (AVAILABLE_MODES.includes(modelName)) {
-				relevantModels.push({ name: modelName, displayName: model.displayName || '' })
+			if ((Object.values(eAvailableModles) as string[]).includes(modelName)) {
+				relevantModels.push({
+					name: modelName as eAvailableModles,
+					displayName: model.displayName || ''
+				})
 			}
 		}
 

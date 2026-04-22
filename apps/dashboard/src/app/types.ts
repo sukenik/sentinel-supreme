@@ -7,3 +7,8 @@ export interface iToastMessage {
 	message: string
 	type: eToastType
 }
+
+export enum eAiEngine {
+	ANALYSIS = 'analysisAi',
+	CHAT = 'chatAi'
+}

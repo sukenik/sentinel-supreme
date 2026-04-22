@@ -1,19 +1,16 @@
 import { Column, Entity, PrimaryGeneratedColumn, UpdateDateColumn } from 'typeorm'
-import { iAiConfig } from '../../types'
+import type { iAiConfig, iModelConfig } from '../../ai.types'
 
 @Entity('ai_config')
 export class AiConfigEntity implements iAiConfig {
 	@PrimaryGeneratedColumn('uuid')
 	id!: string
 
-	@Column()
-	modelName!: string
+	@Column({ type: 'jsonb' })
+	analysisAi!: iModelConfig
 
-	@Column({ type: 'text' })
-	systemMessage!: string
-
-	@Column({ type: 'float' })
-	temperature!: number
+	@Column({ type: 'jsonb' })
+	chatAi!: iModelConfig
 
 	@Column({ type: 'bigint' })
 	totalTokensUsed!: number

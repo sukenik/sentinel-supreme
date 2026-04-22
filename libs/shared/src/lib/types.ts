@@ -1,3 +1,4 @@
+import { iAiInsight } from './ai.types'
 import { eSeverity } from './rules.types'
 
 export enum eUserRole {
@@ -75,13 +76,6 @@ export interface iRegisterUser extends iLoginUser {
 
 export type UpdateUser = Pick<iUser, 'email' | 'password' | 'role'>
 
-export interface iAiInsight {
-	tokensUsed: number
-	generatedAt: string
-	content: string
-	model: string
-}
-
 export interface iAlert {
 	id: string
 	ruleId: string
@@ -94,6 +88,11 @@ export interface iAlert {
 	reputationData?: iReputationData
 	logSourceIp?: string
 	aiInsight?: iAiInsight
+}
+
+export interface iAlertUpdate {
+	alertId: string
+	aiInsight: iAiInsight
 }
 
 export interface iReputationData {
@@ -147,18 +146,4 @@ export interface iNotificationPayload {
 	title: string
 	message: string
 	recipients: iNotificationRecipient[]
-}
-
-export interface iAlertUpdate {
-	alertId: string
-	aiInsight: iAiInsight
-}
-
-export interface iAiConfig {
-	id: string
-	modelName: string
-	systemMessage: string
-	temperature: number
-	totalTokensUsed: number
-	updatedAt: Date
 }

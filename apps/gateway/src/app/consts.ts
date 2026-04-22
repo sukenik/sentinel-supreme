@@ -1,4 +1,5 @@
 export const GATEWAY_CLIENT = 'GATEWAY_CLIENT'
+export const AI_CLIENT = 'AI_CLIENT'
 export const REDIS_MACHINE_KEY_PREFIX = 'machine_api_key:'
 export const MACHINE_KEY_REQ_HEADER = 'x-api-key'
 export const ONE_WEEK_IN_SECONDS = 60 * 60 * 24 * 7

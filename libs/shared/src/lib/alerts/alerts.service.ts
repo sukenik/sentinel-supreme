@@ -1,7 +1,8 @@
 import { Injectable } from '@nestjs/common'
 import { InjectRepository } from '@nestjs/typeorm'
 import { Repository } from 'typeorm'
-import { iAiInsight, iAlert } from '../types'
+import { iAiInsight } from '../ai.types'
+import { iAlert } from '../types'
 import { AlertEntity } from './entities/alert.entity'
 
 @Injectable()

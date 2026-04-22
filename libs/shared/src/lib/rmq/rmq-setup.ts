@@ -78,6 +78,10 @@ export async function validateRmqTopology(url: string) {
 		durable: true
 	})
 
+	await channel.assertQueue(QUEUES.AI_CHAT, {
+		durable: true
+	})
+
 	await channel.close()
 	await connection.close()
 }

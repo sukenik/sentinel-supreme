@@ -42,6 +42,7 @@
 	"dependencies": {
 		"@google/genai": "^1.50.1",
 		"@langchain/google-genai": "^2.1.26",
+		"@langchain/langgraph": "^1.2.9",
 		"@nestjs-modules/ioredis": "^2.0.2",
 		"@nestjs/axios": "^4.0.1",
 		"@nestjs/common": "^11.0.0",

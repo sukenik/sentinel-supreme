@@ -1,1 +1,2 @@
 export const AI_ANALYSIS_CLIENT = 'AI_ANALYSIS_CLIENT'
+export const CHAT_AGENT = 'CHAT_AGENT'
