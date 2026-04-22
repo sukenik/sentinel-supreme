@@ -1,7 +1,7 @@
 import { Controller } from '@nestjs/common'
 import { EventPattern, Payload } from '@nestjs/microservices'
-import type { iAlert, iAlertUpdate, iLog } from '@sentinel-supreme/shared'
-import { LOG_PATTERNS } from '@sentinel-supreme/shared'
+import type { iAiChatChunk, iAlert, iAlertUpdate, iLog } from '@sentinel-supreme/shared'
+import { AI_CHAT_PATTERNS, LOG_PATTERNS } from '@sentinel-supreme/shared'
 import { DashboardStreamGateway } from './streaming.gateway'
 
 @Controller()
@@ -22,4 +22,15 @@ export class RmqStreamBridge {
 	async handleAlertUpdate(@Payload() data: iAlertUpdate) {
 		this.logsGateway.emitAlertUpdate(data)
 	}
+
+	@EventPattern(AI_CHAT_PATTERNS.CHUNK)
+	handleAiChatChunk(@Payload() data: iAiChatChunk) {
+		this.logsGateway.emitAiChunk(data)
+	}
+
+	// TODO:
+	// @EventPattern(AI_CHAT_PATTERNS.ERROR)
+	// handleAiChatError(@Payload() data: { userId: string; error: string }) {
+	// 	this.logsGateway.emitAiChunk(data)
+	// }
 }
