@@ -201,7 +201,6 @@ const AiManager: FC = () => {
 			</div>
 			<div className='flex-1 min-h-112.5 relative'>
 				<div className='inset-0'>
-					{/* <div className='absolute inset-0'> */}
 					{activeTab === eAiSettingsTabs.MODELS && (
 						<ModelConfig
 							config={config}
