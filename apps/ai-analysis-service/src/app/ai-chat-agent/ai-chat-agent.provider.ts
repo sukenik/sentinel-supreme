@@ -19,23 +19,30 @@ export const AiChatAgentProvider: Provider = {
 		aiConfigService: AiConfigService,
 		logModel: Model<Log>
 	) => {
-		const { chatAi } = await aiConfigService.get()
-
 		const apiKey = configService.getOrThrow<string>(ENV_VARS.GEMINI_API_KEY)
-		const model = new ChatGoogleGenerativeAI({
-			apiKey,
-			temperature: chatAi.temperature,
-			model: chatAi.modelName
-		})
-
 		const tools = [createSystemHealthTool(logModel)]
-		const modelWithTools = model.bindTools(tools)
+
+		const getModel = async () => {
+			const { chatAi } = await aiConfigService.get()
+
+			const model = new ChatGoogleGenerativeAI({
+				apiKey,
+				temperature: chatAi.temperature,
+				model: chatAi.modelName,
+				streaming: true,
+				streamUsage: true
+			})
+
+			return { model: model.bindTools(tools), systemPrompt: chatAi.systemPrompt }
+		}
 
 		const callModel = async (state: typeof MessagesAnnotation.State) => {
-			const response = await modelWithTools.invoke([
-				new SystemMessage(chatAi.systemPrompt),
-				...state.messages
-			])
+			const { messages } = state
+
+			const { model, systemPrompt } = await getModel()
+
+			const response = await model.invoke([new SystemMessage(systemPrompt), ...messages])
+
 			return { messages: [response] }
 		}
 

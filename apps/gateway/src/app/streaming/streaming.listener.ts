@@ -28,9 +28,8 @@ export class RmqStreamBridge {
 		this.logsGateway.emitAiChunk(data)
 	}
 
-	// TODO:
-	// @EventPattern(AI_CHAT_PATTERNS.ERROR)
-	// handleAiChatError(@Payload() data: { userId: string; error: string }) {
-	// 	this.logsGateway.emitAiChunk(data)
-	// }
+	@EventPattern(AI_CHAT_PATTERNS.ERROR)
+	handleAiChatError(@Payload() data: { userId: string; error: string }) {
+		this.logsGateway.emitAiError(data)
+	}
 }

@@ -34,5 +34,7 @@ export interface iAvailableModel {
 export interface iAiChatChunk {
 	userId: string
 	isFinal: boolean
+	hasUsedTools?: boolean
 	content?: string
+	tokensUsed?: number
 }

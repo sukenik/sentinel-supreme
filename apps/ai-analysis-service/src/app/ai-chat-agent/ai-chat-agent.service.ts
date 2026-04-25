@@ -2,6 +2,7 @@ import { HumanMessage } from '@langchain/core/messages'
 import { Inject, Injectable, Logger } from '@nestjs/common'
 import { ClientProxy } from '@nestjs/microservices'
 import { AI_CHAT_PATTERNS, iAiChatChunk } from '@sentinel-supreme/shared'
+import { AiConfigService } from '@sentinel-supreme/shared/server'
 import { AI_CHAT_CLIENT, CHAT_AGENT } from '../consts'
 
 @Injectable()
@@ -10,32 +11,72 @@ export class AiChatAgentService {
 
 	constructor(
 		@Inject(CHAT_AGENT) private readonly agent: any,
-		@Inject(AI_CHAT_CLIENT) private readonly client: ClientProxy
+		@Inject(AI_CHAT_CLIENT) private readonly client: ClientProxy,
+		private readonly aiConfigService: AiConfigService
 	) {}
 
 	async chatStream(userMessage: string, userId: string) {
 		const { CHUNK, ERROR } = AI_CHAT_PATTERNS
+		let totalTokens = 0
+
 		this.logger.log(`Streaming starting for user: ${userId}`)
 
 		try {
-			const stream = await this.agent.stream(
+			const eventStream = await this.agent.streamEvents(
 				{ messages: [new HumanMessage(userMessage)] },
-				{ streamMode: 'messages' }
+				{
+					version: 'v2',
+					configurable: { thread_id: userId }
+				}
 			)
 
-			for await (const [chunk] of stream) {
-				if (chunk.content) {
-					this.client.emit(CHUNK, {
-						userId,
-						content: chunk.content,
-						isFinal: false
-					} as iAiChatChunk)
+			for await (const event of eventStream) {
+				const eventType = event.event
+
+				if (eventType === 'on_chat_model_end') {
+					const usage = event.data.output?.usage_metadata
+					const toolCalls = event.data.output?.tool_calls
+
+					if (toolCalls && toolCalls.length > 0) {
+						this.client.emit(CHUNK, {
+							userId,
+							content: '',
+							hasUsedTools: true,
+							isFinal: false
+						} as iAiChatChunk)
+					}
+
+					if (usage) {
+						this.logger.log(`Tokens detected in event: ${usage.total_tokens}`)
+						totalTokens += usage.total_tokens || 0
+					}
+				}
+
+				if (eventType === 'on_chat_model_stream') {
+					const content = event.data.chunk?.content
+
+					if (content) {
+						this.client.emit(CHUNK, {
+							userId,
+							content,
+							isFinal: false
+						} as iAiChatChunk)
+					}
 				}
 			}
 
-			this.client.emit(CHUNK, { userId, isFinal: true } as iAiChatChunk)
+			this.client.emit(CHUNK, {
+				userId,
+				isFinal: true,
+				tokensUsed: totalTokens
+			} as iAiChatChunk)
 
-			this.logger.log(`Streaming finished for user: ${userId}`)
+			this.logger.log(`Streaming finished. Total tokens: ${totalTokens} for user: ${userId}`)
+
+			if (totalTokens > 0) {
+				const config = await this.aiConfigService.get()
+				await this.aiConfigService.incrementTokens(config.id, totalTokens)
+			}
 		} catch (error) {
 			const { stack } = error as { stack: string }
 			this.logger.error('Error during AI Streaming', stack)

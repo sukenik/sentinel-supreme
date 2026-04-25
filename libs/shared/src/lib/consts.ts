@@ -105,7 +105,8 @@ export const WS_EVENTS = {
 	LOG_RECEIVED: 'log_received',
 	ALERT_RECEIVED: 'alert_received',
 	AI_ANALYSIS_RECEIVED: 'ai_analysis_received',
-	AI_CHAT_CHUNK_RECEIVED: 'ai_chat_chunk_received'
+	AI_CHAT_CHUNK_RECEIVED: 'ai_chat_chunk_received',
+	AI_CHAT_ERROR_RECEIVED: 'ai_chat_error_received'
 }
 
 export const WS_ERRORS = {

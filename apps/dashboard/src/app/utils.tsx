@@ -1,10 +1,11 @@
 import { eLogLevel, eUserRole, iUser } from '@sentinel-supreme/shared'
-import { LayoutDashboard, Search, Server, Settings, ShieldAlert } from 'lucide-react'
+import { Bot, LayoutDashboard, Search, Server, Settings, ShieldAlert } from 'lucide-react'
 import AiManager from './components/AiManager/AiManager'
 import DashboardView from './components/DashboardView'
 import NotificationManager from './components/NotificationsManager'
 import UserManager from './components/UserManager'
 import { eMenuOptions, eSettingsMenu } from './consts'
+import AiChatPage from './pages/AiChatPage'
 import InvestigationPage from './pages/InvestigationPage'
 import MachinesPage from './pages/MachinesPage'
 import RulesPage from './pages/RulesPage'
@@ -26,7 +27,7 @@ export const getLevelColor = (level: eLogLevel) => {
 
 export const useMenuOptionsByRole = () => {
 	const role = useAuthStore().user?.role
-	const options = [eMenuOptions.DASHBOARD, eMenuOptions.INVESTIGATION]
+	const options = [eMenuOptions.DASHBOARD, eMenuOptions.INVESTIGATION, eMenuOptions.AI_CHAT]
 
 	if (role === eUserRole.ADMIN) {
 		return options.concat([eMenuOptions.MACHINES, eMenuOptions.RULES, eMenuOptions.SETTINGS])
@@ -41,6 +42,8 @@ export const getComponentByMenuOption = (option: eMenuOptions) => {
 			return DashboardView
 		case eMenuOptions.INVESTIGATION:
 			return InvestigationPage
+		case eMenuOptions.AI_CHAT:
+			return AiChatPage
 		case eMenuOptions.MACHINES:
 			return MachinesPage
 		case eMenuOptions.RULES:
@@ -106,6 +109,8 @@ export const getIconByMenuOption = (option: eMenuOptions) => {
 			return <LayoutDashboard {...props} />
 		case eMenuOptions.INVESTIGATION:
 			return <Search {...props} />
+		case eMenuOptions.AI_CHAT:
+			return <Bot {...props} />
 		case eMenuOptions.MACHINES:
 			return <Server {...props} />
 		case eMenuOptions.RULES:
@@ -129,3 +134,10 @@ export const getComponentBySettingsMenu = (menu: eSettingsMenu) => {
 			return UserManager
 	}
 }
+
+export const SUGGESTED_PROMPTS = [
+	'Check system health for the last hour',
+	'Are there any critical errors in the last 24h?',
+	'Summarize logs from the authentication service',
+	'Show me error distribution by service'
+]

@@ -6,6 +6,7 @@ export const ROUTES = {
 export enum eMenuOptions {
 	DASHBOARD = 'Dashboard',
 	INVESTIGATION = 'Investigation',
+	AI_CHAT = 'AI Chat',
 	MACHINES = 'Machines',
 	RULES = 'Rules',
 	SETTINGS = 'Settings'

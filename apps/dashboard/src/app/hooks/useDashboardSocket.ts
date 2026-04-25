@@ -1,5 +1,4 @@
 import {
-	appConfig,
 	eSeverity,
 	GATEWAY_ROUTES,
 	iAlert,
@@ -9,8 +8,8 @@ import {
 	WS_EVENTS
 } from '@sentinel-supreme/shared'
 import { useCallback, useEffect, useState } from 'react'
-import { io, Socket } from 'socket.io-client'
 import api from '../api/axiosInstance'
+import { socket } from '../api/socket'
 import { useAlertStore } from '../store/useAlertStore'
 import { useAuthStore } from '../store/useAuthStore'
 import { useLogStore } from '../store/useLogStore'
@@ -27,9 +26,9 @@ const getCriticalTodayAlerts = (alerts: iAlert[]) => {
 }
 
 export const useDashboardSocket = () => {
-	const [isConnected, setIsConnected] = useState(false)
+	const [isConnected, setIsConnected] = useState(socket.connected)
+	const { access_token } = useAuthStore()
 
-	const { access_token, logout } = useAuthStore()
 	const { addLog } = useLogStore()
 	const { addAlert, setAlerts } = useAlertStore()
 	const { updateStats, incrementCritical, incrementLogs } = useStatStore()
@@ -46,7 +45,6 @@ export const useDashboardSocket = () => {
 			const alerts = alertsRes.data.data as iAlert[]
 			const totalLogsLastDay = logsCountRes.data.data as number
 			const activeRules = rules.filter(({ isActive }) => isActive)
-
 			const criticalTodayAlerts = getCriticalTodayAlerts(alerts)
 
 			setAlerts(alerts)
@@ -65,37 +63,11 @@ export const useDashboardSocket = () => {
 
 		fetchInitialData()
 
-		const socket: Socket = io(`${appConfig.GATEWAY_URL}${GATEWAY_ROUTES.WS_DASHBOARD_STREAM}`, {
-			transports: ['websocket'],
-			auth: { token: access_token }
-		})
+		const onConnect = () => setIsConnected(true)
+		const onDisconnect = () => setIsConnected(false)
 
-		socket.on('connect', () => setIsConnected(true))
-		socket.on('disconnect', () => setIsConnected(false))
-
-		socket.on('connect_error', async (err) => {
-			if (err.message === 'jwt expired') {
-				console.warn('WS Token expired, attempting refresh...')
-
-				try {
-					const response = await api.post(
-						`${GATEWAY_ROUTES.AUTH}${GATEWAY_ROUTES.REFRESH}`,
-						{},
-						{ withCredentials: true }
-					)
-					const { access_token } = response.data.data
-
-					useAuthStore.getState().setAuth(access_token, useAuthStore.getState().user!)
-
-					socket.auth = { token: access_token }
-					socket.connect()
-				} catch (refreshErr) {
-					logout()
-				}
-			} else {
-				logout()
-			}
-		})
+		socket.on('connect', onConnect)
+		socket.on('disconnect', onDisconnect)
 
 		socket.on(WS_EVENTS.LOG_RECEIVED, (newLog: iLog) => {
 			addLog(newLog)
@@ -104,24 +76,23 @@ export const useDashboardSocket = () => {
 
 		socket.on(WS_EVENTS.ALERT_RECEIVED, (newAlert: iAlert) => {
 			addAlert(newAlert)
-			newAlert.severity === eSeverity.CRITICAL && incrementCritical()
+			if (newAlert.severity === eSeverity.CRITICAL) {
+				incrementCritical()
+			}
 		})
 
 		socket.on(WS_EVENTS.AI_ANALYSIS_RECEIVED, (update: iAlertUpdate) => {
 			useAlertStore.getState().updateAlert(update.alertId, { aiInsight: update.aiInsight })
 		})
 
-		socket.on(
-			WS_EVENTS.AI_CHAT_CHUNK_RECEIVED,
-			(data: { isFinal: boolean; content?: string }) => {
-				console.log(data)
-			}
-		)
-
 		return () => {
-			socket.disconnect()
+			socket.off('connect', onConnect)
+			socket.off('disconnect', onDisconnect)
+			socket.off(WS_EVENTS.LOG_RECEIVED)
+			socket.off(WS_EVENTS.ALERT_RECEIVED)
+			socket.off(WS_EVENTS.AI_ANALYSIS_RECEIVED)
 		}
-	}, [access_token, fetchInitialData, addLog, addAlert, incrementCritical, incrementLogs, logout])
+	}, [access_token, fetchInitialData, addLog, addAlert, incrementCritical, incrementLogs])
 
 	return { isConnected }
 }

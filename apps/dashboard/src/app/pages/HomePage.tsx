@@ -2,6 +2,7 @@ import { GATEWAY_ROUTES } from '@sentinel-supreme/shared'
 import { Menu } from 'lucide-react'
 import { FC, MouseEvent, useEffect, useRef, useState } from 'react'
 import api from '../api/axiosInstance'
+import { connectSocket, disconnectSocket } from '../api/socket'
 import Tooltip from '../components/Tooltip'
 import { eMenuOptions, SIDEBAR_COLLAPSED_LOCAL_STORAGE } from '../consts'
 import { useAuthStore } from '../store/useAuthStore'
@@ -17,7 +18,7 @@ const HomePage: FC = () => {
 	const popupRef = useRef<HTMLDivElement>(null)
 
 	const { openOption, setOpenOption } = useMenuStore()
-	const { user, logout } = useAuthStore()
+	const { user, access_token, logout } = useAuthStore()
 	const options = useMenuOptionsByRole()
 
 	const handleOptionClick = (e: MouseEvent) => {
@@ -42,6 +43,16 @@ const HomePage: FC = () => {
 			logout()
 		}
 	}
+
+	useEffect(() => {
+		if (access_token) {
+			connectSocket(access_token)
+		}
+
+		return () => {
+			disconnectSocket()
+		}
+	}, [access_token])
 
 	useEffect(() => {
 		localStorage.setItem(SIDEBAR_COLLAPSED_LOCAL_STORAGE, JSON.stringify(isCollapsed))

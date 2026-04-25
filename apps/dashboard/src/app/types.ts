@@ -12,3 +12,8 @@ export enum eAiEngine {
 	ANALYSIS = 'analysisAi',
 	CHAT = 'chatAi'
 }
+
+export enum eChatRole {
+	USER,
+	AI
+}

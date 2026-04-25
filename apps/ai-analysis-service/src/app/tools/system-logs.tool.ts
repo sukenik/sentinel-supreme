@@ -14,6 +14,7 @@ export const createSystemHealthTool = (logModel: Model<Log>) =>
 				.describe('The number of minutes to look back for logs')
 		}),
 		func: async ({ minutesBack }) => {
+			const start = performance.now()
 			const timeLimit = new Date(Date.now() - minutesBack * 60000)
 
 			const stats = await logModel.aggregate([
@@ -27,10 +28,13 @@ export const createSystemHealthTool = (logModel: Model<Log>) =>
 				}
 			])
 
+			const end = performance.now()
+
 			return JSON.stringify({
 				message: `Found statistics for the last ${minutesBack} minutes`,
 				data: stats,
-				timestamp: new Date().toISOString()
+				timestamp: new Date().toISOString(),
+				executionTimeMs: (end - start).toFixed(2)
 			})
 		}
 	})
