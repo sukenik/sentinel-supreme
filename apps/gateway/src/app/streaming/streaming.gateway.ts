@@ -79,7 +79,15 @@ export class DashboardStreamGateway implements OnGatewayConnection, OnGatewayDis
 	emitAiChunk(data: iAiChatChunk) {
 		this.server.to(data.userId).emit(WS_EVENTS.AI_CHAT_CHUNK_RECEIVED, {
 			content: data.content,
-			isFinal: data.isFinal
+			isFinal: data.isFinal,
+			hasUsedTools: data.hasUsedTools,
+			tokensUsed: data.tokensUsed
+		} as Partial<iAiChatChunk>)
+	}
+
+	emitAiError(data: { userId: string; error: string }) {
+		this.server.to(data.userId).emit(WS_EVENTS.AI_CHAT_ERROR_RECEIVED, {
+			error: data.error
 		})
 	}
 }
