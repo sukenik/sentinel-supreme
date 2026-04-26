@@ -21,7 +21,7 @@ async function bootstrap() {
 	await app.startAllMicroservices()
 
 	await app.listen(0)
-	Logger.log('🚀 AI-Analysis-Service is listening...')
+	Logger.log('🚀 AI-Service is listening...')
 }
 
 bootstrap()

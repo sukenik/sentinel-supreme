@@ -29,7 +29,9 @@ import { AI_ANALYSIS_CLIENT } from './consts'
 				MONGO_PORT: Joi.number().required(),
 				MONGO_DB: Joi.string().required(),
 				MONGO_HOST: Joi.string().required(),
-				GEMINI_API_KEY: Joi.string().required()
+				GEMINI_API_KEY: Joi.string().required(),
+				QDRANT_HOST: Joi.string().required(),
+				QDRANT_PORT: Joi.number().required()
 			})
 		}),
 		SharedRmqModule.register(AI_ANALYSIS_CLIENT, QUEUES.AI_ANALYSIS_RESULTS, true, {

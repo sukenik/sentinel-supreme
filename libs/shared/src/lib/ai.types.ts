@@ -3,6 +3,7 @@ export interface iAiInsight {
 	generatedAt: string
 	content: string
 	model: string
+	similarPatterns?: iSimilarPattern[]
 }
 
 export interface iAiConfig {
@@ -37,4 +38,10 @@ export interface iAiChatChunk {
 	hasUsedTools?: boolean
 	content?: string
 	tokensUsed?: number
+}
+
+export interface iSimilarPattern {
+	logId: string
+	summary: string
+	score: number
 }
