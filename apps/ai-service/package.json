@@ -1,5 +1,5 @@
 {
-	"name": "ai-analysis-service",
+	"name": "ai-service",
 	"version": "0.0.1",
 	"private": true,
 	"nx": {
@@ -11,7 +11,7 @@
 					"args": [
 						"--node-env=production"
 					],
-					"cwd": "apps/ai-analysis-service"
+					"cwd": "apps/ai-service"
 				},
 				"configurations": {
 					"development": {
@@ -28,8 +28,8 @@
 				"cache": true,
 				"executor": "@nx/js:prune-lockfile",
 				"outputs": [
-					"{workspaceRoot}/apps/ai-analysis-service/dist/package.json",
-					"{workspaceRoot}/apps/ai-analysis-service/dist/package-lock.json"
+					"{workspaceRoot}/apps/ai-service/dist/package.json",
+					"{workspaceRoot}/apps/ai-service/dist/package-lock.json"
 				],
 				"options": {
 					"buildTarget": "build"
@@ -41,7 +41,7 @@
 				],
 				"cache": true,
 				"outputs": [
-					"{workspaceRoot}/apps/ai-analysis-service/dist/workspace_modules"
+					"{workspaceRoot}/apps/ai-service/dist/workspace_modules"
 				],
 				"executor": "@nx/js:copy-workspace-modules",
 				"options": {
@@ -63,15 +63,15 @@
 					"build"
 				],
 				"options": {
-					"buildTarget": "ai-analysis-service:build",
+					"buildTarget": "ai-service:build",
 					"runBuildTargetDependencies": false
 				},
 				"configurations": {
 					"development": {
-						"buildTarget": "ai-analysis-service:build:development"
+						"buildTarget": "ai-service:build:development"
 					},
 					"production": {
-						"buildTarget": "ai-analysis-service:build:production"
+						"buildTarget": "ai-service:build:production"
 					}
 				}
 			},

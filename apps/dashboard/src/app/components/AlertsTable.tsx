@@ -50,7 +50,7 @@ const AlertsTable: FC<iProps> = ({ alerts }) => {
 						<tr className='text-slate-400 uppercase text-xs tracking-wider'>
 							<th className='p-4 w-10' />
 							<th className='p-4 font-medium'>{'Severity'}</th>
-							<th className='p-4 font-medium'>{'Alert Type'}</th>
+							<th className='p-4 font-medium'>{'Rule Name'}</th>
 							<th className='p-4 font-medium'>{'Trigger Time'}</th>
 							<th className='p-4 font-medium'>{'Source IP'}</th>
 							<th className='p-4 font-medium text-right'>{'Actions'}</th>

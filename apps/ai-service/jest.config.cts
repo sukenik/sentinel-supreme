@@ -7,7 +7,7 @@ const swcJestConfig = JSON.parse(readFileSync(`${__dirname}/.spec.swcrc`, 'utf-8
 swcJestConfig.swcrc = false
 
 module.exports = {
-	displayName: 'ai-analysis-service',
+	displayName: 'ai-service',
 	preset: '../../jest.preset.js',
 	testEnvironment: 'node',
 	transform: {

@@ -1,9 +1,10 @@
 import { eSeverity, iAlert } from '@sentinel-supreme/shared'
-import { BrainCircuit, ChevronRight, Clock, Network } from 'lucide-react'
+import { BrainCircuit, ChevronRight, Clock, Fingerprint, Network } from 'lucide-react'
 import { FC, MouseEvent } from 'react'
 import ReactMarkdown from 'react-markdown'
 import { eMenuOptions } from '../consts'
 import { useMenuStore } from '../store/useMenuStore'
+import Tooltip from './Tooltip'
 
 interface iProps {
 	alert: iAlert
@@ -46,7 +47,14 @@ const AlertRow: FC<iProps> = ({ alert, isExpanded, handleToggleRow }) => {
 						{alert.severity}
 					</span>
 				</td>
-				<td className='p-4 font-medium text-slate-200'>{alert.ruleName}</td>
+				<td className='p-4 font-medium text-slate-200 flex gap-2'>
+					{alert.ruleName}
+					{alert.aiInsight?.similarPatterns && (
+						<Tooltip text='Similar patterns detected in history'>
+							<Fingerprint size={14} className='text-orange-500' />
+						</Tooltip>
+					)}
+				</td>
 				<td className='p-4 text-slate-400 text-sm'>
 					{new Date(alert.createdAt).toLocaleTimeString()}
 				</td>
@@ -131,7 +139,6 @@ const AlertRow: FC<iProps> = ({ alert, isExpanded, handleToggleRow }) => {
 										)}
 									</div>
 								</div>
-
 								<div className='space-y-4 text-sm border-l border-slate-800 pl-6'>
 									<div className='text-slate-400 font-medium uppercase text-xs'>
 										{'Alert Context'}
@@ -159,6 +166,36 @@ const AlertRow: FC<iProps> = ({ alert, isExpanded, handleToggleRow }) => {
 											</p>
 										</div>
 									</div>
+									{alert.aiInsight?.similarPatterns && (
+										<div className='mt-6 space-y-3'>
+											<div className='flex items-center gap-2 text-orange-400 font-semibold text-[11px] uppercase tracking-wider'>
+												<Fingerprint size={14} />
+												{'Similar Patterns Found'}
+											</div>
+
+											<div className='space-y-2'>
+												{alert.aiInsight.similarPatterns.map(
+													(pattern, idx) => (
+														<div
+															key={idx}
+															className='p-3 bg-orange-500/5 border border-orange-500/20 rounded-lg group hover:bg-orange-500/10 transition-colors'
+														>
+															<div className='flex justify-between items-start mb-1'>
+																<span className='text-[10px] font-bold text-orange-500/80 uppercase'>
+																	{`Match: ${(
+																		pattern.score * 100
+																	).toFixed(0)}%`}
+																</span>
+															</div>
+															<p className='text-xs text-slate-300 line-clamp-2 italic'>
+																{`"${pattern.summary}"`}
+															</p>
+														</div>
+													)
+												)}
+											</div>
+										</div>
+									)}
 								</div>
 							</div>
 						</div>
