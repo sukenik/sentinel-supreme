@@ -82,7 +82,9 @@ export const useDashboardSocket = () => {
 		})
 
 		socket.on(WS_EVENTS.AI_ANALYSIS_RECEIVED, (update: iAlertUpdate) => {
-			useAlertStore.getState().updateAlert(update.alertId, { aiInsight: update.aiInsight })
+			useAlertStore
+				.getState()
+				.updateAlert(update.alertId, { aiInsight: update.aiInsight || null })
 		})
 
 		return () => {

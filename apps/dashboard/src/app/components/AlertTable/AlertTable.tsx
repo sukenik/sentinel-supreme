@@ -6,7 +6,7 @@ interface iProps {
 	alerts: iAlert[]
 }
 
-const AlertsTable: FC<iProps> = ({ alerts }) => {
+const AlertTable: FC<iProps> = ({ alerts }) => {
 	const [selectedSeverity, setSelectedSeverity] = useState(eSeverity.ALL)
 	const [expandedAlertId, setExpandedAlertId] = useState<string | null>(null)
 
@@ -81,4 +81,4 @@ const AlertsTable: FC<iProps> = ({ alerts }) => {
 	)
 }
 
-export default AlertsTable
+export default AlertTable

@@ -1,10 +1,19 @@
 import { eSeverity, iAlert } from '@sentinel-supreme/shared'
-import { BrainCircuit, ChevronRight, Clock, Fingerprint, Network } from 'lucide-react'
-import { FC, MouseEvent } from 'react'
+import {
+	AlertCircle,
+	BrainCircuit,
+	ChevronRight,
+	Clock,
+	ExternalLink,
+	Fingerprint,
+	Network
+} from 'lucide-react'
+import { FC, MouseEvent, useState } from 'react'
 import ReactMarkdown from 'react-markdown'
-import { eMenuOptions } from '../consts'
-import { useMenuStore } from '../store/useMenuStore'
-import Tooltip from './Tooltip'
+import { eMenuOptions } from '../../consts'
+import { useMenuStore } from '../../store/useMenuStore'
+import Tooltip from '../Tooltip'
+import SimilarPatternsModal from './SimilarPatternsModal'
 
 interface iProps {
 	alert: iAlert
@@ -14,10 +23,16 @@ interface iProps {
 
 const AlertRow: FC<iProps> = ({ alert, isExpanded, handleToggleRow }) => {
 	const setOpenOption = useMenuStore((state) => state.setOpenOption)
+	const [isModalOpen, setIsModalOpen] = useState(false)
 
 	const handleInvestigateClick = (e: MouseEvent) => {
 		e.stopPropagation()
 		setOpenOption(eMenuOptions.INVESTIGATION, alert.logSourceIp || '')
+	}
+
+	const toggleModal = (e: MouseEvent) => {
+		e.stopPropagation()
+		setIsModalOpen(!isModalOpen)
 	}
 
 	return (
@@ -51,7 +66,11 @@ const AlertRow: FC<iProps> = ({ alert, isExpanded, handleToggleRow }) => {
 					{alert.ruleName}
 					{alert.aiInsight?.similarPatterns && (
 						<Tooltip text='Similar patterns detected in history'>
-							<Fingerprint size={14} className='text-orange-500' />
+							<Fingerprint
+								onClick={toggleModal}
+								size={14}
+								className='text-orange-500'
+							/>
 						</Tooltip>
 					)}
 				</td>
@@ -75,9 +94,7 @@ const AlertRow: FC<iProps> = ({ alert, isExpanded, handleToggleRow }) => {
 					<div className={`grid-rows-collapse ${isExpanded ? 'grid-rows-expand' : ''}`}>
 						<div className='min-h-0 overflow-hidden'>
 							<div
-								className={`p-6 grid grid-cols-1 md:grid-cols-3 gap-6 ${
-									isExpanded ? 'animate-slide-in-top' : 'animate-slide-out-top'
-								}`}
+								className={`p-6 grid grid-cols-1 md:grid-cols-3 gap-6 ${isExpanded ? 'animate-slide-in-top' : 'animate-slide-out-top'}`}
 							>
 								<div className='md:col-span-2 space-y-3'>
 									<div className='flex items-center gap-2 text-cyan-400 font-semibold text-sm uppercase tracking-wider'>
@@ -85,32 +102,41 @@ const AlertRow: FC<iProps> = ({ alert, isExpanded, handleToggleRow }) => {
 										{'AI Analysis & Insights'}
 									</div>
 									<div className='bg-slate-950/50 border border-slate-800 rounded-lg p-4 min-h-32 max-h-64 overflow-y-auto custom-scrollbar'>
-										{alert.aiInsight ? (
+										{alert.aiInsight === null ? (
+											<div className='flex flex-col items-center justify-center h-32 gap-3 text-red-400/80 italic text-sm text-center'>
+												<AlertCircle
+													size={24}
+													className='text-red-500/50'
+												/>
+												<div className='space-y-1'>
+													<p className='font-semibold not-italic text-red-500/70'>
+														{'AI Service Unavailable'}
+													</p>
+													<p className='text-sm opacity-70'>
+														{'The model is currently overloaded.'}
+													</p>
+												</div>
+											</div>
+										) : alert.aiInsight ? (
 											<div className='space-y-4'>
 												<div className='text-slate-300 text-sm leading-relaxed prose prose-invert prose-sm max-w-none'>
 													<ReactMarkdown
 														components={{
-															h3: ({ node, ...props }) => (
+															h3: (props) => (
 																<h3
 																	className='text-cyan-400 font-bold mt-4 mb-2 uppercase tracking-tight'
 																	{...props}
 																/>
 															),
-															strong: ({ node, ...props }) => (
+															strong: (props) => (
 																<strong
 																	className='text-white font-semibold'
 																	{...props}
 																/>
 															),
-															ul: ({ node, ...props }) => (
+															ul: (props) => (
 																<ul
 																	className='list-disc list-inside space-y-1 text-slate-400'
-																	{...props}
-																/>
-															),
-															hr: ({ node, ...props }) => (
-																<hr
-																	className='border-slate-800 my-4'
 																	{...props}
 																/>
 															)
@@ -167,33 +193,22 @@ const AlertRow: FC<iProps> = ({ alert, isExpanded, handleToggleRow }) => {
 										</div>
 									</div>
 									{alert.aiInsight?.similarPatterns && (
-										<div className='mt-6 space-y-3'>
-											<div className='flex items-center gap-2 text-orange-400 font-semibold text-[11px] uppercase tracking-wider'>
-												<Fingerprint size={14} />
-												{'Similar Patterns Found'}
+										<div className='mt-6 p-4 bg-orange-500/5 border border-orange-500/20 rounded-lg'>
+											<div className='flex items-center justify-between'>
+												<div className='flex items-center gap-2 text-orange-400 text-xs uppercase tracking-wider'>
+													<Fingerprint size={16} />
+													{'Pattern Match'}
+												</div>
+												<button
+													onClick={toggleModal}
+													className='p-1 hover:bg-orange-500/20 rounded text-orange-500 transition-colors cursor-pointer'
+												>
+													<ExternalLink size={16} />
+												</button>
 											</div>
-
-											<div className='space-y-2'>
-												{alert.aiInsight.similarPatterns.map(
-													(pattern, idx) => (
-														<div
-															key={idx}
-															className='p-3 bg-orange-500/5 border border-orange-500/20 rounded-lg group hover:bg-orange-500/10 transition-colors'
-														>
-															<div className='flex justify-between items-start mb-1'>
-																<span className='text-[10px] font-bold text-orange-500/80 uppercase'>
-																	{`Match: ${(
-																		pattern.score * 100
-																	).toFixed(0)}%`}
-																</span>
-															</div>
-															<p className='text-xs text-slate-300 line-clamp-2 italic'>
-																{`"${pattern.summary}"`}
-															</p>
-														</div>
-													)
-												)}
-											</div>
+											<p className='text-xs text-slate-500 mt-2 italic'>
+												{`Found ${alert.aiInsight.similarPatterns.length} historical matches. Click to view.`}
+											</p>
 										</div>
 									)}
 								</div>
@@ -202,6 +217,12 @@ const AlertRow: FC<iProps> = ({ alert, isExpanded, handleToggleRow }) => {
 					</div>
 				</td>
 			</tr>
+			{isModalOpen && (
+				<SimilarPatternsModal
+					similarPatterns={alert.aiInsight?.similarPatterns || []}
+					toggleModal={toggleModal}
+				/>
+			)}
 		</>
 	)
 }

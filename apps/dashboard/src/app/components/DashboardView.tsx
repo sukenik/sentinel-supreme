@@ -1,9 +1,9 @@
 import { FC } from 'react'
-import AlertsTable from '../components/AlertsTable'
 import LiveLogList from '../components/LiveLogList'
 import { useDashboardSocket } from '../hooks/useDashboardSocket'
 import { useAlertStore } from '../store/useAlertStore'
 import { useStatStore } from '../store/useStatStore'
+import AlertTable from './AlertTable/AlertTable'
 import StatCard from './StatCard'
 
 const DashboardView: FC = () => {
@@ -32,9 +32,8 @@ const DashboardView: FC = () => {
 			</div>
 			<div className='flex-1 flex flex-col xl:flex-row gap-6 min-h-0'>
 				<div className='flex-[2.5] flex flex-col min-h-125 xl:min-h-0'>
-					<AlertsTable alerts={alerts} />
+					<AlertTable alerts={alerts} />
 				</div>
-
 				<div className='flex-1 min-h-100 xl:min-h-0 2xl:min-w-97 3xl:min-w-183'>
 					<LiveLogList isConnected={isConnected} />
 				</div>
