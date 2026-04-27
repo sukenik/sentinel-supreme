@@ -1,5 +1,5 @@
 import { eSeverity, iAlert } from '@sentinel-supreme/shared'
-import { BrainCircuit, ChevronRight, Clock, Fingerprint, Network } from 'lucide-react'
+import { AlertCircle, BrainCircuit, ChevronRight, Clock, Fingerprint, Network } from 'lucide-react'
 import { FC, MouseEvent } from 'react'
 import ReactMarkdown from 'react-markdown'
 import { eMenuOptions } from '../consts'
@@ -85,7 +85,24 @@ const AlertRow: FC<iProps> = ({ alert, isExpanded, handleToggleRow }) => {
 										{'AI Analysis & Insights'}
 									</div>
 									<div className='bg-slate-950/50 border border-slate-800 rounded-lg p-4 min-h-32 max-h-64 overflow-y-auto custom-scrollbar'>
-										{alert.aiInsight ? (
+										{alert.aiInsight === null ? (
+											<div className='flex flex-col items-center justify-center h-32 gap-3 text-red-400/80 italic text-sm text-center'>
+												<AlertCircle
+													size={24}
+													className='text-red-500/50'
+												/>
+												<div className='space-y-1'>
+													<p className='font-semibold not-italic text-red-500/70'>
+														{'AI Service Unavailable'}
+													</p>
+													<p className='text-sm opacity-70'>
+														{
+															'The model is currently overloaded. Please try again later.'
+														}
+													</p>
+												</div>
+											</div>
+										) : alert.aiInsight ? (
 											<div className='space-y-4'>
 												<div className='text-slate-300 text-sm leading-relaxed prose prose-invert prose-sm max-w-none'>
 													<ReactMarkdown
