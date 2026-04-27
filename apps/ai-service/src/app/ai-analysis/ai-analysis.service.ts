@@ -89,10 +89,10 @@ export class AiAnalysisService {
 
 			similarPatterns = searchResults
 				.filter((res) => res.score > 0.85)
-				.map((res) => ({
-					logId: res.payload!.logId as string,
-					summary: res.payload!.summary as string,
-					score: res.score
+				.map(({ payload, score }) => ({
+					logId: payload!.logId as string,
+					summary: payload!.summary as string,
+					score
 				}))
 
 			await this.vectorDbService.upsertThreat(uuidv4(), vector, {
