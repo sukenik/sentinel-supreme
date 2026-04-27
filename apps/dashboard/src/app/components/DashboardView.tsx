@@ -1,9 +1,9 @@
 import { FC } from 'react'
-import AlertTable from '../components/AlertTable/AlertsTable'
 import LiveLogList from '../components/LiveLogList'
 import { useDashboardSocket } from '../hooks/useDashboardSocket'
 import { useAlertStore } from '../store/useAlertStore'
 import { useStatStore } from '../store/useStatStore'
+import AlertTable from './AlertTable/AlertTable'
 import StatCard from './StatCard'
 
 const DashboardView: FC = () => {

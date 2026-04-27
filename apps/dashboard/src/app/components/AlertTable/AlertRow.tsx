@@ -145,6 +145,17 @@ const AlertRow: FC<iProps> = ({ alert, isExpanded, handleToggleRow }) => {
 														{alert.aiInsight.content}
 													</ReactMarkdown>
 												</div>
+												<div className='flex items-center gap-4 pt-3 border-t border-slate-800/50 text-sm text-slate-500 font-mono'>
+													<span className='bg-blue-500/10 px-2 py-0.5 rounded border border-blue-500/20'>
+														{`Tokens: ${alert.aiInsight.tokensUsed}`}
+													</span>
+													<span className='bg-blue-500/10 px-2 py-0.5 rounded border border-blue-500/20'>
+														{`Generated: ${new Date(alert.aiInsight.generatedAt).toLocaleTimeString()}`}
+													</span>
+													<span className='bg-blue-500/10 px-2 py-0.5 rounded border border-blue-500/20'>
+														{`Model: ${alert.aiInsight.model}`}
+													</span>
+												</div>
 											</div>
 										) : (
 											<div className='flex flex-col items-center justify-center h-32 gap-3 text-slate-500 italic text-sm'>
@@ -161,13 +172,24 @@ const AlertRow: FC<iProps> = ({ alert, isExpanded, handleToggleRow }) => {
 									<div className='space-y-3'>
 										<div className='flex items-center gap-3 text-slate-300'>
 											<Clock size={14} className='text-slate-500' />
+											<span>{`Triggered: ${new Date(alert.createdAt).toLocaleString()}`}</span>
+										</div>
+										<div className='flex items-center gap-3 text-slate-300'>
+											<Network size={14} className='text-slate-500' />
 											<span>
-												{new Date(alert.createdAt).toLocaleString()}
+												{'Source IP: '}
+												<span className='font-mono'>
+													{alert.logSourceIp}
+												</span>
 											</span>
 										</div>
-										<div className='flex items-center gap-3 text-slate-300 font-mono'>
-											<Network size={14} className='text-slate-500' />
-											<span>{alert.logSourceIp}</span>
+										<div className='p-3 bg-slate-950/50 rounded-md border border-slate-800'>
+											<p className='text-xs text-slate-500 mb-1'>
+												{'Raw Event Data:'}
+											</p>
+											<p className='text-xs text-slate-400 italic wrap-break-words'>
+												{`"${alert.message}"`}
+											</p>
 										</div>
 									</div>
 									{alert.aiInsight?.similarPatterns && (
