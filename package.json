@@ -63,7 +63,6 @@
 		"amqplib": "^0.10.9",
 		"axios": "^1.13.6",
 		"bcrypt": "^6.0.0",
-		"compute-cosine-similarity": "^1.1.0",
 		"http-proxy-middleware": "^3.0.5",
 		"ioredis": "^5.10.0",
 		"joi": "^18.0.2",
