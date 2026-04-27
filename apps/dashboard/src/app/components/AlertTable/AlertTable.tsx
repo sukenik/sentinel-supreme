@@ -1,6 +1,7 @@
-import { eSeverity, iAlert } from '@sentinel-supreme/shared'
+import { eSeverity, iAlert, iSimilarPattern } from '@sentinel-supreme/shared'
 import { ChangeEvent, FC, MouseEvent, useMemo, useState } from 'react'
 import AlertRow from './AlertRow'
+import SimilarPatternsModal from './SimilarPatternsModal'
 
 interface iProps {
 	alerts: iAlert[]
@@ -9,6 +10,7 @@ interface iProps {
 const AlertTable: FC<iProps> = ({ alerts }) => {
 	const [selectedSeverity, setSelectedSeverity] = useState(eSeverity.ALL)
 	const [expandedAlertId, setExpandedAlertId] = useState<string | null>(null)
+	const [similarPatternsToDisplay, setSimilarPatternsToDisplay] = useState<iSimilarPattern[]>([])
 
 	const handleToggleRow = (e: MouseEvent) => {
 		const alertId = e.currentTarget.id
@@ -17,6 +19,18 @@ const AlertTable: FC<iProps> = ({ alerts }) => {
 
 	const handleFilterChange = (e: ChangeEvent<HTMLSelectElement>) => {
 		setSelectedSeverity(e.target.value as eSeverity)
+	}
+
+	const handleToggleSimilarPatternsModal = (e: MouseEvent) => {
+		e.stopPropagation()
+		const alertId = e.currentTarget.id
+
+		setSimilarPatternsToDisplay(
+			alertId
+				? filteredAlerts.filter(({ id }) => alertId === id)[0].aiInsight?.similarPatterns ||
+						[]
+				: []
+		)
 	}
 
 	const filteredAlerts = useMemo(() => {
@@ -63,6 +77,7 @@ const AlertTable: FC<iProps> = ({ alerts }) => {
 								alert={alert}
 								isExpanded={expandedAlertId === alert.id}
 								handleToggleRow={handleToggleRow}
+								handleToggleSimilarPatternsModal={handleToggleSimilarPatternsModal}
 							/>
 						))}
 						{!filteredAlerts.length && (
@@ -76,6 +91,12 @@ const AlertTable: FC<iProps> = ({ alerts }) => {
 						)}
 					</tbody>
 				</table>
+				{!!similarPatternsToDisplay.length && (
+					<SimilarPatternsModal
+						similarPatterns={similarPatternsToDisplay}
+						toggleModal={handleToggleSimilarPatternsModal}
+					/>
+				)}
 			</div>
 		</div>
 	)

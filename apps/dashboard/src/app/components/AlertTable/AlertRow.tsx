@@ -8,31 +8,30 @@ import {
 	Fingerprint,
 	Network
 } from 'lucide-react'
-import { FC, MouseEvent, useState } from 'react'
+import { FC, MouseEvent } from 'react'
 import ReactMarkdown from 'react-markdown'
 import { eMenuOptions } from '../../consts'
 import { useMenuStore } from '../../store/useMenuStore'
 import Tooltip from '../Tooltip'
-import SimilarPatternsModal from './SimilarPatternsModal'
 
 interface iProps {
 	alert: iAlert
 	isExpanded: boolean
 	handleToggleRow: (e: MouseEvent) => void
+	handleToggleSimilarPatternsModal: (e: MouseEvent) => void
 }
 
-const AlertRow: FC<iProps> = ({ alert, isExpanded, handleToggleRow }) => {
+const AlertRow: FC<iProps> = ({
+	alert,
+	isExpanded,
+	handleToggleRow,
+	handleToggleSimilarPatternsModal
+}) => {
 	const setOpenOption = useMenuStore((state) => state.setOpenOption)
-	const [isModalOpen, setIsModalOpen] = useState(false)
 
 	const handleInvestigateClick = (e: MouseEvent) => {
 		e.stopPropagation()
 		setOpenOption(eMenuOptions.INVESTIGATION, alert.logSourceIp || '')
-	}
-
-	const toggleModal = (e: MouseEvent) => {
-		e.stopPropagation()
-		setIsModalOpen(!isModalOpen)
 	}
 
 	return (
@@ -67,7 +66,8 @@ const AlertRow: FC<iProps> = ({ alert, isExpanded, handleToggleRow }) => {
 					{alert.aiInsight?.similarPatterns && (
 						<Tooltip text='Similar patterns detected in history'>
 							<Fingerprint
-								onClick={toggleModal}
+								id={alert.id}
+								onClick={handleToggleSimilarPatternsModal}
 								size={14}
 								className='text-orange-500'
 							/>
@@ -200,7 +200,8 @@ const AlertRow: FC<iProps> = ({ alert, isExpanded, handleToggleRow }) => {
 													{'Pattern Match'}
 												</div>
 												<button
-													onClick={toggleModal}
+													id={alert.id}
+													onClick={handleToggleSimilarPatternsModal}
 													className='p-1 hover:bg-orange-500/20 rounded text-orange-500 transition-colors cursor-pointer'
 												>
 													<ExternalLink size={16} />
@@ -217,12 +218,6 @@ const AlertRow: FC<iProps> = ({ alert, isExpanded, handleToggleRow }) => {
 					</div>
 				</td>
 			</tr>
-			{isModalOpen && (
-				<SimilarPatternsModal
-					similarPatterns={alert.aiInsight?.similarPatterns || []}
-					toggleModal={toggleModal}
-				/>
-			)}
 		</>
 	)
 }
