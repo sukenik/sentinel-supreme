@@ -3,7 +3,8 @@ import {
 	eAvailableModles,
 	GATEWAY_ROUTES,
 	iAiConfig,
-	iAvailableModel
+	iAvailableModel,
+	iChatAiConfig
 } from '@sentinel-supreme/shared'
 import { Activity, RotateCcw, Settings2, Terminal, Zap } from 'lucide-react'
 import { ChangeEvent, FC, MouseEvent, useEffect, useState } from 'react'
@@ -158,6 +159,18 @@ const AiManager: FC = () => {
 		setActiveTab(tab)
 	}
 
+	const handleToggleCache = async () => {
+		if (!config) return
+
+		const updatedChatAi = {
+			...config.chatAi,
+			useSemanticCache: !config.chatAi.useSemanticCache
+		} as iChatAiConfig
+
+		setConfig({ ...config, chatAi: updatedChatAi })
+		updateField({ chatAi: updatedChatAi }, 'Semantic Cache')
+	}
+
 	if (isLoading || !config)
 		return (
 			<div className='p-10 text-center text-slate-500 animate-pulse font-mono tracking-widest'>
@@ -209,6 +222,7 @@ const AiManager: FC = () => {
 							handleChatModelChange={handleChatModelChange}
 							handleTemperatureChange={handleTemperatureChange}
 							handleTemperatureMouseUp={handleTemperatureMouseUp}
+							handleToggleCache={handleToggleCache}
 						/>
 					)}
 					{activeTab === eAiSettingsTabs.PROMPTS && (

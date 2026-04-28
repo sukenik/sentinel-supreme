@@ -3,12 +3,12 @@ import { ConfigService } from '@nestjs/config'
 import { QdrantClient } from '@qdrant/js-client-rest'
 import { ENV_VARS } from '@sentinel-supreme/shared'
 import { EMBEDDING_SIZE } from '../consts'
+import { eVectorCollection } from '../types'
 
 @Injectable()
 export class VectorDbService implements OnModuleInit {
 	private readonly logger = new Logger(VectorDbService.name)
 	private client: QdrantClient
-	private readonly COLLECTION_NAME = 'threat_patterns'
 
 	constructor(private config: ConfigService) {
 		this.client = new QdrantClient({
@@ -18,17 +18,18 @@ export class VectorDbService implements OnModuleInit {
 	}
 
 	async onModuleInit() {
-		await this.ensureCollection()
+		for (const collection of Object.values(eVectorCollection)) {
+			await this.ensureCollection(collection)
+		}
 	}
 
-	private async ensureCollection() {
+	private async ensureCollection(collectionName: eVectorCollection) {
 		const collections = await this.client.getCollections()
-		const exists = collections.collections.some((c) => c.name === this.COLLECTION_NAME)
+		const exists = collections.collections.some((c) => c.name === collectionName)
 
 		if (!exists) {
-			this.logger.log(`Creating collection: ${this.COLLECTION_NAME}`)
-
-			await this.client.createCollection(this.COLLECTION_NAME, {
+			this.logger.log(`Creating collection: ${collectionName}`)
+			await this.client.createCollection(collectionName, {
 				vectors: {
 					size: EMBEDDING_SIZE,
 					distance: 'Cosine'
@@ -37,8 +38,8 @@ export class VectorDbService implements OnModuleInit {
 		}
 	}
 
-	async upsertThreat(id: string, vector: number[], payload: any) {
-		return this.client.upsert(this.COLLECTION_NAME, {
+	async upsert(collection: eVectorCollection, id: string, vector: number[], payload: any) {
+		return this.client.upsert(collection, {
 			wait: true,
 			points: [
 				{
@@ -50,8 +51,8 @@ export class VectorDbService implements OnModuleInit {
 		})
 	}
 
-	async searchSimilarThreats(vector: number[], limit = 3) {
-		return this.client.search(this.COLLECTION_NAME, {
+	async searchSimilar(collection: eVectorCollection, vector: number[], limit = 3) {
+		return this.client.search(collection, {
 			vector,
 			limit,
 			with_payload: true

@@ -185,6 +185,7 @@ export const DEFAULT_AI_CONFIG: Partial<iAiConfig> = {
 	chatAi: {
 		modelName: eAvailableModles.GEMINI_3_1_FLASH_LITE_PREVIEW,
 		temperature: 0.1,
+		useSemanticCache: false,
 		systemPrompt: `
 			You are Sentinel Supreme Assistant.
 			Use the provided tools to answer questions about system health.

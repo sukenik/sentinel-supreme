@@ -1,5 +1,5 @@
 import { iAiConfig, iAvailableModel } from '@sentinel-supreme/shared'
-import { Cpu, MessageSquare, Thermometer } from 'lucide-react'
+import { Cpu, MessageSquare, Thermometer, Zap, ZapOff } from 'lucide-react'
 import { ChangeEvent, FC } from 'react'
 import { eAiEngine } from '../../types'
 
@@ -10,6 +10,7 @@ interface iProps {
 	handleChatModelChange: (e: ChangeEvent<HTMLSelectElement>) => void
 	handleTemperatureChange: (e: ChangeEvent<HTMLInputElement>, engine: eAiEngine) => void
 	handleTemperatureMouseUp: (engine: eAiEngine) => void
+	handleToggleCache: () => Promise<void>
 }
 
 const ModelConfig: FC<iProps> = ({
@@ -18,7 +19,8 @@ const ModelConfig: FC<iProps> = ({
 	handleAnalysisModelChange,
 	handleChatModelChange,
 	handleTemperatureChange,
-	handleTemperatureMouseUp
+	handleTemperatureMouseUp,
+	handleToggleCache
 }) => {
 	const handleAnalysisTemperatureChange = (e: ChangeEvent<HTMLInputElement>) => {
 		handleTemperatureChange(e, eAiEngine.ANALYSIS)
@@ -40,7 +42,7 @@ const ModelConfig: FC<iProps> = ({
 		<div className='grid grid-cols-1 lg:grid-cols-2 gap-6 animate-in fade-in duration-300'>
 			<div className='p-6 bg-slate-800/40 border border-slate-700 rounded-xl backdrop-blur-sm flex flex-col justify-between'>
 				<div>
-					<div className='flex items-center gap-3 mb-4 text-slate-400'>
+					<div className='flex items-center gap-3 mb-8 text-slate-400'>
 						<Cpu size={18} className='text-purple-400' />
 						<span className='text-xs font-bold uppercase tracking-wider'>
 							{'Log Analysis Engine'}
@@ -98,11 +100,24 @@ const ModelConfig: FC<iProps> = ({
 				</p>
 			</div>
 			<div className='p-6 bg-slate-800/40 border border-slate-700 rounded-xl backdrop-blur-sm space-y-8'>
-				<div className='flex items-center gap-3 mb-4 text-slate-400'>
-					<MessageSquare size={18} className='text-cyan-400' />
-					<span className='text-xs font-bold uppercase tracking-wider'>
-						{'Chat Assistant'}
-					</span>
+				<div className='flex items-center justify-between mb-4'>
+					<div className='flex items-center gap-3 text-slate-400'>
+						<MessageSquare size={18} className='text-cyan-400' />
+						<span className='text-xs font-bold uppercase tracking-wider'>
+							{'Chat Assistant'}
+						</span>
+					</div>
+					<button
+						onClick={handleToggleCache}
+						className={`flex items-center gap-2 px-3 py-1.5 rounded-lg border transition-all cursor-pointer font-mono text-sm uppercase tracking-tighter ${
+							config.chatAi.useSemanticCache
+								? 'bg-cyan-500/10 border-cyan-500/50 text-cyan-400 shadow-[0_0_10px_rgba(34,211,238,0.1)]'
+								: 'bg-slate-900 border-slate-700 text-slate-500'
+						}`}
+					>
+						{config.chatAi.useSemanticCache ? <Zap size={12} /> : <ZapOff size={12} />}
+						{`Semantic Cache: ${config.chatAi.useSemanticCache ? 'Enabled' : 'Disabled'}`}
+					</button>
 				</div>
 				<div className='space-y-6'>
 					<div className='space-y-2'>
@@ -150,6 +165,11 @@ const ModelConfig: FC<iProps> = ({
 						</div>
 					</div>
 				</div>
+				<p className='text-sm text-slate-500 mt-6 italic leading-relaxed'>
+					{config.chatAi.useSemanticCache
+						? '* Instant responses for recurring technical questions are enabled to save computation power.'
+						: '* Real-time neural processing is forced for every interaction.'}
+				</p>
 			</div>
 		</div>
 	)
