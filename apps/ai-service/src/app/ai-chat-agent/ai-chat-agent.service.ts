@@ -3,7 +3,11 @@ import { Inject, Injectable, Logger } from '@nestjs/common'
 import { ClientProxy } from '@nestjs/microservices'
 import { AI_CHAT_PATTERNS, iAiChatChunk } from '@sentinel-supreme/shared'
 import { AiConfigService } from '@sentinel-supreme/shared/server'
+import { v4 as uuidv4 } from 'uuid'
 import { AI_CHAT_CLIENT, CHAT_AGENT } from '../consts'
+import { GeminiEmbeddingService } from '../gemini-embedding/gemini-embedding.service'
+import { eVectorCollection } from '../types'
+import { VectorDbService } from '../vector-db/vector-db.service'
 
 @Injectable()
 export class AiChatAgentService {
@@ -12,16 +16,45 @@ export class AiChatAgentService {
 	constructor(
 		@Inject(CHAT_AGENT) private readonly agent: any,
 		@Inject(AI_CHAT_CLIENT) private readonly client: ClientProxy,
-		private readonly aiConfigService: AiConfigService
+		private readonly aiConfigService: AiConfigService,
+		private readonly embeddingService: GeminiEmbeddingService,
+		private readonly vectorDb: VectorDbService
 	) {}
 
 	async chatStream(userMessage: string, userId: string) {
 		const { CHUNK, ERROR } = AI_CHAT_PATTERNS
 		let totalTokens = 0
+		let fullResponseContent = ''
+		let userMessageVector: number[] | null = null
 
 		this.logger.log(`Streaming starting for user: ${userId}`)
 
 		try {
+			const config = await this.aiConfigService.get()
+
+			if (config.chatAi.useSemanticCache) {
+				userMessageVector = await this.embeddingService.embedText(userMessage)
+				const cachedResponse = await this.vectorDb.searchSimilar(
+					eVectorCollection.CHAT_CACHE,
+					userMessageVector,
+					1
+				)
+
+				if (cachedResponse.length > 0 && cachedResponse[0].score > 0.96) {
+					this.logger.log(`[Semantic Cache] Hit! Similarity: ${cachedResponse[0].score}`)
+					const cachedText = cachedResponse[0].payload!.response as string
+
+					this.client.emit(CHUNK, {
+						userId,
+						content: cachedText,
+						isFinal: true,
+						tokensUsed: 0
+					} as iAiChatChunk)
+
+					return
+				}
+			}
+
 			const eventStream = await this.agent.streamEvents(
 				{ messages: [new HumanMessage(userMessage)] },
 				{
@@ -47,7 +80,6 @@ export class AiChatAgentService {
 					}
 
 					if (usage) {
-						this.logger.log(`Tokens detected in event: ${usage.total_tokens}`)
 						totalTokens += usage.total_tokens || 0
 					}
 				}
@@ -56,6 +88,8 @@ export class AiChatAgentService {
 					const content = event.data.chunk?.content
 
 					if (content) {
+						fullResponseContent += content
+
 						this.client.emit(CHUNK, {
 							userId,
 							content,
@@ -71,10 +105,18 @@ export class AiChatAgentService {
 				tokensUsed: totalTokens
 			} as iAiChatChunk)
 
-			this.logger.log(`Streaming finished. Total tokens: ${totalTokens} for user: ${userId}`)
+			if (config.chatAi.useSemanticCache && fullResponseContent.length > 0) {
+				const vectorToSave =
+					userMessageVector || (await this.embeddingService.embedText(userMessage))
+
+				await this.vectorDb.upsert(eVectorCollection.CHAT_CACHE, uuidv4(), vectorToSave, {
+					question: userMessage,
+					response: fullResponseContent,
+					createdAt: new Date().toISOString()
+				})
+			}
 
 			if (totalTokens > 0) {
-				const config = await this.aiConfigService.get()
 				await this.aiConfigService.incrementTokens(config.id, totalTokens)
 			}
 		} catch (error) {
@@ -82,5 +124,7 @@ export class AiChatAgentService {
 			this.logger.error('Error during AI Streaming', stack)
 			this.client.emit(ERROR, { userId, error: 'Neural link failed' })
 		}
+
+		this.logger.log(`Streaming ended for user: ${userId}`)
 	}
 }

@@ -9,7 +9,7 @@ export interface iAiInsight {
 export interface iAiConfig {
 	id: string
 	analysisAi: iModelConfig
-	chatAi: iModelConfig
+	chatAi: iChatAiConfig
 	totalTokensUsed: number
 	updatedAt: Date
 }
@@ -25,6 +25,10 @@ export interface iModelConfig {
 	modelName: eAvailableModles
 	systemPrompt: string
 	temperature: number
+}
+
+export interface iChatAiConfig extends iModelConfig {
+	useSemanticCache: boolean
 }
 
 export interface iAvailableModel {

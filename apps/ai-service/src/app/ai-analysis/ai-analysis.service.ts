@@ -6,6 +6,7 @@ import { ENV_VARS, iAiInsight, iLog, iSimilarPattern } from '@sentinel-supreme/s
 import { AiConfigService } from '@sentinel-supreme/shared/server'
 import { v4 as uuidv4 } from 'uuid'
 import { GeminiEmbeddingService } from '../gemini-embedding/gemini-embedding.service'
+import { eVectorCollection } from '../types'
 import { VectorDbService } from '../vector-db/vector-db.service'
 
 @Injectable()
@@ -34,7 +35,11 @@ export class AiAnalysisService {
 
 			logVector = await this.geminiEmbeddingService.embedText(messageForEmbedding)
 
-			const searchResults = await this.vectorDbService.searchSimilarThreats(logVector, 3)
+			const searchResults = await this.vectorDbService.searchSimilar(
+				eVectorCollection.THREAT_PATTERNS,
+				logVector,
+				3
+			)
 
 			similarPatterns = searchResults
 				.filter((res) => res.score > 0.85)
@@ -87,7 +92,7 @@ export class AiAnalysisService {
 
 		if (logVector.length > 0) {
 			await this.vectorDbService
-				.upsertThreat(uuidv4(), logVector, {
+				.upsert(eVectorCollection.THREAT_PATTERNS, uuidv4(), logVector, {
 					logId: isBatch ? 'batch' : logs[0].fingerprint,
 					summary,
 					timestamp: new Date().toISOString(),

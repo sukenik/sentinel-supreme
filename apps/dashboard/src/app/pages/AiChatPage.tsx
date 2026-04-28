@@ -1,11 +1,11 @@
-import { AlertCircle, Bot, Cpu, Database, Loader2, Send, Sparkles, User } from 'lucide-react'
+import { AlertCircle, Bot, Cpu, Database, Loader2, Send, Sparkles, User, Zap } from 'lucide-react'
 import { ChangeEvent, FC, KeyboardEvent, MouseEvent, useEffect, useRef, useState } from 'react'
 import { useAiStream } from '../hooks/useAiStream'
 import { eChatRole } from '../types'
 import { SUGGESTED_PROMPTS } from '../utils'
 
 const AiChatPage: FC = () => {
-	const { messages, sendMessage, isTyping, activeModel } = useAiStream()
+	const { messages, sendMessage, isTyping, aiConfig } = useAiStream()
 	const [input, setInput] = useState('')
 	const messagesEndRef = useRef<HTMLDivElement>(null)
 
@@ -45,17 +45,30 @@ const AiChatPage: FC = () => {
 							{'Sentinel Supreme AI'}
 						</h2>
 						<div className='mx-4 w-px h-4 bg-slate-700' />
-						<div className='flex justify-center items-center gap-2 px-2.5 py-1 bg-slate-950/50 border border-slate-800 rounded-full shadow-inner'>
+						<div className='flex justify-center items-center gap-2 px-2.5 py-1 bg-slate-950/50 border border-slate-800 rounded-lg shadow-inner'>
 							<Cpu size={14} className='text-slate-500' />
 							<span className='text-sm font-mono font-medium text-slate-400 uppercase tracking-tight'>
 								<span className='text-slate-600 mr-1'>{'MODEL:'}</span>
 								<span
-									className={activeModel ? 'text-cyan-400/80' : 'text-slate-600'}
+									className={
+										aiConfig?.modelName ? 'text-cyan-400/80' : 'text-slate-600'
+									}
 								>
-									{activeModel || 'SYNCHRONIZING...'}
+									{aiConfig?.modelName || 'SYNCHRONIZING...'}
 								</span>
 							</span>
 						</div>
+						{aiConfig?.useSemanticCache && (
+							<>
+								<div className='mx-4 w-px h-4 bg-slate-700' />
+								<div className='flex justify-center items-center gap-2 px-2.5 py-1 bg-green-500/5 border border-green-500/20 rounded-lg'>
+									<Database size={14} className='text-green-500/60' />
+									<span className='text-sm font-mono text-green-500/60 uppercase'>
+										{'Cache Ready'}
+									</span>
+								</div>
+							</>
+						)}
 					</div>
 				</div>
 			</div>
@@ -131,7 +144,7 @@ const AiChatPage: FC = () => {
 										{msg.content}
 									</div>
 									{msg.role === eChatRole.AI &&
-										msg.tokensUsed &&
+										!!msg.tokensUsed &&
 										!msg.isStreaming && (
 											<div className='mt-2 pt-2 border-t border-cyan-500/10 text-xs font-mono text-slate-500 flex justify-between items-center'>
 												<span>{'COMPUTATION FINISHED'}</span>
@@ -141,6 +154,12 @@ const AiChatPage: FC = () => {
 												</span>
 											</div>
 										)}
+									{msg.role === eChatRole.AI && msg.tokensUsed === 0 && (
+										<div className='mt-2 pt-2 border-t border-cyan-500/10 text-xs font-mono text-cyan-500/60 flex items-center gap-1'>
+											<Zap size={10} />
+											<span>{'RETRIEVED FROM SEMANTIC CACHE (0ms)'}</span>
+										</div>
+									)}
 									{msg.isStreaming && (
 										<span className='inline-block w-1.5 h-4 ml-1 bg-cyan-400 animate-pulse align-middle' />
 									)}

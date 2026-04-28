@@ -1,4 +1,10 @@
-import { GATEWAY_ROUTES, iAiChatChunk, iAiConfig, WS_EVENTS } from '@sentinel-supreme/shared'
+import {
+	GATEWAY_ROUTES,
+	iAiChatChunk,
+	iAiConfig,
+	iChatAiConfig,
+	WS_EVENTS
+} from '@sentinel-supreme/shared'
 import { useCallback, useEffect, useState } from 'react'
 import api from '../api/axiosInstance'
 import { socket } from '../api/socket'
@@ -17,12 +23,12 @@ interface iMessage {
 export const useAiStream = () => {
 	const [messages, setMessages] = useState<iMessage[]>([])
 	const [isTyping, setIsTyping] = useState(false)
-	const [activeModel, setActiveModel] = useState<string>('')
+	const [aiConfig, setAiConfig] = useState<iChatAiConfig>()
 
 	useEffect(() => {
 		api.get(GATEWAY_ROUTES.AI_CONFIG).then((res) => {
 			const config = res.data.data as iAiConfig
-			setActiveModel(config.chatAi.modelName)
+			setAiConfig(config.chatAi)
 		})
 
 		const handleChunk = (data: Partial<iAiChatChunk>) => {
@@ -41,7 +47,10 @@ export const useAiStream = () => {
 								? lastMessage.content
 								: lastMessage.content + rawContent,
 							hasUsedTools: lastMessage.hasUsedTools || !!data.hasUsedTools,
-							tokensUsed: data.tokensUsed || lastMessage.tokensUsed,
+							tokensUsed:
+								data.tokensUsed !== undefined
+									? data.tokensUsed
+									: lastMessage.tokensUsed,
 							isStreaming: !data.isFinal
 						}
 					]
@@ -106,5 +115,5 @@ export const useAiStream = () => {
 		}
 	}, [])
 
-	return { messages, sendMessage, isTyping, activeModel }
+	return { messages, sendMessage, isTyping, aiConfig }
 }

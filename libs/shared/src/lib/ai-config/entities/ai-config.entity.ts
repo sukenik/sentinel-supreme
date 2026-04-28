@@ -1,5 +1,5 @@
 import { Column, Entity, PrimaryGeneratedColumn, UpdateDateColumn } from 'typeorm'
-import type { iAiConfig, iModelConfig } from '../../ai.types'
+import type { iAiConfig, iChatAiConfig, iModelConfig } from '../../ai.types'
 
 @Entity('ai_config')
 export class AiConfigEntity implements iAiConfig {
@@ -10,7 +10,7 @@ export class AiConfigEntity implements iAiConfig {
 	analysisAi!: iModelConfig
 
 	@Column({ type: 'jsonb' })
-	chatAi!: iModelConfig
+	chatAi!: iChatAiConfig
 
 	@Column({ type: 'bigint' })
 	totalTokensUsed!: number
