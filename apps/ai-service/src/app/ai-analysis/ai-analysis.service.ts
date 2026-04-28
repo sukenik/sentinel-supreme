@@ -21,6 +21,37 @@ export class AiAnalysisService {
 
 	async analyzeLogs(logs: iLog[]): Promise<iAiInsight> {
 		const { id: configId, analysisAi } = await this.aiConfigService.get()
+		const isBatch = logs.length > 1
+
+		let pastContext = ''
+		let similarPatterns: iSimilarPattern[] = []
+		let logVector: number[] = []
+
+		try {
+			const messageForEmbedding = isBatch
+				? `Batch of ${logs.length} logs from ${logs[0].service}`
+				: this.cleanLogForEmbedding(logs[0].message)
+
+			logVector = await this.geminiEmbeddingService.embedText(messageForEmbedding)
+
+			const searchResults = await this.vectorDbService.searchSimilarThreats(logVector, 3)
+
+			similarPatterns = searchResults
+				.filter((res) => res.score > 0.85)
+				.map(({ payload, score }) => ({
+					logId: payload!.logId as string,
+					summary: payload!.summary as string,
+					score
+				}))
+
+			if (similarPatterns.length > 0) {
+				pastContext = `\n\nCONTEXT FROM PAST SIMILAR INCIDENTS:\n${similarPatterns
+					.map((p) => `- ${p.summary}`)
+					.join('\n')}`
+			}
+		} catch (e) {
+			this.logger.warn('Enrichment step failed, continuing with standard analysis', e)
+		}
 
 		const apiKey = this.config.getOrThrow<string>(ENV_VARS.GEMINI_API_KEY)
 		const dynamicModel = new ChatGoogleGenerativeAI({
@@ -39,10 +70,10 @@ export class AiAnalysisService {
 			metadata: l.metadata
 		}))
 
-		const isBatch = logs.length > 1
+		const systemPromptWithContext = `${analysisAi.systemPrompt}${pastContext}`
 
 		const response = await dynamicModel.invoke([
-			new SystemMessage(analysisAi.systemPrompt),
+			new SystemMessage(systemPromptWithContext),
 			new HumanMessage(`
                 Analyze the following ${isBatch ? 'batch of ' + logs.length : 'single'} logs:
                 ${JSON.stringify(logContext)}
@@ -54,7 +85,16 @@ export class AiAnalysisService {
 
 		this.aiConfigService.incrementTokens(configId, tokensUsed)
 
-		const similarPatterns = await this.getSimilarPatterns(summary, isBatch, logs)
+		if (logVector.length > 0) {
+			await this.vectorDbService
+				.upsertThreat(uuidv4(), logVector, {
+					logId: isBatch ? 'batch' : logs[0].fingerprint,
+					summary,
+					timestamp: new Date().toISOString(),
+					service: isBatch ? 'multiple' : logs[0].service
+				})
+				.catch((e) => this.logger.error('Failed to save to Vector DB', e))
+		}
 
 		return {
 			tokensUsed,
@@ -65,46 +105,19 @@ export class AiAnalysisService {
 		}
 	}
 
+	private cleanLogForEmbedding(message: string): string {
+		return message
+			.replace(/\d{4}-\d{2}-\d{2}[T ]\d{2}:\d{2}:\d{2}(\.\d+)?Z?/g, '')
+			.replace(/\b\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}\b/g, 'IP_ADDR')
+			.replace(/0x[a-fA-F0-9]+/g, 'HEX_ADDR')
+			.trim()
+	}
+
 	private extractContent(content: string | (ContentBlock | ContentBlock.Text)[]): string {
 		if (typeof content === 'string') return content
-
 		if (Array.isArray(content)) {
 			return content.map((part) => ('text' in part ? part.text : '')).join('')
 		}
-
 		return String(content)
-	}
-
-	private async getSimilarPatterns(
-		summary: string,
-		isBatch: boolean,
-		logs: iLog[]
-	): Promise<iSimilarPattern[]> {
-		let similarPatterns = [] as iSimilarPattern[]
-
-		try {
-			const vector = await this.geminiEmbeddingService.embedText(summary)
-
-			const searchResults = await this.vectorDbService.searchSimilarThreats(vector, 3)
-
-			similarPatterns = searchResults
-				.filter((res) => res.score > 0.85)
-				.map(({ payload, score }) => ({
-					logId: payload!.logId as string,
-					summary: payload!.summary as string,
-					score
-				}))
-
-			await this.vectorDbService.upsertThreat(uuidv4(), vector, {
-				logId: isBatch ? 'batch' : logs[0].fingerprint,
-				summary,
-				timestamp: new Date().toISOString(),
-				service: isBatch ? 'multiple' : logs[0].service
-			})
-		} catch (error) {
-			this.logger.error('Failed to process vector embeddings', error)
-		}
-
-		return similarPatterns
 	}
 }
