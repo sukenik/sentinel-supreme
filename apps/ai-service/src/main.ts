@@ -12,7 +12,7 @@ async function bootstrap() {
 	const port = config.getOrThrow<number>(ENV_VARS.AI_SERVICE_PORT)
 
 	app.connectMicroservice(
-		SharedRmqModule.getOptionsRaw(QUEUES.AI_ANALYSIS, false, {
+		SharedRmqModule.getOptions(config, QUEUES.AI_ANALYSIS, false, {
 			arguments: {
 				[DL_CONFIG.DLX_HEADER]: AI_ANALYSIS_DLX.DLX_NAME,
 				[DL_CONFIG.DL_ROUTING_KEY_HEADER]: AI_ANALYSIS_DLX.DL_ROUTING_KEY
@@ -20,7 +20,7 @@ async function bootstrap() {
 		})
 	)
 
-	app.connectMicroservice(SharedRmqModule.getOptionsRaw(QUEUES.AI_CHAT_REQUEST))
+	app.connectMicroservice(SharedRmqModule.getOptions(config, QUEUES.AI_CHAT_REQUEST))
 
 	await app.startAllMicroservices()
 
