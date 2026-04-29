@@ -1,7 +1,9 @@
 import { Module } from '@nestjs/common'
 import { ConfigModule } from '@nestjs/config'
 import { ScheduleModule } from '@nestjs/schedule'
+import { appConfig } from '@sentinel-supreme/shared'
 import { MongoModule, PostgresModule, RedisModule } from '@sentinel-supreme/shared/server'
+import { PrometheusModule } from '@willsoto/nestjs-prometheus'
 import * as Joi from 'joi'
 import { AiAnalysisModule } from './aiAnalysis/ai-analysis.module'
 import { AppController } from './app.controller'
@@ -14,6 +16,7 @@ import { RetentionModule } from './retention/retention.module'
 		ConfigModule.forRoot({
 			isGlobal: true,
 			validationSchema: Joi.object({
+				LOG_PROCESSOR_PORT: Joi.number().required(),
 				MONGO_USER: Joi.string().required(),
 				MONGO_PASSWORD: Joi.string().required(),
 				MONGO_PORT: Joi.number().required(),
@@ -34,6 +37,9 @@ import { RetentionModule } from './retention/retention.module'
 				PG_HOST: Joi.string().required(),
 				LOG_RETENTION_DAYS: Joi.number().required()
 			})
+		}),
+		PrometheusModule.register({
+			path: appConfig.PROMETHEUS_ENDPOINT
 		}),
 		ScheduleModule.forRoot(),
 		MongoModule,

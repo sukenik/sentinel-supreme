@@ -21,8 +21,7 @@ async function bootstrap() {
 	})
 
 	const config = app.get(ConfigService)
-
-	const port = config.getOrThrow(ENV_VARS.GATEWAY_PORT)
+	const port = config.getOrThrow<number>(ENV_VARS.GATEWAY_PORT)
 
 	app.connectMicroservice(SharedRmqModule.getOptions(config, QUEUES.UI_UPDATES))
 	app.connectMicroservice(SharedRmqModule.getOptions(config, QUEUES.AI_CHAT_RESPONSE))

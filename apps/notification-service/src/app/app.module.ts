@@ -1,5 +1,7 @@
 import { Module } from '@nestjs/common'
 import { ConfigModule } from '@nestjs/config'
+import { appConfig } from '@sentinel-supreme/shared'
+import { PrometheusModule } from '@willsoto/nestjs-prometheus'
 import * as Joi from 'joi'
 import { AppController } from './app.controller'
 import { AppService } from './app.service'
@@ -10,6 +12,7 @@ import { NotificationOrchestratorModule } from './notification-orchestrator/noti
 		ConfigModule.forRoot({
 			isGlobal: true,
 			validationSchema: Joi.object({
+				NOTIFICATION_SERVICE_PORT: Joi.number().required(),
 				RMQ_USER: Joi.string().required(),
 				RMQ_PASSWORD: Joi.string().required(),
 				RMQ_PORT: Joi.number().required(),
@@ -22,6 +25,9 @@ import { NotificationOrchestratorModule } from './notification-orchestrator/noti
 				SLACK_WEBHOOK_URL: Joi.string().required(),
 				DISCORD_WEBHOOK_URL: Joi.string().required()
 			})
+		}),
+		PrometheusModule.register({
+			path: appConfig.PROMETHEUS_ENDPOINT
 		}),
 		NotificationOrchestratorModule
 	],
