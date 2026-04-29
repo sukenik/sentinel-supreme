@@ -42,7 +42,7 @@ import { UsersModule } from './users/users.module'
 		ConfigModule.forRoot({
 			isGlobal: true,
 			validationSchema: Joi.object({
-				GATEWAY_PORT: Joi.number().default(3000),
+				GATEWAY_PORT: Joi.number().required(),
 				RMQ_USER: Joi.string().required(),
 				RMQ_PASSWORD: Joi.string().required(),
 				RMQ_PORT: Joi.number().required(),

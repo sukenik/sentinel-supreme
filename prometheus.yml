@@ -10,3 +10,18 @@ scrape_configs:
       metrics_path: '/api/metrics'
       static_configs:
           - targets: ['host.docker.internal:3000']
+
+    - job_name: 'sentinel-log-processor'
+      metrics_path: '/metrics'
+      static_configs:
+          - targets: ['host.docker.internal:3001']
+
+    - job_name: 'sentinel-ai-service'
+      metrics_path: '/metrics'
+      static_configs:
+          - targets: ['host.docker.internal:3002']
+
+    - job_name: 'sentinel-notification-service'
+      metrics_path: '/metrics'
+      static_configs:
+          - targets: ['host.docker.internal:3003']
