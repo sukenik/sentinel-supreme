@@ -2,6 +2,7 @@ import { Module } from '@nestjs/common'
 import { ConfigModule } from '@nestjs/config'
 import { APP_GUARD } from '@nestjs/core'
 import { ThrottlerGuard, ThrottlerModule } from '@nestjs/throttler'
+import { appConfig } from '@sentinel-supreme/shared'
 import {
 	AiConfigModule,
 	MongoModule,
@@ -10,6 +11,7 @@ import {
 	SharedNotificationsPreferencesModule,
 	SharedRulesModule
 } from '@sentinel-supreme/shared/server'
+import { PrometheusModule } from '@willsoto/nestjs-prometheus'
 import Joi from 'joi'
 import { AiChatManagerModule } from './ai-chat/ai-chat-manager.module'
 import { AlertsModule } from './alerts/alerts.module'
@@ -64,6 +66,9 @@ import { UsersModule } from './users/users.module'
 				MONGO_HOST: Joi.string().required(),
 				GEMINI_API_KEY: Joi.string().required()
 			})
+		}),
+		PrometheusModule.register({
+			path: appConfig.PROMETHEUS_ENDPOINT
 		}),
 		PostgresModule,
 		MongoModule,

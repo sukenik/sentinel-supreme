@@ -3,7 +3,8 @@ import { eAvailableModles, iAiConfig } from './ai.types'
 export const appConfig = {
 	DASHBOARD_URL: 'http://localhost:4200',
 	GATEWAY_URL: 'http://localhost:3000/',
-	NOTIFICATION_SERVICE_URL: 'http://localhost:3005/'
+	NOTIFICATION_SERVICE_URL: 'http://localhost:3005/',
+	PROMETHEUS_ENDPOINT: '/metrics'
 }
 
 export const QUEUES = {
