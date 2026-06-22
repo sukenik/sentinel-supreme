@@ -197,3 +197,9 @@ export const DEFAULT_AI_CONFIG: Partial<iAiConfig> = {
 		`
 	}
 }
+
+export const PROMETHEUS_METRICS = {
+	AI_CHAT_REQUESTS_TOTAL: 'ai_chat_requests_total',
+	AI_SEMANTIC_CACHE_HITS_TOTAL: 'ai_semantic_cache_hits_total',
+	AI_TOKENS_CONSUMED_TOTAL: 'ai_tokens_consumed_total'
+}
