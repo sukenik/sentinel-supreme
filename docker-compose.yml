@@ -119,6 +119,29 @@ services:
         networks:
             - sentinel-network
 
+    loki:
+        image: grafana/loki:latest
+        container_name: sentinel-loki
+        restart: unless-stopped
+        ports:
+            - '${LOKI_PORT}:3100'
+        command: -config.file=/etc/loki/local-config.yaml
+        networks:
+            - sentinel-network
+
+    promtail:
+        image: grafana/promtail:latest
+        container_name: sentinel-promtail
+        restart: unless-stopped
+        volumes:
+            - /var/lib/docker/containers:/var/lib/docker/containers:ro
+            - ./promtail-config.yml:/etc/promtail/config.yml
+            - ./logs:/var/log/sentinel:ro
+            - /var/run/docker.sock:/var/run/docker.sock
+        command: -config.file=/etc/promtail/config.yml
+        networks:
+            - sentinel-network
+
 volumes:
     postgres_data:
         driver: local

@@ -1,0 +1,45 @@
+server:
+    http_listen_port: 9080
+    grpc_listen_port: 0
+
+positions:
+    filename: /tmp/positions.yaml
+
+clients:
+    - url: http://loki:3100/loki/api/v1/push
+
+scrape_configs:
+    - job_name: docker-logs
+      docker_sd_configs:
+          - host: unix:///var/run/docker.sock
+            refresh_interval: 5s
+      relabel_configs:
+          - source_labels: ['__meta_docker_container_name']
+            regex: '/(.*)'
+            target_label: 'container'
+
+    - job_name: local-apps
+      static_configs:
+          - targets: [localhost]
+            labels:
+                job: sentinel-local
+                service_name: gateway
+                __path__: /var/log/sentinel/gateway.log
+
+          - targets: [localhost]
+            labels:
+                job: sentinel-local
+                service_name: log-processor
+                __path__: /var/log/sentinel/log-processor.log
+
+          - targets: [localhost]
+            labels:
+                job: sentinel-local
+                service_name: notification-service
+                __path__: /var/log/sentinel/notification-service.log
+
+          - targets: [localhost]
+            labels:
+                job: sentinel-local
+                service_name: ai-service
+                __path__: /var/log/sentinel/ai-service.log

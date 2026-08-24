@@ -61,3 +61,4 @@ vitest.config.*.timestamp*
 GEMINI.md
 simulate-logs.ps1
 TODO.txt
+/logs
