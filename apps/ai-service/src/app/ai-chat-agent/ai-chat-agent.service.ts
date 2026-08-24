@@ -1,8 +1,10 @@
 import { HumanMessage } from '@langchain/core/messages'
 import { Inject, Injectable, Logger } from '@nestjs/common'
 import { ClientProxy } from '@nestjs/microservices'
-import { AI_CHAT_PATTERNS, iAiChatChunk } from '@sentinel-supreme/shared'
+import { AI_CHAT_PATTERNS, iAiChatChunk, PROMETHEUS_METRICS } from '@sentinel-supreme/shared'
 import { AiConfigService } from '@sentinel-supreme/shared/server'
+import { InjectMetric } from '@willsoto/nestjs-prometheus'
+import { Counter } from 'prom-client'
 import { v4 as uuidv4 } from 'uuid'
 import { AI_CHAT_CLIENT, CHAT_AGENT } from '../consts'
 import { GeminiEmbeddingService } from '../gemini-embedding/gemini-embedding.service'
@@ -14,6 +16,12 @@ export class AiChatAgentService {
 	private readonly logger = new Logger(AiChatAgentService.name)
 
 	constructor(
+		@InjectMetric(PROMETHEUS_METRICS.AI_CHAT_REQUESTS_TOTAL)
+		private readonly chatCounter: Counter,
+		@InjectMetric(PROMETHEUS_METRICS.AI_SEMANTIC_CACHE_HITS_TOTAL)
+		private readonly cacheHitCounter: Counter,
+		@InjectMetric(PROMETHEUS_METRICS.AI_TOKENS_CONSUMED_TOTAL)
+		private readonly tokenCounter: Counter,
 		@Inject(CHAT_AGENT) private readonly agent: any,
 		@Inject(AI_CHAT_CLIENT) private readonly client: ClientProxy,
 		private readonly aiConfigService: AiConfigService,
@@ -28,6 +36,7 @@ export class AiChatAgentService {
 		let userMessageVector: number[] | null = null
 
 		this.logger.log(`Streaming starting for user: ${userId}`)
+		this.chatCounter.inc()
 
 		try {
 			const config = await this.aiConfigService.get()
@@ -42,6 +51,8 @@ export class AiChatAgentService {
 
 				if (cachedResponse.length > 0 && cachedResponse[0].score > 0.96) {
 					this.logger.log(`[Semantic Cache] Hit! Similarity: ${cachedResponse[0].score}`)
+					this.cacheHitCounter.inc()
+
 					const cachedText = cachedResponse[0].payload!.response as string
 
 					this.client.emit(CHUNK, {
@@ -117,6 +128,8 @@ export class AiChatAgentService {
 			}
 
 			if (totalTokens > 0) {
+				this.tokenCounter.inc(totalTokens)
+
 				await this.aiConfigService.incrementTokens(config.id, totalTokens)
 			}
 		} catch (error) {
