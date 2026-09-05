@@ -1,8 +1,8 @@
 import { Module } from '@nestjs/common'
-import { ConfigModule } from '@nestjs/config'
+import { ConfigModule, ConfigService } from '@nestjs/config'
 import { APP_GUARD } from '@nestjs/core'
 import { ThrottlerGuard, ThrottlerModule } from '@nestjs/throttler'
-import { appConfig } from '@sentinel-supreme/shared'
+import { appConfig, ENV_VARS } from '@sentinel-supreme/shared'
 import {
 	AiConfigModule,
 	MongoModule,
@@ -27,18 +27,22 @@ import { UsersModule } from './users/users.module'
 
 @Module({
 	imports: [
-		ThrottlerModule.forRoot([
-			{
-				name: 'short',
-				ttl: 1000,
-				limit: 10
-			},
-			{
-				name: 'long',
-				ttl: 60000,
-				limit: 100
-			}
-		]),
+		ThrottlerModule.forRootAsync({
+			imports: [ConfigModule],
+			inject: [ConfigService],
+			useFactory: (configService: ConfigService) => [
+				{
+					name: 'short',
+					ttl: configService.getOrThrow<number>(ENV_VARS.GATEWAY_THROTTLE_SHORT_TTL),
+					limit: configService.getOrThrow<number>(ENV_VARS.GATEWAY_THROTTLE_SHORT_LIMIT)
+				},
+				{
+					name: 'long',
+					ttl: configService.getOrThrow<number>(ENV_VARS.GATEWAY_THROTTLE_LONG_TTL),
+					limit: configService.getOrThrow<number>(ENV_VARS.GATEWAY_THROTTLE_LONG_LIMIT)
+				}
+			]
+		}),
 		ConfigModule.forRoot({
 			isGlobal: true,
 			validationSchema: Joi.object({
@@ -64,7 +68,11 @@ import { UsersModule } from './users/users.module'
 				MONGO_PORT: Joi.number().required(),
 				MONGO_DB: Joi.string().required(),
 				MONGO_HOST: Joi.string().required(),
-				GEMINI_API_KEY: Joi.string().required()
+				GEMINI_API_KEY: Joi.string().required(),
+				GATEWAY_THROTTLE_SHORT_TTL: Joi.number().required(),
+				GATEWAY_THROTTLE_SHORT_LIMIT: Joi.number().required(),
+				GATEWAY_THROTTLE_LONG_TTL: Joi.number().required(),
+				GATEWAY_THROTTLE_LONG_LIMIT: Joi.number().required()
 			})
 		}),
 		PrometheusModule.register({

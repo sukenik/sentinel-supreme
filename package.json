@@ -24,7 +24,8 @@
 		"docker:down": "docker compose down",
 		"docker:logs": "docker compose logs -f",
 		"prepare": "husky",
-		"seed:logs": "ts-node -P apps/log-processor/tsconfig.app.json apps/log-processor/src/scripts/seed-logs.ts"
+		"seed:logs": "ts-node -P apps/log-processor/tsconfig.app.json apps/log-processor/src/scripts/seed-logs.ts",
+		"test:k6:gateway": "dotenv -e .env -- k6 run k6/gateway-load-test.js"
 	},
 	"lint-staged": {
 		"*.{ts,tsx,js,jsx}": [
@@ -126,6 +127,7 @@
 		"autoprefixer": "^10.4.27",
 		"baseline-browser-mapping": "^2.11.15",
 		"caniuse-lite": "^1.0.30001809",
+		"dotenv-cli": "^11.0.0",
 		"eslint": "^9.8.0",
 		"eslint-config-prettier": "^10.1.8",
 		"eslint-plugin-import": "2.31.0",
