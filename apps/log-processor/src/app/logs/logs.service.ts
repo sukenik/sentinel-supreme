@@ -30,7 +30,7 @@ export class LogsService implements OnModuleDestroy {
 			.subscribe({
 				next: async (logs) => {
 					try {
-						await this.logModel.insertMany(logs, { ordered: false })
+						await this.logModel.collection.insertMany(logs, { ordered: false })
 
 						logs.forEach((log) => {
 							this.client.emit(LOG_PATTERNS.PROCESSED_LOG, log)
