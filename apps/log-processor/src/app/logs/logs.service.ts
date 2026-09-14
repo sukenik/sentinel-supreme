@@ -24,7 +24,7 @@ export class LogsService implements OnModuleDestroy {
 	private initBuffer() {
 		this.logBuffer$
 			.pipe(
-				bufferTime(5000, undefined, 50),
+				bufferTime(5000, undefined, 500),
 				filter((logs) => logs.length > 0)
 			)
 			.subscribe({
